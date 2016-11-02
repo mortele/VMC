@@ -1,9 +1,13 @@
 #include <iostream>
+#include "system.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
-int main(int argc, char *argv[])
-{
+int main(int, char**) {
+
+    System system;
+
     cout << "Hello World!" << endl;
     return 0;
 }

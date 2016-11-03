@@ -12,11 +12,11 @@ protected:
     double computeKineticEnergy();
     double computeElectronCorePotentialEnergy();
     double computeCoreCorePotentialEnergy();
-    virtual double computeElectronElectronPotentialEnergy() = 0;
+    double computeElectronElectronPotentialEnergy();
 
 public:
     Hamiltonian(class System* system);
-    virtual double computeLocalEnergy() = 0;
+    double computeLocalEnergy();
     double getLocalEnergy() { return m_localEnergy; }
 };
 

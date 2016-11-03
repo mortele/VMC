@@ -1,4 +1,4 @@
-#include "Hamiltonians/hamiltonian.h"
+#include "hamiltonian.h"
 #include "WaveFunctions/hydrogenwavefunction.h"
 #include "Cores/core.h"
 #include "electron.h"
@@ -49,5 +49,8 @@ Hamiltonian::Hamiltonian(System* system) {
 }
 
 double Hamiltonian::computeLocalEnergy() {
-
+    return computeKineticEnergy() +
+           computeCoreCorePotentialEnergy() +
+           computeElectronCorePotentialEnergy() +
+           computeElectronElectronPotentialEnergy();
 }

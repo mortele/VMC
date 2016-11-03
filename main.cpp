@@ -14,6 +14,7 @@ int main(int, char**) {
     Atom atom(&system, zeros<vec>(3), 1);
     system.addCore(&atom);
 
+
     cout << "Hello World!" << endl;
     return 0;
 }

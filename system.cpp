@@ -1,7 +1,7 @@
 #include "system.h"
 #include "electron.h"
+#include "hamiltonian.h"
 #include "Cores/core.h"
-#include "Hamiltonians/hamiltonian.h"
 
 System::System() {
     m_electrons.clear();

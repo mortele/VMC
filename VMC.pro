@@ -10,10 +10,20 @@ SOURCES += main.cpp \
     Hamiltonians/hamiltonian.cpp \
     system.cpp \
     electron.cpp \
-    atom.cpp
+    atom.cpp \
+    sampler.cpp \
+    Hamiltonians/molecule.cpp \
+    WaveFunctions/wavefunction.cpp \
+    WaveFunctions/hydrogenwavefunction.cpp \
+    Cores/core.cpp
 
 HEADERS += \
     Hamiltonians/hamiltonian.h \
     system.h \
     electron.h \
-    atom.h
+    atom.h \
+    sampler.h \
+    Hamiltonians/molecule.h \
+    WaveFunctions/wavefunction.h \
+    WaveFunctions/hydrogenwavefunction.h \
+    Cores/core.h

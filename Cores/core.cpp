@@ -2,6 +2,8 @@
 #include "system.h"
 
 
-Core::Core(arma::vec position) {
-    m_position = position;
+Core::Core(System* system, arma::vec position) {
+    m_position  = position;
+    m_system    = system;
 }
+

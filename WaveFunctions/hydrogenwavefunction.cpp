@@ -8,6 +8,7 @@
 using arma::vec;
 using arma::mat;
 using arma::norm;
+using arma::zeros;
 using std::exp;
 
 HydrogenWaveFunction::HydrogenWaveFunction(System* system,

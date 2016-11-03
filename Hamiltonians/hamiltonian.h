@@ -10,6 +10,9 @@ protected:
     class WaveFunction* m_waveFunction;
 
     double computeKineticEnergy();
+    double computeElectronCorePotentialEnergy();
+    double computeCoreCorePotentialEnergy();
+    virtual double computeElectronElectronPotentialEnergy() = 0;
 
 public:
     Hamiltonian(class System* system);

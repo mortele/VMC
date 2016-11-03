@@ -6,7 +6,7 @@
 class Molecule : public Hamiltonian {
 private:
     class System*               m_system;
-    std::vector<class Atom*>    m_atoms;
+    std::vector<class Core*>    m_atoms;
 
 public:
     Molecule(class System* system);

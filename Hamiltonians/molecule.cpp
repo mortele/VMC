@@ -1,6 +1,6 @@
 #include "molecule.h"
 #include "system.h"
-#include "atom.h"
+#include "Cores/atom.h"
 #include <armadillo>
 
 
@@ -14,9 +14,9 @@ double Molecule::computeLocalEnergy() {
 
 void Molecule::setup() {
     m_atoms.clear();
-    m_atoms.reserve(m_system->getAtoms().size());
+    m_atoms.reserve(m_system->getCores().size());
 
-    for (Atom* atom : m_system->getAtoms()) {
+    for (Core* atom : m_system->getCores()) {
         m_atoms.push_back(atom);
     }
 }

@@ -12,24 +12,21 @@ using arma::zeros;
 using std::exp;
 
 HydrogenWaveFunction::HydrogenWaveFunction(System* system,
+                                           double  alpha,
                                            bool    useNumericalDerivatives) :
         WaveFunction(system) {
-    m_alpha                     = 1.0;
+    m_alpha                     = alpha;
     m_useNumericalDerivatives   = useNumericalDerivatives;
 }
 
 void HydrogenWaveFunction::setup() {
-    m_electrons.clear();
-    m_electrons.reserve(m_system->getNumberOfElectrons());
-    for (Electron* electron : m_system->getElectrons()) {
-        m_electrons.push_back(electron);
-    }
+    WaveFunction::setup();
     assert(m_numberOfElectrons == 1);
     assert(m_numberOfDimensions == 3);
 }
 
 double HydrogenWaveFunction::evaluateWaveFunction() {
-    vec position = m_electrons.at(0)->getPosition();
+    vec position = m_system->getElectrons().at(0)->getPosition();
     double r = norm(position);
     return exp(-m_alpha * r);
 }

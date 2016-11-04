@@ -5,11 +5,14 @@
 
 class Atom : public Core {
 private:
-    int m_charge;
+    int     m_charge;
+    double  m_size;
+
+    void createElectrons();
+    void findAtomSize();
 
 public:
     Atom(class System* system, arma::vec position, int charge);
-
     double computeCoreCoreInteraction();
     double computeElectronCoreInteraction();
 };

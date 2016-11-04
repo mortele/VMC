@@ -7,7 +7,7 @@ private:
     arma::vec m_position;
 
 public:
-    Electron(arma::vec position, int spin);
+    Electron(arma::vec position, int spin=1);
 
     void setPosition    (arma::vec position);
     void setPosition    (double position, int dimension);

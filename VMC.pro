@@ -26,4 +26,5 @@ HEADERS += \
     WaveFunctions/hydrogenwavefunction.h \
     Cores/atom.h \
     Cores/core.h \
-    metropolis.h
+    metropolis.h \
+    RandomNumberGenerator/random.h

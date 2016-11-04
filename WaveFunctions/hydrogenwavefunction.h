@@ -8,10 +8,11 @@ class HydrogenWaveFunction : public WaveFunction {
 private:
     bool                            m_useNumericalDerivatives = true;
     double                          m_alpha;
-    std::vector<class Electron*>    m_electrons;
 
 public:
-    HydrogenWaveFunction(class System* system, bool useNumericalDerivatives);
+    HydrogenWaveFunction(class System* system,
+                         double        alpha = 1.0,
+                         bool          useNumericalDerivatives = false);
     void setup();
     double      evaluateWaveFunction();
     double      evaluateLaplacian();

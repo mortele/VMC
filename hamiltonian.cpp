@@ -5,9 +5,14 @@
 #include "system.h"
 #include <armadillo>
 
+
 using arma::vec;
 using arma::norm;
 
+
+void Hamiltonian::setup() {
+    m_waveFunction = m_system->getWaveFunction();
+}
 
 double Hamiltonian::computeKineticEnergy() {
     return - 0.5 * m_waveFunction->evaluateLaplacian();
@@ -33,7 +38,7 @@ double Hamiltonian::computeElectronElectronPotentialEnergy() {
     double electronElectronInteractionEnergy = 0;
     for (Electron* electron1 : m_system->getElectrons()) {
         for (Electron* electron2 : m_system->getElectrons()) {
-            if (electron1 != electron2) { // TODO: Is this horribly bad practice?
+            if (electron1 != electron2) {
                 vec     dr          = electron1->getPosition() -
                                       electron2->getPosition();
                 electronElectronInteractionEnergy += 1.0 / norm(dr);

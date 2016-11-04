@@ -18,9 +18,29 @@ void WaveFunction::setup() {
     m_numberOfElectrons  = m_system->getNumberOfElectrons();
 }
 
+void WaveFunction::updateOldWaveFunctionValue() {
+    m_oldValueSquared = m_currentValueSquared;
+}
+
+void WaveFunction::evaluateWaveFunctionInitial() {
+    m_currentValueSquared = evaluateWaveFunctionSquared();
+    m_oldValueSquared     = m_currentValueSquared;
+}
+
+double WaveFunction::computeWaveFunctionRatio(int) {
+    m_currentValueSquared = evaluateWaveFunctionSquared();
+    return m_currentValueSquared / m_oldValueSquared;
+}
+
 void WaveFunction::setStepLength(double stepLength) {
     m_stepLength            = stepLength;
     m_2stepLengthInverse    = 1.0 / (2.0 * stepLength);
+}
+
+double WaveFunction::evaluateWaveFunctionSquared() {
+    const double current = evaluateWaveFunction();
+    m_currentValueSquared = current * current;
+    return m_currentValueSquared;
 }
 
 double WaveFunction::evaluateLaplacian() {

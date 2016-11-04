@@ -2,6 +2,7 @@
 
 class Sampler {
     friend class Metropolis;
+    friend class System;
 
 private:
     double              m_currentEnergy;
@@ -12,8 +13,8 @@ private:
     class Hamiltonian*  m_hamiltonian;
 
     void sample(bool acceptedStep);
+    void setup();
 
 public:
     Sampler(class System* system);
-    void setup();
 };

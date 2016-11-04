@@ -1,0 +1,3 @@
+[submodule "RandomNumberGenerator"]
+	path = RandomNumberGenerator
+	url = git@github.com:andeplane/RandomNumberGenerator.git

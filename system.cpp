@@ -1,6 +1,7 @@
 #include "system.h"
 #include "electron.h"
 #include "hamiltonian.h"
+#include "sampler.h"
 #include "Cores/core.h"
 
 System::System() {
@@ -8,11 +9,16 @@ System::System() {
     m_cores.clear();
     m_numberOfElectrons = 0;
     m_numberOfDimensions = 3;
+    m_sampler = new Sampler(this);
 }
 
 
 void System::setHamiltonian(class Hamiltonian* hamiltonian) {
     m_hamiltonian = hamiltonian;
+}
+
+void System::setWaveFunction(WaveFunction* waveFunction) {
+    m_waveFunction = waveFunction;
 }
 
 double System::computeLocalEnergy() {

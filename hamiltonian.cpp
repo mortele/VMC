@@ -54,8 +54,9 @@ Hamiltonian::Hamiltonian(System* system) {
 }
 
 double Hamiltonian::computeLocalEnergy() {
-    return computeKineticEnergy() +
-           computeCoreCorePotentialEnergy() +
-           computeElectronCorePotentialEnergy() +
-           computeElectronElectronPotentialEnergy();
+    m_localEnergy = computeKineticEnergy() +
+                    computeCoreCorePotentialEnergy() +
+                    computeElectronCorePotentialEnergy() +
+                    computeElectronElectronPotentialEnergy();
+    return m_localEnergy;
 }

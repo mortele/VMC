@@ -9,10 +9,10 @@ using arma::vec;
 using arma::zeros;
 using std::cout;
 using std::endl;
+using std::string;
 
 void Atom::createElectrons() {
     findAtomSize();
-    cout << m_size << endl;
     for (int i = 0; i < m_charge; i++) {
         m_electrons.push_back(new Electron(vec {Random::nextGaussian(m_position(0), m_size),
                                                 Random::nextGaussian(m_position(1), m_size),
@@ -25,7 +25,6 @@ Atom::Atom(System* system, arma::vec position, int charge) :
         Core(system, position) {
     m_charge            = charge;
     m_generalizedCharge = (double) charge;
-    m_electrons.clear();
     m_electrons.reserve(charge);
     createElectrons();
 }
@@ -54,6 +53,10 @@ double Atom::computeElectronCoreInteraction() {
         interactionEnergy      -= m_charge * rInverse;
     }
     return interactionEnergy;
+}
+
+std::string Atom::getInfo() {
+    return findAtomName();
 }
 
 void Atom::findAtomSize() {
@@ -101,6 +104,47 @@ void Atom::findAtomSize() {
     // Convert size to atomic units, Bohr radii (a0).
     const double pmToBohrRadius = 0.0188972613;
     m_size *= pmToBohrRadius;
+}
+
+string Atom::findAtomName() {
+    if 		  (m_charge == 1) {
+        m_atomName = "H";
+    } else if (m_charge == 2) {
+        m_atomName = "He";
+    } else if (m_charge == 3) {
+        m_atomName = "Li";
+    } else if (m_charge == 4) {
+        m_atomName = "Be";
+    } else if (m_charge == 5) {
+        m_atomName = "B";
+    } else if (m_charge == 6) {
+        m_atomName = "C";
+    } else if (m_charge == 7) {
+        m_atomName = "N";
+    } else if (m_charge == 8) {
+        m_atomName = "O";
+    } else if (m_charge == 9) {
+        m_atomName = "F";
+    } else if (m_charge == 10) {
+        m_atomName = "Ne";
+    } else if (m_charge == 11) {
+        m_atomName = "Na";
+    } else if (m_charge == 12) {
+        m_atomName = "Mg";
+    } else if (m_charge == 13) {
+        m_atomName = "Al";
+    } else if (m_charge == 14) {
+        m_atomName = "Si";
+    } else if (m_charge == 15) {
+        m_atomName = "P";
+    } else if (m_charge == 16) {
+        m_atomName = "S";
+    } else if (m_charge == 17) {
+        m_atomName = "Cl";
+    } else if (m_charge == 18) {
+        m_atomName = "Ar";
+    }
+    return m_atomName;
 }
 
 

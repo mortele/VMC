@@ -14,6 +14,7 @@ public:
     Core(class System* system, arma::vec position);
     virtual double computeCoreCoreInteraction() { return 0; }
     virtual double computeElectronCoreInteraction() = 0;
+    virtual std::string getInfo() { return "Unknown"; }
 
     double      getGeneralizedCharge         () { return m_generalizedCharge; }
     arma::vec   getPosition                  () { return m_position; }

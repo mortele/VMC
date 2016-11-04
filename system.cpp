@@ -8,8 +8,6 @@
 #include "RandomNumberGenerator/random.h"
 
 System::System() {
-    m_electrons.clear();
-    m_cores.clear();
     m_numberOfElectrons         = 0;
     m_numberOfSpinUpElectrons   = 0;
     m_numberOfSpinDownElectrons = 0;

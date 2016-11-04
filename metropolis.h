@@ -6,7 +6,8 @@ class Metropolis {
 private:
     int                 m_numberOfElectrons;
     int                 m_numberOfDimensions;
-    double              m_stepLength = 1e-3;
+    int                 m_numberOfMetropolisSteps;
+    double              m_stepLength = 1e-1;
     double              m_stepLengthHalf;
     class System*       m_system;
     class Sampler*      m_sampler;
@@ -14,6 +15,9 @@ private:
 
     bool step();
     void setup();
+    void printInitialInfo();
+    void printIterationInfo(int iteration);
+    void printFinalInfo();
 
 public:
     Metropolis(class System* system);

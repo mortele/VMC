@@ -12,9 +12,7 @@ using std::endl;
 int main(int, char**) {
     System system;
     system.addCore(new Atom(&system, zeros<vec>(3), 1));
-    system.setWaveFunction(new HydrogenWaveFunction(&system));
-    system.runMetropolis(5);
-
-    cout << "Hello World!" << endl;
+    system.setWaveFunction(new HydrogenWaveFunction(&system, 0.999));
+    system.runMetropolis(1e6);
     return 0;
 }

@@ -14,6 +14,10 @@ void Hamiltonian::setup() {
     m_waveFunction = m_system->getWaveFunction();
 }
 
+void Hamiltonian::setElectronInteraction(bool interaction) {
+    m_interactingElectrons = interaction;
+}
+
 double Hamiltonian::computeKineticEnergy() {
     return - 0.5 * m_waveFunction->evaluateLaplacian();
 }
@@ -35,17 +39,21 @@ double Hamiltonian::computeCoreCorePotentialEnergy() {
 }
 
 double Hamiltonian::computeElectronElectronPotentialEnergy() {
-    double electronElectronInteractionEnergy = 0;
-    for (Electron* electron1 : m_system->getElectrons()) {
-        for (Electron* electron2 : m_system->getElectrons()) {
-            if (electron1 != electron2) {
-                vec     dr          = electron1->getPosition() -
-                                      electron2->getPosition();
-                electronElectronInteractionEnergy += 1.0 / norm(dr);
+    if (m_interactingElectrons) {
+        double electronElectronInteractionEnergy = 0;
+        for (Electron* electron1 : m_system->getElectrons()) {
+            for (Electron* electron2 : m_system->getElectrons()) {
+                if (electron1 != electron2) {
+                    vec     dr          = electron1->getPosition() -
+                                          electron2->getPosition();
+                    electronElectronInteractionEnergy += 1.0 / norm(dr);
+                }
             }
         }
+        return 0.5 * electronElectronInteractionEnergy;
+    } else {
+        return 0;
     }
-    return 0.5 * electronElectronInteractionEnergy;
 }
 
 

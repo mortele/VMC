@@ -15,7 +15,9 @@ SOURCES += main.cpp \
     WaveFunctions/hydrogenwavefunction.cpp \
     Cores/atom.cpp \
     Cores/core.cpp \
-    metropolis.cpp
+    metropolis.cpp \
+    WaveFunctions/heliumwavefunction.cpp \
+    unittest.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -27,4 +29,6 @@ HEADERS += \
     Cores/atom.h \
     Cores/core.h \
     metropolis.h \
-    RandomNumberGenerator/random.h
+    RandomNumberGenerator/random.h \
+    WaveFunctions/heliumwavefunction.h \
+    unittest.h

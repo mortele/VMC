@@ -34,7 +34,9 @@ double WaveFunction::computeWaveFunctionRatio(int) {
 
 void WaveFunction::setStepLength(double stepLength) {
     m_stepLength            = stepLength;
-    m_2stepLengthInverse    = 1.0 / (2.0 * stepLength);
+    m_2stepLengthInverse = 1.0 / (2.0 * m_stepLength);
+    m_stepLengthSquared = m_stepLength * m_stepLength;
+    m_stepLengthSquaredInverse = 1.0 / m_stepLengthSquared;
 }
 
 double WaveFunction::evaluateWaveFunctionSquared() {
@@ -63,11 +65,12 @@ double WaveFunction::evaluateLaplacian() {
             laplacian += waveFunctionPlus - 2* waveFunction + waveFunctionMinus;
         }
     }
-    return laplacian * m_stepLengthSquaredInverse;
+    return laplacian * m_stepLengthSquaredInverse / waveFunction;
 }
 
 mat WaveFunction::evaluateGradient() {
     mat gradient = zeros<mat>(m_numberOfElectrons, m_numberOfDimensions);
+    double waveFunction = evaluateWaveFunction();
 
     for (int electron = 0; electron < m_numberOfElectrons; electron++) {
         for (int dimension = 0; dimension < m_numberOfDimensions; dimension++) {
@@ -85,5 +88,6 @@ mat WaveFunction::evaluateGradient() {
             gradient(electron, dimension) = waveFunctionPlus - waveFunctionMinus;
         }
     }
-    return gradient *= m_2stepLengthInverse;
+    gradient *= m_2stepLengthInverse / waveFunction;
+
 }

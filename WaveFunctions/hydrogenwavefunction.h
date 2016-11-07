@@ -6,8 +6,8 @@
 
 class HydrogenWaveFunction : public WaveFunction {
 private:
-    bool                            m_useNumericalDerivatives = true;
-    double                          m_alpha;
+    bool   m_useNumericalDerivatives = false;
+    double m_alpha;
 
 public:
     HydrogenWaveFunction(class System* system,

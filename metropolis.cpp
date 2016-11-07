@@ -42,24 +42,39 @@ void Metropolis::setup() {
     m_waveFunction       = m_system->getWaveFunction();
     m_numberOfElectrons  = m_system->getNumberOfElectrons();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
-    double minimumSize = 10.0;
-    for (Core* core : m_system->getCores()) {
-        minimumSize = std::min(minimumSize, core->getSize());
+    if (! m_stepLengthSetManually) {
+        double minimumSize = 10.0;
+        for (Core* core : m_system->getCores()) {
+            minimumSize = std::min(minimumSize, core->getSize());
+        }
+        m_stepLength     = 2.0 * minimumSize;
+        m_stepLengthHalf = 0.5 * m_stepLength;
     }
-    m_stepLength     = 1.5 * minimumSize;
+}
+
+void Metropolis::setStepLength(double stepLength) {
+    m_stepLength     = stepLength;
     m_stepLengthHalf = 0.5 * m_stepLength;
+    m_stepLengthSetManually = true;
 }
 
 void Metropolis::runSteps(int steps) {
     m_numberOfMetropolisSteps = steps;
-    printInitialInfo();
+    if (! m_silent) printInitialInfo();
     m_waveFunction->evaluateWaveFunctionInitial();
     for (int i = 0; i < steps; i++) {
         bool acceptedStep = step();
         m_sampler->sample(acceptedStep);
-        printIterationInfo(i);
+        if (! m_silent) printIterationInfo(i);
     }
-    printFinalInfo();
+    if (! m_silent) printFinalInfo();
+}
+
+void Metropolis::runStepsSilent(int steps) {
+    m_silent = true;
+    runSteps(steps);
+    m_sampler->computeAverages();
+    m_silent = false;
 }
 
 void Metropolis::printInitialInfo() {

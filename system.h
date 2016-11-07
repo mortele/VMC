@@ -7,6 +7,7 @@ private:
     int                             m_numberOfElectrons;
     int                             m_numberOfSpinUpElectrons;
     int                             m_numberOfSpinDownElectrons;
+    bool                            m_interactingElectrons = true;
     class Sampler*                  m_sampler;
     class Metropolis*               m_metropolis;
     class Hamiltonian*              m_hamiltonian;
@@ -19,9 +20,12 @@ private:
 public:
     System();
     void runMetropolis                (int steps);
+    void runMetropolisSilent          (int steps);
     void adjustPositionOfElectron     (int electron, int dimension, double adjustment);
     void addCore                      (class Core* core);
     void setWaveFunction              (class WaveFunction* waveFunction);
+    void setElectronInteraction       (bool interacting);
+    void setStepLength                (double stepLength);
     int  getNumberOfDimensions        () { return m_numberOfDimensions;        }
     int  getNumberOfElectrons         () { return m_numberOfElectrons;         }
     int  getNumberOfSpinUpElectrons   () { return m_numberOfSpinUpElectrons;   }

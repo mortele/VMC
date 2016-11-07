@@ -21,7 +21,7 @@ HydrogenWaveFunction::HydrogenWaveFunction(System* system,
 
 void HydrogenWaveFunction::setup() {
     WaveFunction::setup();
-    assert(m_numberOfElectrons == 1);
+    assert(m_numberOfElectrons  == 1);
     assert(m_numberOfDimensions == 3);
 }
 
@@ -36,7 +36,6 @@ double HydrogenWaveFunction::evaluateLaplacian() {
         vec     position = m_system->getElectrons().at(0)->getPosition();
         double  rInverse = 1.0 / norm(position);
         return m_alpha * m_alpha - (2.0 * m_alpha * rInverse);
-
     } else {
         return WaveFunction::evaluateLaplacian();
     }

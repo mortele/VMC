@@ -33,14 +33,14 @@ private:
     void computeAverages();
     void computeBlockAverages();
 
-    double getEnergy()              { return m_energy;              }
-    double getVariance()            { return m_variance;            }
-    double getAcceptanceRate()      { return m_acceptanceRate;      }
-
     double getBlockEnergy()         { return m_blockEnergy;         }
     double getBlockVariance()       { return m_blockVariance;       }
     double getBlockAcceptanceRate() { return m_blockAcceptanceRate; }
 
 public:
     Sampler(class System* system);
+
+    double getEnergy()              { return m_energy;              }
+    double getVariance()            { return m_variance;            }
+    double getAcceptanceRate()      { return m_acceptanceRate;      }
 };

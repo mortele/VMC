@@ -21,6 +21,7 @@ System::System() {
 void System::setup() {
     m_waveFunction->setup();
     m_hamiltonian->setup();
+    m_hamiltonian->setElectronInteraction(m_interactingElectrons);
     m_metropolis->setup();
     m_sampler->setup();
 }
@@ -30,8 +31,21 @@ void System::runMetropolis(int steps) {
     m_metropolis->runSteps(steps);
 }
 
+void System::runMetropolisSilent(int steps) {
+    setup();
+    m_metropolis->runStepsSilent(steps);
+}
+
 void System::setWaveFunction(WaveFunction* waveFunction) {
     m_waveFunction = waveFunction;
+}
+
+void System::setElectronInteraction(bool interacting) {
+    m_interactingElectrons = interacting;
+}
+
+void System::setStepLength(double stepLength) {
+    m_metropolis->setStepLength(stepLength);
 }
 
 void System::adjustPositionOfElectron(int       electron,

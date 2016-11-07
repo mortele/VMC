@@ -45,8 +45,23 @@ double HeliumWaveFunction::evaluateLaplacian() {
 
 arma::mat HeliumWaveFunction::evaluateGradient() {
     if (! m_useNumericalDerivatives) {
-        return zeros(0,0);
+        mat     gradient = zeros<mat>(m_numberOfElectrons, m_numberOfDimensions);
+        for (int electron = 0; electron < m_numberOfElectrons; electron++) {
+            vec     position = m_system->getElectrons().at(electron)->getPosition();
+            double  rInverse = 1.0 / norm(position);
+            double  constant = - m_alpha * rInverse;
+            for (int dimension = 0; dimension < m_numberOfDimensions; dimension++) {
+                gradient(electron, dimension) = constant * position(dimension);
+            }
+        }
+        return gradient;
     } else {
         return WaveFunction::evaluateGradient();
     }
 }
+
+
+
+
+
+

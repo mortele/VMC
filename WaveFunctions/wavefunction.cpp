@@ -89,5 +89,5 @@ mat WaveFunction::evaluateGradient() {
         }
     }
     gradient *= m_2stepLengthInverse / waveFunction;
-
+    return gradient;
 }

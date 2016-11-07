@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     Cores/core.cpp \
     metropolis.cpp \
     WaveFunctions/heliumwavefunction.cpp \
-    unittest.cpp
+    unittest.cpp \
+    WaveFunctions/heliumwithjastrow.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -31,4 +32,5 @@ HEADERS += \
     metropolis.h \
     RandomNumberGenerator/random.h \
     WaveFunctions/heliumwavefunction.h \
-    unittest.h
+    unittest.h \
+    WaveFunctions/heliumwithjastrow.h

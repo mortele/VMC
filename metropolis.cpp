@@ -16,18 +16,14 @@ using std::pow;
 bool Metropolis::step() {
     int    electron       = Random::nextInt(0, m_numberOfElectrons  - 1);
     int    dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
-    double proposedChange = Random::nextDouble( - m_stepLengthHalf,
-                                                  m_stepLengthHalf);
-    m_system->getElectrons().at(electron)->adjustPosition(proposedChange,
-                                                          dimension);
+    double proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
+    m_system->getElectrons().at(electron)->adjustPosition(proposedChange, dimension);
     m_waveFunction->updateOldWaveFunctionValue();
     const double R = m_waveFunction->computeWaveFunctionRatio(electron);
-
     if (R > Random::nextDouble(0, 1)) {
         return true;
     } else {
-        m_system->getElectrons().at(electron)->adjustPosition(- proposedChange,
-                                                                dimension);
+        m_system->getElectrons().at(electron)->adjustPosition(-proposedChange, dimension);
         return false;
     }
 }
@@ -114,7 +110,7 @@ void Metropolis::printIterationInfo(int iteration) {
         m_sampler->computeAverages();
         m_sampler->computeBlockAverages();
 
-        printf(" %3de%2-d %12.5g %12.5g %12.5g %12.5g %12.5g\n",
+        printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g\n",
                 preFactor,
                 exponent,
                 m_sampler->getEnergy(),

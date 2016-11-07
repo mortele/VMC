@@ -3,7 +3,7 @@
 #include <armadillo>
 
 class HeliumWaveFunction : public WaveFunction {
-private:
+protected:
     bool    m_useNumericalDerivatives = false;
     double  m_alpha;
 

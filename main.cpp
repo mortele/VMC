@@ -13,6 +13,6 @@ int main(int, char**) {
     System system;
     system.addCore(new Atom(&system, zeros<vec>(3), 1));
     system.setWaveFunction(new HydrogenWaveFunction(&system, 0.999));
-    system.runMetropolis(1e6);
+    system.runMetropolis(3e6);
     return 0;
 }

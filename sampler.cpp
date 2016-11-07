@@ -15,52 +15,38 @@ void Sampler::sample(bool acceptedStep) {
     } else {
         m_currentEnergy = m_hamiltonian->getLocalEnergy();
     }
-    //cout << "[ "  << setw(10) << m_system->getElectrons().at(0)->getPosition()(0) << ", "
-    //              << setw(10) << m_system->getElectrons().at(0)->getPosition()(1) << ", "
-    //              << setw(10) << m_system->getElectrons().at(0)->getPosition()(2)
-    //     << " ] " << setw(10) << m_currentEnergy << " : " << acceptedStep << endl;
     m_currentEnergySquared            = m_currentEnergy * m_currentEnergy;
     m_cumulativeEnergy               += m_currentEnergy;
     m_cumulativeEnergySquared        += m_currentEnergySquared;
-    m_cumulativeBlockEnergy          += m_currentEnergy;
-    m_cumulativeBlockEnergySquared   += m_currentEnergySquared;
+    m_blockCumulativeEnergy          += m_currentEnergy;
+    m_blockCumulativeEnergySquared   += m_currentEnergySquared;
+    m_blockAccepted                  += acceptedStep;
+    m_totalAccepted                  += acceptedStep;
     m_totalSamplesTaken              += 1;
+    m_blockSamplesTaken              += 1;
 }
 
-void Sampler::computeAverages(int steps) {
+void Sampler::computeAverages() {
+    const double E             = m_cumulativeEnergy        / m_totalSamplesTaken;
+    const double E2            = m_cumulativeEnergySquared / m_totalSamplesTaken;
+    m_acceptanceRate           = m_totalAccepted           / m_totalSamplesTaken;
+    m_energy                   = E;
+    m_variance                 = E2-E*E;
     m_numberOfMetropolisSteps  = m_totalSamplesTaken;
-    m_cumulativeEnergy        /= m_totalSamplesTaken;
-    m_cumulativeEnergySquared /= m_totalSamplesTaken;
-    m_energy    = m_cumulativeEnergy;
-    m_variance  = m_cumulativeEnergySquared - m_cumulativeEnergy * m_cumulativeEnergy;
 }
 
-double Sampler::getEnergyAverage(int iteration) {
-    return m_cumulativeEnergy / m_totalSamplesTaken;
-}
+void Sampler::computeBlockAverages() {
+    const double N        = m_blockSamplesTaken;
+    const double E        = m_blockCumulativeEnergy        / N;
+    const double E2       = m_blockCumulativeEnergySquared / N;
+    m_blockEnergy         = E;
+    m_blockVariance       = E2 - E*E;
+    m_blockAcceptanceRate = m_blockAccepted / N;
 
-double Sampler::getVariance(int iteration) {
-    const double E  = m_cumulativeEnergy        / m_totalSamplesTaken;
-    const double E2 = m_cumulativeEnergySquared / m_totalSamplesTaken;
-    return E2 - E*E;
-}
-
-double Sampler::getEnergyBlockAverage(int iteration) {
-    const double blockSize  = iteration - m_currentBlockStart;
-    const double Eb         = m_cumulativeBlockEnergy        / (blockSize);
-    const double Eb2        = m_cumulativeBlockEnergySquared / (blockSize);
-
-    m_blockVariance                 = Eb2 - Eb*Eb;
-    m_cumulativeBlockEnergy         = 0;
-    m_cumulativeBlockEnergySquared  = 0;
-    m_currentBlockStart             = iteration;
-    return Eb;
-}
-
-double Sampler::getVarianceBlock(int) {
-    const double Vb = m_blockVariance;
-    m_blockVariance = 0;
-    return Vb;
+    m_blockSamplesTaken            = 0;
+    m_blockAccepted                = 0;
+    m_blockCumulativeEnergy        = 0;
+    m_blockCumulativeEnergySquared = 0;
 }
 
 Sampler::Sampler(System* system) {
@@ -68,6 +54,5 @@ Sampler::Sampler(System* system) {
 }
 
 void Sampler::setup() {
-    m_currentBlockStart = -1;
     m_hamiltonian = m_system->getHamiltonian();
 }

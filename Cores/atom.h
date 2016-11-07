@@ -7,7 +7,6 @@
 class Atom : public Core {
 private:
     int     m_charge;
-    double  m_size;
     std::string m_atomName;
 
     void createElectrons();

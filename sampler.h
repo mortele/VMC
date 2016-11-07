@@ -5,30 +5,41 @@ class Sampler {
     friend class System;
 
 private:
-    int                 m_numberOfMetropolisSteps;
-    int                 m_currentBlockStart;
-    double              m_totalSamplesTaken;
-    double              m_currentEnergy;
-    double              m_currentEnergySquared;
-    double              m_cumulativeEnergy;
-    double              m_cumulativeEnergySquared;
-    double              m_cumulativeBlockEnergy;
-    double              m_cumulativeBlockEnergySquared;
-    double              m_blockVariance;
-    double              m_energy;
-    double              m_variance;
-    class System*       m_system;
-    class Hamiltonian*  m_hamiltonian;
+    int                 m_numberOfMetropolisSteps		= 0;
+    double              m_currentEnergy					= 0;
+    double              m_currentEnergySquared			= 0;
+    double              m_energy						= 0;
+    double              m_variance						= 0;
+
+    double              m_totalAccepted                 = 0;
+    double              m_totalSamplesTaken				= 0;
+    double              m_cumulativeEnergy				= 0;
+    double              m_cumulativeEnergySquared		= 0;
+    double              m_acceptanceRate				= 0;
+
+    double              m_blockEnergy                   = 0;
+    double              m_blockVariance                 = 0;
+    double              m_blockAccepted                 = 0;
+    double              m_blockSamplesTaken				= 0;
+    double              m_blockCumulativeEnergy			= 0;
+    double              m_blockCumulativeEnergySquared	= 0;
+    double              m_blockAcceptanceRate			= 0;
+
+    class System*       m_system						= nullptr;
+    class Hamiltonian*  m_hamiltonian					= nullptr;
 
     void setup();
     void sample(bool acceptedStep);
-    void computeAverages(int steps);
-    double getEnergyAverage(int iteration);
-    double getVariance(int iteration);
-    double getEnergyBlockAverage(int iteration);
-    double getVarianceBlock(int iteration);
-    double getEnergy()   { return m_energy;   }
-    double getVariance() { return m_variance; }
+    void computeAverages();
+    void computeBlockAverages();
+
+    double getEnergy()              { return m_energy;              }
+    double getVariance()            { return m_variance;            }
+    double getAcceptanceRate()      { return m_acceptanceRate;      }
+
+    double getBlockEnergy()         { return m_blockEnergy;         }
+    double getBlockVariance()       { return m_blockVariance;       }
+    double getBlockAcceptanceRate() { return m_blockAcceptanceRate; }
 
 public:
     Sampler(class System* system);

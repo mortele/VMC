@@ -6,7 +6,6 @@
 
 class HydrogenWaveFunction : public WaveFunction {
 private:
-    bool   m_useNumericalDerivatives = false;
     double m_alpha;
 
 public:

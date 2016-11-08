@@ -5,6 +5,7 @@
 #include "WaveFunctions/heliumwavefunction.h"
 #include "WaveFunctions/hydrogenwavefunction.h"
 #include "WaveFunctions/heliumwithjastrow.h"
+#include "WaveFunctions/directevaluationslater.h"
 #include "RandomNumberGenerator/random.h"
 #include <armadillo>
 #include <cassert>
@@ -25,11 +26,12 @@ System* UnitTest::setupNewTestSystem() {
 bool UnitTest::runAllTests() {
     cout << "Running all tests." << endl;
     cout << "=================================================================" << endl;
-    //cout << "Running test: "; if (! testHydrogen())               return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testNonInteractingHelium())   return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testHelium())                 return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testNumericalLaplacian())     return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testHeliumWithJastrow())      return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testHydrogen())                     return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testNonInteractingHelium())         return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testHelium())                       return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testNumericalLaplacian())           return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testHeliumWithJastrowNumerical())   return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterHelium())           return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -78,6 +80,21 @@ bool UnitTest::testNumericalLaplacian() {
     return true;
 }
 
+bool UnitTest::testDirectSlaterHelium() {
+    printf("%-40s", "Direct eval. slater (Helium)"); fflush(stdout);
+    int nSpinUp     = 1;
+    int nSpinDown   = 1;
+    System* test = setupNewTestSystem();
+    test->setElectronInteraction(false);
+    test->addCore(new Atom(system, zeros<vec>(3), 2));
+    test->setWaveFunction(new DirectEvaluationSlater(system, nSpinUp, nSpinDown, true));
+    test->runMetropolis(100);
+    const double E   = test->getSampler()->getEnergy();
+    const double ref = -4;
+    assert(fabs(ref - E) < 1e-3);
+    return true;
+}
+
 bool UnitTest::testHelium() {
     printf("%-40s", "Helium"); fflush(stdout);
     System* test = setupNewTestSystem();
@@ -91,19 +108,16 @@ bool UnitTest::testHelium() {
     return true;
 }
 
-bool UnitTest::testHeliumWithJastrow() {
-    printf("%-40s", "Helium with Jastrow"); fflush(stdout);
+bool UnitTest::testHeliumWithJastrowNumerical() {
+    printf("%-40s", "Helium with Jastrow (numerical)"); fflush(stdout);
     System* test = setupNewTestSystem();
     test->addCore(new Atom(test, zeros<vec>(3), 2));
     test->setWaveFunction(new HeliumWithJastrow(test, 1.843, 0.347, true));
-
     test->setStepLength(1.0);
-    test->runMetropolis(10000000);
+    test->runMetropolisSilent(100000);
     const double E   = test->getSampler()->getEnergy();
     const double ref = -2.8901; // FYS4411 project 2
-    cout << E << endl;
-    cout << ref << endl;
-    assert(fabs(ref - E) < 3e-3);
+    assert(fabs(ref - E) < 1e-2);
     return true;
 }
 

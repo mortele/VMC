@@ -8,8 +8,9 @@ public:
     static bool runAllTests();
     static bool testHydrogen();
     static bool testHelium();
-    static bool testHeliumWithJastrow();
+    static bool testHeliumWithJastrowNumerical();
     static bool testNonInteractingHelium();
     static bool testNumericalLaplacian();
+    static bool testDirectSlaterHelium();
 };
 

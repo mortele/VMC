@@ -11,6 +11,7 @@ WaveFunction::WaveFunction(System* system) {
     m_2stepLengthInverse = 1.0 / (2.0 * m_stepLength);
     m_stepLengthSquared = m_stepLength * m_stepLength;
     m_stepLengthSquaredInverse = 1.0 / m_stepLengthSquared;
+    m_useNumericalDerivatives = false;
 }
 
 void WaveFunction::setup() {

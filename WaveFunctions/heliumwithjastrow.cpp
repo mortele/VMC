@@ -28,6 +28,7 @@ double HeliumWithJastrow::evaluateWaveFunction() {
 
 double HeliumWithJastrow::evaluateLaplacian() {
     if (! m_useNumericalDerivatives) {
+        // TODO: FIX THIS.
         const vec position1 = m_system->getElectrons().at(0)->getPosition();
         const vec position2 = m_system->getElectrons().at(1)->getPosition();
         const double r1  = norm(position1);

@@ -19,9 +19,9 @@ System::System() {
 }
 
 void System::setup() {
-    m_waveFunction->setup();
     m_hamiltonian->setup();
     m_hamiltonian->setElectronInteraction(m_interactingElectrons);
+    m_waveFunction->setup();
     m_metropolis->setup();
     m_sampler->setup();
 }

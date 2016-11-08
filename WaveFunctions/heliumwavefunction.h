@@ -4,7 +4,6 @@
 
 class HeliumWaveFunction : public WaveFunction {
 protected:
-    bool    m_useNumericalDerivatives = false;
     double  m_alpha;
 
 public:

@@ -62,6 +62,10 @@ double DirectEvaluationSlater::computeWaveFunctionRatio(int changedElectronIndex
     return m_currentValueSquared / m_oldValueSquared;
 }
 
+double DirectEvaluationSlater::evaluateLaplacian() {
+
+}
+
 double DirectEvaluationSlater::evaluateOrbital(int orbital, int electron, bool up) {
     if (orbital == 0) {
         return s1(electron, up);
@@ -135,3 +139,48 @@ double DirectEvaluationSlater::p2z(int electron, bool up) {
     return z * exp(-m_alpha * r);
 
 }
+
+double DirectEvaluationSlater::s1Laplacian(int electron, bool up) {
+    std::vector<Electron*> electrons = (up == 1) ? m_system->getSpinUpElectrons() :
+                                                   m_system->getSpinDownElectrons();
+    const double r = norm(electrons.at(electron)->getPosition());
+    return (m_alpha * m_alpha - 2 * m_alpha / r) * exp(-m_alpha * r);
+}
+
+double DirectEvaluationSlater::s2Laplacian(int electron, bool up) {
+    std::vector<Electron*> electrons = (up == 1) ? m_system->getSpinUpElectrons() :
+                                                   m_system->getSpinDownElectrons();
+    const double r = norm(electrons.at(electron)->getPosition());
+    return (  5./4 * m_alpha * m_alpha
+            - 2 * m_alpha / r
+            - m_alpha * m_alpha * m_alpha / 8.) * exp(-0.5 * m_alpha * r);
+}
+
+double DirectEvaluationSlater::p2xLaplacian(int electron, bool up) {
+    std::vector<Electron*> electrons = (up == 1) ? m_system->getSpinUpElectrons() :
+                                                   m_system->getSpinDownElectrons();
+    const double r = norm(electrons.at(electron)->getPosition());
+    const double x = electrons.at(electron)->getPosition()(0);
+    return (m_alpha * x * (m_alpha * r - 8.)) / (4. * r) * exp(-0.5 * m_alpha * r);
+}
+
+double DirectEvaluationSlater::p2yLaplacian(int electron, bool up) {
+    std::vector<Electron*> electrons = (up == 1) ? m_system->getSpinUpElectrons() :
+                                                   m_system->getSpinDownElectrons();
+    const double r = norm(electrons.at(electron)->getPosition());
+    const double y = electrons.at(electron)->getPosition()(1);
+    return (m_alpha * y * (m_alpha * r - 8.)) / (4. * r) * exp(-0.5 * m_alpha * r);
+}
+
+double DirectEvaluationSlater::p2zLaplacian(int electron, bool up) {
+    std::vector<Electron*> electrons = (up == 1) ? m_system->getSpinUpElectrons() :
+                                                   m_system->getSpinDownElectrons();
+    const double r = norm(electrons.at(electron)->getPosition());
+    const double z = electrons.at(electron)->getPosition()(2);
+    return (m_alpha * z * (m_alpha * r - 8.)) / (4. * r) * exp(-0.5 * m_alpha * r);
+}
+
+
+
+
+

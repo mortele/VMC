@@ -1,5 +1,6 @@
 #pragma once
 #include <armadillo>
+#include <iostream>
 
 class Electron {
 private:

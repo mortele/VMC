@@ -16,11 +16,18 @@ private:
     double evaluateOrbital(int orbital, int electron, bool up);
     void updateSpinUpSlater();
     void updateSpinDownSlater();
-    double s1(int electron, bool up);
-    double s2(int electron, bool up);
+
+    double s1 (int electron, bool up);
+    double s2 (int electron, bool up);
     double p2x(int electron, bool up);
     double p2y(int electron, bool up);
     double p2z(int electron, bool up);
+
+    double s1Laplacian (int electron, bool up);
+    double s2Laplacian (int electron, bool up);
+    double p2xLaplacian(int electron, bool up);
+    double p2yLaplacian(int electron, bool up);
+    double p2zLaplacian(int electron, bool up);
 
 public:
     DirectEvaluationSlater(class System* system,
@@ -28,8 +35,8 @@ public:
                            int           numberOfSpinUpElectrons,
                            int           numberOfSpinDownElectrons,
                            bool          useNumericalDerivatives);
-    double evaluateWaveFunction();
-    void evaluateWaveFunctionInitial();
-    double computeWaveFunctionRatio(int changedElectronIndex);
+    double  evaluateWaveFunction();
+    void    evaluateWaveFunctionInitial();
+    double  computeWaveFunctionRatio(int changedElectronIndex);
 };
 

@@ -36,7 +36,7 @@ void System::setupSpinElectronArrays() {
             m_spinUpElectrons.push_back(m_electrons.at(electron));
 
         // Spin down electron.
-        } if (spin == 0) {
+        } else if (spin == 0) {
             m_spinDownElectrons.push_back(m_electrons.at(electron));
 
         } else {

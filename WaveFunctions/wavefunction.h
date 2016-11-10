@@ -17,7 +17,7 @@ protected:
     double          m_stepLengthSquaredInverse;
     class System*   m_system;
 
-    void setup();
+    void            setup();
     void            updateOldWaveFunctionValue();
     virtual void    evaluateWaveFunctionInitial();
     virtual double  computeWaveFunctionRatio(int changedElectronIndex);

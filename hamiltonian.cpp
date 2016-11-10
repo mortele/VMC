@@ -41,8 +41,8 @@ double Hamiltonian::computeCoreCorePotentialEnergy() {
 double Hamiltonian::computeElectronElectronPotentialEnergy() {
     if (m_interactingElectrons) {
         double electronElectronInteractionEnergy = 0;
-        for (int i = 0; i < m_system->getElectrons().size(); i++) {
-            for (int j = i+1; j < m_system->getElectrons().size(); j++) {
+        for (unsigned int i = 0; i < m_system->getElectrons().size(); i++) {
+            for (unsigned int j = i+1; j < m_system->getElectrons().size(); j++) {
                 vec dr = m_system->getElectrons().at(i)->getPosition() -
                          m_system->getElectrons().at(j)->getPosition();
                 electronElectronInteractionEnergy += 1.0 / norm(dr);

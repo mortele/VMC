@@ -24,6 +24,25 @@ void System::setup() {
     m_waveFunction->setup();
     m_metropolis->setup();
     m_sampler->setup();
+    setupSpinElectronArrays();
+}
+
+void System::setupSpinElectronArrays() {
+    for (int electron = 0; electron < m_numberOfElectrons; electron++) {
+        int spin = m_electrons.at(electron)->getSpin();
+
+        // Spin up electron.
+        if (spin == 1) {
+            m_spinUpElectrons.push_back(m_electrons.at(electron));
+
+        // Spin down electron.
+        } if (spin == 0) {
+            m_spinDownElectrons.push_back(m_electrons.at(electron));
+
+        } else {
+            std::cout << "Something is terribly wrong in System::setupSpinElectronArrays()." << std::endl;
+        }
+    }
 }
 
 void System::runMetropolis(int steps) {

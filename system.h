@@ -14,8 +14,11 @@ private:
     class WaveFunction*             m_waveFunction;
     std::vector<class Core*>        m_cores;
     std::vector<class Electron*>    m_electrons;
+    std::vector<class Electron*>    m_spinUpElectrons;
+    std::vector<class Electron*>    m_spinDownElectrons;
 
     void setup();
+    void setupSpinElectronArrays();
 
 public:
     System();
@@ -30,10 +33,12 @@ public:
     int  getNumberOfElectrons         () { return m_numberOfElectrons;         }
     int  getNumberOfSpinUpElectrons   () { return m_numberOfSpinUpElectrons;   }
     int  getNumberOfSpinDownElectrons () { return m_numberOfSpinDownElectrons; }
-    class Sampler*               getSampler()      { return m_sampler;      }
-    class Hamiltonian*           getHamiltonian()  { return m_hamiltonian;  }
-    class WaveFunction*          getWaveFunction() { return m_waveFunction; }
-    std::vector<class Core*>     getCores()        { return m_cores;        }
-    std::vector<class Electron*> getElectrons()    { return m_electrons;    }
+    class Sampler*               getSampler()           { return m_sampler;            }
+    class Hamiltonian*           getHamiltonian()       { return m_hamiltonian;        }
+    class WaveFunction*          getWaveFunction()      { return m_waveFunction;       }
+    std::vector<class Core*>     getCores()             { return m_cores;              }
+    std::vector<class Electron*> getElectrons()         { return m_electrons;          }
+    std::vector<class Electron*> getSpinUpElectrons()   { return m_spinUpElectrons;    }
+    std::vector<class Electron*> getSpinDownElectrons() { return m_spinDownElectrons;  }
 };
 

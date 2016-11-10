@@ -82,15 +82,22 @@ bool UnitTest::testNumericalLaplacian() {
 
 bool UnitTest::testDirectSlaterHelium() {
     printf("%-40s", "Direct eval. slater (Helium)"); fflush(stdout);
-    int nSpinUp     = 1;
-    int nSpinDown   = 1;
+    int     nSpinUp     = 1;
+    int     nSpinDown   = 1;
+    double  alpha       = 2.0;
     System* test = setupNewTestSystem();
     test->setElectronInteraction(false);
-    test->addCore(new Atom(system, zeros<vec>(3), 2));
-    test->setWaveFunction(new DirectEvaluationSlater(system, nSpinUp, nSpinDown, true));
-    test->runMetropolis(100);
+    test->addCore(new Atom(test, zeros<vec>(3), 2));
+    test->setWaveFunction(new DirectEvaluationSlater(test,
+                                                     alpha,
+                                                     nSpinUp,
+                                                     nSpinDown,
+                                                     true));
+    test->runMetropolis(100000);
     const double E   = test->getSampler()->getEnergy();
     const double ref = -4;
+    cout << E   << endl;
+    cout << ref << endl;
     assert(fabs(ref - E) < 1e-3);
     return true;
 }

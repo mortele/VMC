@@ -16,26 +16,30 @@ using arma::det;
 DirectEvaluationSlater::DirectEvaluationSlater(System*  system,
                                                double   alpha,
                                                int      numberOfSpinUpElectrons,
-                                               int      numberOfSpinDownElectrons,
-                                               bool     useNumericalDerivatives) :
+                                               int      numberOfSpinDownElectrons) :
         WaveFunction(system) {
     m_numberOfSpinUpElectrons   = numberOfSpinUpElectrons;
     m_numberOfSpinDownElectrons = numberOfSpinDownElectrons;
     m_numberOfSpatialOrbitals   = numberOfSpinUpElectrons;
-    m_useNumericalDerivatives   = useNumericalDerivatives;
+    m_useNumericalDerivatives   = true;
     m_alpha                     = alpha;
 
     assert(numberOfSpinUpElectrons == numberOfSpinDownElectrons);
 }
 
 double DirectEvaluationSlater::evaluateWaveFunction() {
+    updateSpinUpSlater();
+    updateSpinDownSlater();
     const double determinantProduct = m_spinUpDeterminant * m_spinDownDeterminant;
+    m_currentValueSquared = determinantProduct * determinantProduct;
+    return determinantProduct;
 }
 
 void DirectEvaluationSlater::evaluateWaveFunctionInitial() {
     m_slaterSpinUp   = zeros<mat>(m_numberOfSpinUpElectrons,   m_numberOfSpatialOrbitals);
     m_slaterSpinDown = zeros<mat>(m_numberOfSpinDownElectrons, m_numberOfSpatialOrbitals);
 
+    // Assume number of spin up electrons == number of spin down electrons.
     for (int electron = 0; electron < m_numberOfSpinUpElectrons; electron++) {
         for (int orbital = 0; orbital  < m_numberOfSpatialOrbitals; orbital ++) {
             m_slaterSpinUp  (electron, orbital) = evaluateOrbital(orbital, electron, 1);
@@ -63,8 +67,9 @@ double DirectEvaluationSlater::computeWaveFunctionRatio(int changedElectronIndex
 }
 
 double DirectEvaluationSlater::evaluateLaplacian() {
-
+    return WaveFunction::evaluateLaplacian();
 }
+
 
 double DirectEvaluationSlater::evaluateOrbital(int orbital, int electron, bool up) {
     if (orbital == 0) {
@@ -178,6 +183,10 @@ double DirectEvaluationSlater::p2zLaplacian(int electron, bool up) {
     const double r = norm(electrons.at(electron)->getPosition());
     const double z = electrons.at(electron)->getPosition()(2);
     return (m_alpha * z * (m_alpha * r - 8.)) / (4. * r) * exp(-0.5 * m_alpha * r);
+}
+
+arma::mat DirectEvaluationSlater::computeSpinUpGradient() {
+    mat gradient = zeros<mat>(m_numberOfSpinUpElectrons, m_numberOfDimensions);
 }
 
 

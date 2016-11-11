@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     WaveFunctions/heliumwavefunction.cpp \
     unittest.cpp \
     WaveFunctions/heliumwithjastrow.cpp \
-    WaveFunctions/directevaluationslater.cpp
+    WaveFunctions/directevaluationslater.cpp \
+    WaveFunctions/directevaluationslaterwithjastrow.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -35,4 +36,5 @@ HEADERS += \
     WaveFunctions/heliumwavefunction.h \
     unittest.h \
     WaveFunctions/heliumwithjastrow.h \
-    WaveFunctions/directevaluationslater.h
+    WaveFunctions/directevaluationslater.h \
+    WaveFunctions/directevaluationslaterwithjastrow.h

@@ -3,7 +3,7 @@
 #include <armadillo>
 
 class DirectEvaluationSlater : public WaveFunction {
-private:
+protected:
     int         m_numberOfSpinUpElectrons;
     int         m_numberOfSpinDownElectrons;
     int         m_numberOfSpatialOrbitals;
@@ -29,14 +29,16 @@ private:
     double p2yLaplacian(int electron, bool up);
     double p2zLaplacian(int electron, bool up);
 
+    arma::mat computeSpinUpGradient();
+
 public:
     DirectEvaluationSlater(class System* system,
                            double        alpha,
                            int           numberOfSpinUpElectrons,
-                           int           numberOfSpinDownElectrons,
-                           bool          useNumericalDerivatives);
-    double  evaluateWaveFunction();
-    void    evaluateWaveFunctionInitial();
-    double  computeWaveFunctionRatio(int changedElectronIndex);
+                           int           numberOfSpinDownElectrons);
+    double      evaluateWaveFunction();
+    void        evaluateWaveFunctionInitial();
+    double      computeWaveFunctionRatio(int changedElectronIndex);
+    double      evaluateLaplacian();
 };
 

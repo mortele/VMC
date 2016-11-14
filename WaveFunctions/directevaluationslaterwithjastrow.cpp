@@ -1,5 +1,6 @@
 #include "directevaluationslaterwithjastrow.h"
 #include "system.h"
+#include "electron.h"
 #include <cmath>
 #include <armadillo>
 
@@ -28,7 +29,7 @@ void DirectEvaluationSlaterWithJastrow::evaluateWaveFunctionInitial() {
     m_currentValueSquared = m_currentValueSquared * jastrowFactor * jastrowFactor;
 }
 
-DirectEvaluationSlaterWithJastrow::evaluateWaveFunction() {
+double DirectEvaluationSlaterWithJastrow::evaluateWaveFunction() {
     const double currentWaveFunction = DirectEvaluationSlater::evaluateWaveFunction() *
                                        computeJastrowFactor();
     m_currentValueSquared = currentWaveFunction * currentWaveFunction;

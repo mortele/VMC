@@ -10,6 +10,19 @@ using std::endl;
 using std::setw;
 
 void Sampler::sample(bool acceptedStep) {
+
+    /*
+     * http://journals.aps.org/prb/pdf/10.1103/PhysRevB.42.3503
+     *
+     * Should think about using :
+     *
+     *        1   --
+     * <E> = ---  >  [ 1 - P(R -> R') ] E (R) + P(R -> R') E (R')
+     *        N   --                     L                  L
+     *
+     * Same average as ordinary estimator, but smaller variance usually.
+     */
+
     if (acceptedStep) {
         m_currentEnergy = m_hamiltonian->computeLocalEnergy();
     } else {

@@ -14,4 +14,5 @@ public:
                                       int           numberOfSpinUpElectrons,
                                       int           numberOfSpinDownElectrons);
     double evaluateWaveFunction();
+    void evaluateWaveFunctionInitial();
 };

@@ -6,6 +6,9 @@ CONFIG -= qt
 LIBS += -L/usr/local/lib -larmadillo -llapack -lblas
 INCLUDEPATH += /usr/local/include
 
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3
+
 SOURCES += main.cpp \
     hamiltonian.cpp \
     system.cpp \

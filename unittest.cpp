@@ -27,13 +27,15 @@ System* UnitTest::setupNewTestSystem() {
 bool UnitTest::runAllTests() {
     cout << "Running all tests." << endl;
     cout << "=================================================================" << endl;
-    cout << "Running test: "; if (! testHydrogen())                       return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testNonInteractingHelium())           return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testHelium())                         return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testNumericalLaplacian())             return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testHeliumWithJastrowNumerical())     return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testDirectSlaterHelium())             return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())  return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testHydrogen())                          return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testNonInteractingHelium())              return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testHelium())                            return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testHeliumWithJastrowNumerical())        return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -127,6 +129,26 @@ bool UnitTest::testDirectSlaterHelium() {
     return true;
 }
 
+bool UnitTest::testDirectSlaterBeryllium() {
+    printf("%-40s", "Direct eval. slater (Berillyium)"); fflush(stdout);
+    int     nSpinUp     = 2;
+    int     nSpinDown   = 2;
+    double  alpha       = 4.0;
+    System* test = setupNewTestSystem();
+    test->setStepLength(1.0);
+    test->setElectronInteraction(false);
+    test->addCore(new Atom(test, zeros<vec>(3), 4));
+    test->setWaveFunction(new DirectEvaluationSlater(test,
+                                                     alpha,
+                                                     nSpinUp,
+                                                     nSpinDown));
+    test->runMetropolis(100000);
+    const double E   = test->getSampler()->getEnergy();
+    const double ref = -20;
+    assert(fabs(ref - E) < 1e-3);
+    return true;
+}
+
 bool UnitTest::testDirectSlaterWithJastrowHelium() {
     printf("%-40s", "Direct eval. slater /w Jastrow (Helium)"); fflush(stdout);
     int     nSpinUp     = 1;
@@ -144,6 +166,28 @@ bool UnitTest::testDirectSlaterWithJastrowHelium() {
     test->runMetropolisSilent(1000000);
     const double E   = test->getSampler()->getEnergy();
     const double ref = -2.8901; // FYS4411 project 2
+    assert(fabs(ref - E) < 1e-2);
+    return true;
+}
+
+bool UnitTest::testDirectSlaterWithJastrowBeryllium()   {
+    printf("%-40s", "Direct eval. slater /w Jastrow (Beryllium)"); fflush(stdout);
+    int     nSpinUp     = 2;
+    int     nSpinDown   = 2;
+    double  alpha       = 3.983;
+    double  beta        = 0.094;
+    System* test = setupNewTestSystem();
+    test->setElectronInteraction(true);
+    test->setStepLength(1.5);
+    test->addCore(new Atom(test, zeros<vec>(3), 4));
+    test->setWaveFunction(new DirectEvaluationSlaterWithJastrow(test,
+                                                                alpha,
+                                                                beta,
+                                                                nSpinUp,
+                                                                nSpinDown));
+    test->runMetropolis(1000000);
+    const double E   = test->getSampler()->getEnergy();
+    const double ref = -14.50; // FYS4411 project 2
     assert(fabs(ref - E) < 1e-2);
     return true;
 }

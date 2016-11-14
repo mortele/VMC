@@ -185,10 +185,6 @@ double DirectEvaluationSlater::p2zLaplacian(int electron, bool up) {
     return (m_alpha * z * (m_alpha * r - 8.)) / (4. * r) * exp(-0.5 * m_alpha * r);
 }
 
-arma::mat DirectEvaluationSlater::computeSpinUpGradient() {
-    mat gradient = zeros<mat>(m_numberOfSpinUpElectrons, m_numberOfDimensions);
-}
-
 
 
 

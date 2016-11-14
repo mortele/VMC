@@ -34,10 +34,7 @@ double HeliumWithJastrow::evaluateLaplacian() {
         const double r1  = norm(position1);
         const double r2  = norm(position2);
         const double r12        = norm(position1 - position2);
-        const double r12Inverse = 1.0 / r12;
         const double r1Dotr2    = dot(position1, position2);
-        const double r1Inverse  = 1.0 / r1;
-        const double r2Inverse  = 1.0 / r2;
 
         const double a = m_alpha;
         const double b = m_beta;

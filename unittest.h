@@ -12,6 +12,8 @@ public:
     static bool testNonInteractingHelium();
     static bool testNumericalLaplacian();
     static bool testDirectSlaterHelium();
+    static bool testDirectSlaterBeryllium();
     static bool testDirectSlaterWithJastrowHelium();
+    static bool testDirectSlaterWithJastrowBeryllium();
 };
 

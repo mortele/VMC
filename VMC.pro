@@ -23,7 +23,10 @@ SOURCES += main.cpp \
     unittest.cpp \
     WaveFunctions/heliumwithjastrow.cpp \
     WaveFunctions/directevaluationslater.cpp \
-    WaveFunctions/directevaluationslaterwithjastrow.cpp
+    WaveFunctions/directevaluationslaterwithjastrow.cpp \
+    hartreefockbasisparser.cpp \
+    WaveFunctions/Orbitals/primitivegaussian.cpp \
+    WaveFunctions/Orbitals/contractedgaussian.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -40,4 +43,7 @@ HEADERS += \
     unittest.h \
     WaveFunctions/heliumwithjastrow.h \
     WaveFunctions/directevaluationslater.h \
-    WaveFunctions/directevaluationslaterwithjastrow.h
+    WaveFunctions/directevaluationslaterwithjastrow.h \
+    hartreefockbasisparser.h \
+    WaveFunctions/Orbitals/primitivegaussian.h \
+    WaveFunctions/Orbitals/contractedgaussian.h

@@ -1,17 +1,10 @@
-#include <iostream>
-#include <armadillo>
-#include "system.h"
-#include "Cores/atom.h"
 #include "unittest.h"
-#include "WaveFunctions/hydrogenwavefunction.h"
-#include "WaveFunctions/directevaluationslater.h"
-
-using arma::vec;
-using arma::zeros;
-using std::cout;
-using std::endl;
+#include "hartreefockbasisparser.h"
 
 int main(int, char**) {
-    UnitTest::runAllTests();
+    //UnitTest::runAllTests();
+
+    HartreeFockBasisParser parser;
+    parser.parseBasisFile("../../HartreeFock/HartreeFockBases/basis-2016-11-15-10.02.27");
 }
 

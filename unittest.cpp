@@ -7,7 +7,9 @@
 #include "WaveFunctions/heliumwithjastrow.h"
 #include "WaveFunctions/directevaluationslater.h"
 #include "WaveFunctions/directevaluationslaterwithjastrow.h"
+#include "WaveFunctions/gaussianslater.h"
 #include "RandomNumberGenerator/random.h"
+#include "hartreefockbasisparser.h"
 #include <armadillo>
 #include <cassert>
 #include <cmath>
@@ -34,8 +36,9 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testHeliumWithJastrowNumerical())        return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testGaussianSlaterHminus())              return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -189,6 +192,16 @@ bool UnitTest::testDirectSlaterWithJastrowBeryllium()   {
     const double E   = test->getSampler()->getEnergy();
     const double ref = -14.50; // FYS4411 project 2
     assert(fabs(ref - E) < 1e-2);
+    return true;
+}
+
+bool UnitTest::testGaussianSlaterHminus() {
+    printf("%-40s", "Slater (HF basis) (H-)"); fflush(stdout);
+    System* test = setupNewTestSystem();
+    HartreeFockBasisParser* parser = new HartreeFockBasisParser();
+    parser->parseBasisFile("../basis-2016-11-15-23.04.55");
+    test->setWaveFunction(new GaussianSlater(test, parser));
+    test->runMetropolis(100000);
     return true;
 }
 

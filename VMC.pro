@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     WaveFunctions/directevaluationslaterwithjastrow.cpp \
     hartreefockbasisparser.cpp \
     WaveFunctions/Orbitals/primitivegaussian.cpp \
-    WaveFunctions/Orbitals/contractedgaussian.cpp
+    WaveFunctions/Orbitals/contractedgaussian.cpp \
+    WaveFunctions/gaussianslater.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -46,4 +47,5 @@ HEADERS += \
     WaveFunctions/directevaluationslaterwithjastrow.h \
     hartreefockbasisparser.h \
     WaveFunctions/Orbitals/primitivegaussian.h \
-    WaveFunctions/Orbitals/contractedgaussian.h
+    WaveFunctions/Orbitals/contractedgaussian.h \
+    WaveFunctions/gaussianslater.h

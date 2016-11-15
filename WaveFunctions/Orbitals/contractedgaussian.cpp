@@ -24,3 +24,27 @@ double ContractedGaussian::operator()(double x, double y, double z) {
     }
     return result;
 }
+
+double ContractedGaussian::xDerivative(double x, double y, double z) {
+    double result = 0;
+    for (int i = 0; i < m_numberOfPrimitives; i++) {
+        result += m_primitives.at(i)->xDerivative(x,y,z);
+    }
+    return result;
+}
+
+double ContractedGaussian::yDerivative(double x, double y, double z) {
+    double result = 0;
+    for (int i = 0; i < m_numberOfPrimitives; i++) {
+        result += m_primitives.at(i)->yDerivative(x,y,z);
+    }
+    return result;
+}
+
+double ContractedGaussian::zDerivative(double x, double y, double z) {
+    double result = 0;
+    for (int i = 0; i < m_numberOfPrimitives; i++) {
+        result += m_primitives.at(i)->zDerivative(x,y,z);
+    }
+    return result;
+}

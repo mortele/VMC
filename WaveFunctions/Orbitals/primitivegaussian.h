@@ -19,5 +19,8 @@ public:
                       double alpha,
                       double constant);
     double operator()(double x, double y, double z);
-    double derivative()
+
+    double xDerivative(double x, double y, double z);
+    double yDerivative(double x, double y, double z);
+    double zDerivative(double x, double y, double z);
 };

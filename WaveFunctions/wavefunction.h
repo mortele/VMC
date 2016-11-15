@@ -25,7 +25,7 @@ protected:
 public:
     WaveFunction(class System* system);
     void   setStepLength(double stepLength);
-    double evaluateWaveFunctionSquared ();
+    double evaluateWaveFunctionSquared();
 
     virtual double      evaluateWaveFunction () = 0;
     virtual void        updateWaveFunction   () {}

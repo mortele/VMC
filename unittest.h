@@ -15,5 +15,6 @@ public:
     static bool testDirectSlaterBeryllium();
     static bool testDirectSlaterWithJastrowHelium();
     static bool testDirectSlaterWithJastrowBeryllium();
+    static bool testGaussianSlaterHminus();
 };
 

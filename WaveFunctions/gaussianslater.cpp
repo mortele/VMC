@@ -5,14 +5,20 @@
 #include "Cores/atom.h"
 #include "system.h"
 #include "electron.h"
+#include <cmath>
 
+using std::cout;
+using std::endl;
+using std::exp;
 using arma::zeros;
 using arma::mat;
 using arma::det;
+using arma::norm;
 
 
 GaussianSlater::GaussianSlater(System* system, HartreeFockBasisParser* parser) :
         WaveFunction(system) {
+    m_beta                      = 0.4;
     m_basis                     = parser->getBasis();
     m_basisSize                 = m_basis.size();
     m_numberOfDimensions        = 3;
@@ -25,13 +31,9 @@ GaussianSlater::GaussianSlater(System* system, HartreeFockBasisParser* parser) :
     for (int atom = 0; atom < parser->getNumberOfAtoms(); atom++) {
         int       Z         = parser->getAtomCharges().at(atom);
         arma::vec position  = parser->getAtomPosition().at(atom);
-        Atom* newAtom = new Atom(system, position, Z);
-        newAtom->clearElectrons();
-        newAtom->createElectrons(1,1);
-        m_system->addCore(newAtom);
+        m_system->addCore(new Atom(system, position, Z));
     }
 }
-
 
 double GaussianSlater::evaluateWaveFunction() {
     for (int electron = 0; electron < m_numberOfSpinUpElectrons; electron++) {
@@ -44,14 +46,26 @@ double GaussianSlater::evaluateWaveFunction() {
             m_spinDownDeterminant(electron, orbital) = computeSpinDownOrbital(electron, orbital);
         }
     }
-    return det(m_spinUpDeterminant) * det(m_spinDownDeterminant);
+    double logJastrow = 0;
+    for (int electron1 = 0; electron1 < m_numberOfElectrons; electron1++) {
+        for (int electron2 = electron1 + 1; electron2 < m_numberOfElectrons; electron2++) {
+            const int       spin1   = m_system->getElectrons().at(electron1)->getSpin();
+            const int       spin2   = m_system->getElectrons().at(electron2)->getSpin();
+            const double    a       = 0.5 - 0.25 * (spin1==spin2);
+            const double    r12     = norm(m_system->getElectrons().at(electron1)->getPosition() -
+                                           m_system->getElectrons().at(electron2)->getPosition());
+            logJastrow += a * r12 / (1 + m_beta * r12);
+        }
+    }
+    //cout << logJastrow << " " << exp(logJastrow) << endl;
+    return det(m_spinUpDeterminant) * det(m_spinDownDeterminant) * exp(logJastrow);
 }
 
 void GaussianSlater::evaluateWaveFunctionInitial() {
     m_spinUpDeterminant   = zeros<mat>(m_numberOfSpinUpElectrons, m_numberOfSpinUpElectrons);
     m_spinDownDeterminant = zeros<mat>(m_numberOfSpinDownElectrons, m_numberOfSpinDownElectrons);
-    m_oldValueSquared = evaluateWaveFunction();
-    m_oldValueSquared = m_oldValueSquared * m_oldValueSquared;
+    m_currentValueSquared = evaluateWaveFunction();
+    m_currentValueSquared = m_currentValueSquared * m_currentValueSquared;
 }
 
 double GaussianSlater::computeSpinUpOrbital(int electron, int orbital) {

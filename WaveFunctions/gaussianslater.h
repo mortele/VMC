@@ -9,6 +9,7 @@ private:
     int         m_basisSize;
     int         m_numberOfSpinUpElectrons;
     int         m_numberOfSpinDownElectrons;
+    double      m_beta;
     arma::mat   m_spinUpCoefficients;
     arma::mat   m_spinDownCoefficients;
     arma::mat   m_spinUpDeterminant;

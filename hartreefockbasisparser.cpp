@@ -98,7 +98,7 @@ void HartreeFockBasisParser::parseBasisFile(string fileName) {
         for (int basisFunction = 0; basisFunction < m_basisSize; basisFunction++) {
             double coefficient = 0;
             basisFile >> coefficient;
-            m_spinUpCoefficients(basisFunction, electron) = coefficient;
+            m_spinDownCoefficients(basisFunction, electron) = coefficient;
         }
     }
     basisFile.close();

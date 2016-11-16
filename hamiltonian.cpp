@@ -5,7 +5,8 @@
 #include "system.h"
 #include <armadillo>
 
-
+using std::cout;
+using std::endl;
 using arma::vec;
 using arma::norm;
 
@@ -60,6 +61,12 @@ Hamiltonian::Hamiltonian(System* system) {
 }
 
 double Hamiltonian::computeLocalEnergy() {
+    //cout << "ENERGY" << endl;
+    //cout << "--------------------------" << endl;
+    //cout << " K  " << computeKineticEnergy() << endl;
+    //cout << " CC " << computeCoreCorePotentialEnergy() << endl;
+    //cout << " EC " << computeElectronCorePotentialEnergy() << endl;
+    //cout << " EE " << computeElectronElectronPotentialEnergy() << endl;
     m_localEnergy = computeKineticEnergy() +
                     computeCoreCorePotentialEnergy() +
                     computeElectronCorePotentialEnergy() +

@@ -21,6 +21,27 @@ void Atom::createElectrons() {
     }
 }
 
+void Atom::createElectrons(int up, int down) {
+    m_electrons.reserve(up+down);
+    findAtomSize();
+    for (int i = 0; i < up; i++) {
+        m_electrons.push_back(new Electron(vec {Random::nextGaussian(m_position(0), m_size),
+                                                Random::nextGaussian(m_position(1), m_size),
+                                                Random::nextGaussian(m_position(2), m_size)},
+                                           0));
+    }
+    for (int i = 0; i < down; i++) {
+        m_electrons.push_back(new Electron(vec {Random::nextGaussian(m_position(0), m_size),
+                                                Random::nextGaussian(m_position(1), m_size),
+                                                Random::nextGaussian(m_position(2), m_size)},
+                                           1));
+    }
+}
+
+void Atom::clearElectrons() {
+    m_electrons.clear();
+}
+
 Atom::Atom(System* system, arma::vec position, int charge) :
         Core(system, position) {
     m_charge            = charge;

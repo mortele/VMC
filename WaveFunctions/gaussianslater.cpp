@@ -25,7 +25,10 @@ GaussianSlater::GaussianSlater(System* system, HartreeFockBasisParser* parser) :
     for (int atom = 0; atom < parser->getNumberOfAtoms(); atom++) {
         int       Z         = parser->getAtomCharges().at(atom);
         arma::vec position  = parser->getAtomPosition().at(atom);
-        m_system->addCore(new Atom(system, position, Z));
+        Atom* newAtom = new Atom(system, position, Z);
+        newAtom->clearElectrons();
+        newAtom->createElectrons(1,1);
+        m_system->addCore(newAtom);
     }
 }
 

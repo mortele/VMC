@@ -18,5 +18,7 @@ public:
     double computeCoreCoreInteraction();
     double computeElectronCoreInteraction();
     std::string getInfo();
+    void createElectrons(int up, int down);
+    void clearElectrons();
 };
 

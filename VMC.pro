@@ -7,7 +7,8 @@ LIBS += -L/usr/local/lib -larmadillo -llapack -lblas
 INCLUDEPATH += /usr/local/include
 
 QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3
+#QMAKE_CXXFLAGS_RELEASE += -O3
+QMAKE_CXXFLAGS_RELEASE += -O3 -unroll-aggressive -opt-prefetch -fast -xCORE-AVX2
 
 SOURCES += main.cpp \
     hamiltonian.cpp \
@@ -27,7 +28,9 @@ SOURCES += main.cpp \
     hartreefockbasisparser.cpp \
     WaveFunctions/Orbitals/primitivegaussian.cpp \
     WaveFunctions/Orbitals/contractedgaussian.cpp \
-    WaveFunctions/gaussianslater.cpp
+    WaveFunctions/gaussianslater.cpp \
+    WaveFunctions/harmonicoscillatorwavefunction.cpp \
+    Cores/harmonicoscillator.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -48,4 +51,7 @@ HEADERS += \
     hartreefockbasisparser.h \
     WaveFunctions/Orbitals/primitivegaussian.h \
     WaveFunctions/Orbitals/contractedgaussian.h \
-    WaveFunctions/gaussianslater.h
+    WaveFunctions/gaussianslater.h \
+    Math/exponentialapproximations.h \
+    WaveFunctions/harmonicoscillatorwavefunction.h \
+    Cores/harmonicoscillator.h

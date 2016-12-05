@@ -16,5 +16,6 @@ public:
     static bool testDirectSlaterWithJastrowHelium();
     static bool testDirectSlaterWithJastrowBeryllium();
     static bool testGaussianSlaterHydrogenMolecule();
+    static bool HO3d();
 };
 

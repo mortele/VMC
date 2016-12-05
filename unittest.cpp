@@ -2,12 +2,14 @@
 #include "system.h"
 #include "sampler.h"
 #include "Cores/atom.h"
+#include "Cores/harmonicoscillator.h"
 #include "WaveFunctions/heliumwavefunction.h"
 #include "WaveFunctions/hydrogenwavefunction.h"
 #include "WaveFunctions/heliumwithjastrow.h"
 #include "WaveFunctions/directevaluationslater.h"
 #include "WaveFunctions/directevaluationslaterwithjastrow.h"
 #include "WaveFunctions/gaussianslater.h"
+#include "WaveFunctions/harmonicoscillatorwavefunction.h"
 #include "RandomNumberGenerator/random.h"
 #include "hartreefockbasisparser.h"
 #include <armadillo>
@@ -38,7 +40,8 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
+    //---->cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! HO3d())    return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -203,6 +206,45 @@ bool UnitTest::testGaussianSlaterHydrogenMolecule() {
     test->setWaveFunction(new GaussianSlater(test, parser));
     test->setStepLength(0.1);
     test->runMetropolis(1000000);
+    return true;
+}
+
+bool UnitTest::HO3d() {
+    printf("%-40s", "3d HO"); fflush(stdout);
+    double lowestEnergy = 1000;
+    double bestAlpha = 0;
+    double bestBeta = 0;
+    for (double alpha = 0.9; alpha < 1.2; alpha += 0.01) {
+        for (double beta = 0.3; beta < 0.7; beta += 0.01) {
+            System* test = setupNewTestSystem();
+            arma::vec pos = {0,0,0};
+            //double alpha = 1.05;
+            double omega = 1.0;
+            //double beta  = 0.40;
+            test->setElectronInteraction(true);
+            test->setStepLength(1.5);
+            test->setWaveFunction(new HarmonicOscillatorWaveFunction(test,
+                                                                     alpha,
+                                                                     beta,
+                                                                     omega));
+            test->addCore(new HarmonicOscillator(test, pos, 2, omega));
+            test->runMetropolis(100000);
+            double E = test->getSampler()->getEnergy();
+            if (E < lowestEnergy) {
+                lowestEnergy = E;
+                bestAlpha = alpha;
+                bestBeta = beta;
+            }
+            cout << "CURRENT" << endl;
+            cout << alpha << " " << beta << endl;
+            cout << "BEST SO FAR" << endl;
+            cout << lowestEnergy << " " << bestAlpha << " " << bestBeta << endl;
+
+        }
+    }
+    cout << endl;
+    cout << "BEST TOTAL" << endl;
+    cout << lowestEnergy << " " << bestAlpha << " " << bestBeta << endl;
     return true;
 }
 

@@ -61,15 +61,10 @@ Hamiltonian::Hamiltonian(System* system) {
 }
 
 double Hamiltonian::computeLocalEnergy() {
-    //cout << "ENERGY" << endl;
-    //cout << "--------------------------" << endl;
-    //cout << " K  " << computeKineticEnergy() << endl;
-    //cout << " CC " << computeCoreCorePotentialEnergy() << endl;
-    //cout << " EC " << computeElectronCorePotentialEnergy() << endl;
-    //cout << " EE " << computeElectronElectronPotentialEnergy() << endl;
-    m_localEnergy = computeKineticEnergy() +
-                    computeCoreCorePotentialEnergy() +
-                    computeElectronCorePotentialEnergy() +
-                    computeElectronElectronPotentialEnergy();
+    m_kineticEnergy     = computeKineticEnergy();
+    m_potentialEnergy   = computeCoreCorePotentialEnergy() +
+                          computeElectronCorePotentialEnergy() +
+                          computeElectronElectronPotentialEnergy();
+    m_localEnergy = m_kineticEnergy + m_potentialEnergy;
     return m_localEnergy;
 }

@@ -14,4 +14,5 @@ public:
                        int              numberOfElectrons,
                        double           omega);
     double computeElectronCoreInteraction();
+    std::string getInfo() { return "HO (omega="+std::to_string(m_generalizedCharge)+")"; }
 };

@@ -110,14 +110,15 @@ void Metropolis::printIterationInfo(int iteration) {
         m_sampler->computeAverages();
         m_sampler->computeBlockAverages();
 
-        printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g\n",
+        printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g %12.5g\n",
                 preFactor,
                 exponent,
                 m_sampler->getEnergy(),
                 m_sampler->getVariance(),
                 m_sampler->getBlockEnergy(),
                 m_sampler->getBlockVariance(),
-                m_sampler->getBlockAcceptanceRate());
+                m_sampler->getBlockAcceptanceRate(),
+                m_sampler->getBLockVirialRatio());
     }
     fflush(stdout);
 }

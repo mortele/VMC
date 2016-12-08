@@ -8,6 +8,8 @@ class Hamiltonian {
 protected:
     bool                m_interactingElectrons = true;
     double              m_localEnergy;
+    double              m_kineticEnergy;
+    double              m_potentialEnergy;
     class System*       m_system;
     class WaveFunction* m_waveFunction;
 
@@ -21,6 +23,8 @@ protected:
 public:
     Hamiltonian(class System* system);
     double computeLocalEnergy();
-    double getLocalEnergy() { return m_localEnergy; }
+    double getLocalEnergy()     { return m_localEnergy; }
+    double getKineticEnergy()   { return m_kineticEnergy; }
+    double getPotentialEnergy() { return m_potentialEnergy; }
 };
 

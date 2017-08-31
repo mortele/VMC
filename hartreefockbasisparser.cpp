@@ -74,14 +74,21 @@ void HartreeFockBasisParser::parseBasisFile(string fileName) {
         m_basis.push_back(new ContractedGaussian(primitives, atomx, atomy, atomz));
 
         for (int primitive = 0; primitive < primitives; primitive++) {
-            int    x = 0;
-            int    y = 0;
-            int    z = 0;
+            int    i = 0;
+            int    j = 0;
+            int    k = 0;
             double exponent = 0;
             double constant = 0;
-            basisFile >> x >> y >> z >> exponent >> constant;
+            basisFile >> i >> j >> k >> exponent >> constant;
 
-            m_basis.at(basisFunction)->addPrimitive(new PrimitiveGaussian(x, y, z, exponent, constant));
+            m_basis.at(basisFunction)->addPrimitive(new PrimitiveGaussian(i,
+                                                                          j,
+                                                                          k,
+                                                                          atomx,
+                                                                          atomy,
+                                                                          atomz,
+                                                                          exponent,
+                                                                          constant));
         }
     }
 

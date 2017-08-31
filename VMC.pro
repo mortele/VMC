@@ -7,8 +7,8 @@ LIBS += -L/usr/local/lib -larmadillo -llapack -lblas
 INCLUDEPATH += /usr/local/include
 
 QMAKE_CXXFLAGS_RELEASE -= -O2
-#QMAKE_CXXFLAGS_RELEASE += -O3
-QMAKE_CXXFLAGS_RELEASE += -O3 -unroll-aggressive -opt-prefetch -fast -xCORE-AVX2
+QMAKE_CXXFLAGS_RELEASE += -O3
+#QMAKE_CXXFLAGS_RELEASE += -O3 -unroll-aggressive -opt-prefetch -fast -xCORE-AVX2
 
 SOURCES += main.cpp \
     hamiltonian.cpp \

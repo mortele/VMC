@@ -68,6 +68,10 @@ void GaussianSlater::evaluateWaveFunctionInitial() {
     m_currentValueSquared = m_currentValueSquared * m_currentValueSquared;
 }
 
+double GaussianSlater::evaluateLaplacian() {
+
+}
+
 double GaussianSlater::computeSpinUpOrbital(int electron, int orbital) {
     double result = 0;
     const double x = m_system->getElectrons().at(electron)->getPosition()(0);

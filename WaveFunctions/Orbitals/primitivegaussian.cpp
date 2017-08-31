@@ -11,14 +11,20 @@ double PrimitiveGaussian::pow(double a, int n) {
     return result;
 }
 
-PrimitiveGaussian::PrimitiveGaussian(int    x,
-                                     int    y,
-                                     int    z,
+PrimitiveGaussian::PrimitiveGaussian(int    i,
+                                     int    j,
+                                     int    k,
+                                     double Ax,
+                                     double Ay,
+                                     double Az,
                                      double alpha,
                                      double constant) :
         m_x         (x),
         m_y         (y),
         m_z         (z),
+        m_Ax        (Ax),
+        m_Ay        (Ay),
+        m_Az        (Az),
         m_alpha     (alpha),
         m_constant  (constant) {
 }
@@ -41,5 +47,39 @@ double PrimitiveGaussian::yDerivative(double x, double y, double z) {
 double PrimitiveGaussian::zDerivative(double x, double y, double z) {
     const double value = (*this)(x, y, z);
     return value * ((m_z == 0) ? - 2 * m_alpha * z : m_z / z - 2 * m_alpha * z);
+}
+
+double PrimitiveGaussian::xxDerivative(double x, double y, double z) {
+    m_currentValue = (*this)(x,y,z);
+    const double a2 = 2*m_alpha;
+    if (m_x==0) {
+        return a2*(a2*x*x - 1);
+    } else if (m_x==1) {
+        return a2*(a2*x*x - 3);
+    } else {
+        return (a2*x*x*(a2*x*x - 2*m_x - 1) + m_x*m_x - m_x) / (x*x);
+    }
+}
+
+double PrimitiveGaussian::yyDerivative(double x, double y, double z) {
+    const double a2 = 2*m_alpha;
+    if (m_y==0) {
+        return a2*(a2*y*y - 1);
+    } else if (m_y==1) {
+        return a2*(a2*y*y - 3);
+    } else {
+        return (a2*y*y*(a2*y*y - 2*m_y - 1) + m_y*m_y - m_y) / (y*y);
+    }
+}
+
+double PrimitiveGaussian::zzDerivative(double x, double y, double z) {
+    const double a2 = 2*m_alpha;
+    if (m_z==0) {
+        return a2*(a2*z*z - 1);
+    } else if (m_z==1) {
+        return a2*(a2*z*z - 3);
+    } else {
+        return (a2*z*z*(a2*z*z - 2*m_z - 1) + m_z*m_z - m_z) / (z*z);
+    }
 }
 

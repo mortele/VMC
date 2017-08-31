@@ -34,14 +34,14 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testHydrogen())                          return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testNonInteractingHelium())              return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testHelium())                            return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "4; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testHeliumWithJastrowNumerical())        return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
-    //---->cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! HO3d())    return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! HO3d())    return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -53,7 +53,7 @@ bool UnitTest::testHydrogen() {
     test->setStepLength(5.0);
     test->addCore(new Atom(test, zeros<vec>(3), 1));
     test->setWaveFunction(new HydrogenWaveFunction(test, 1.0));
-    test->runMetropolisSilent(100000);
+    test->runMetropolis(100000);
     const double E   = test->getSampler()->getEnergy();
     const double ref = -0.5;
     assert(E == ref);

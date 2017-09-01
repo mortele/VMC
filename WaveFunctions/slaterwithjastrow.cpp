@@ -90,33 +90,9 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     m_slaterGradientUp   = zeros<mat>(eUp,   3);
     m_slaterGradientDown = zeros<mat>(eDown, 3);
 
-    for (int electron = 0; electron < eUp; electron++) {
+    for (int electron = 0; electron < m_numberOfElectrons; electron++)
         updateSlaterGradient(1.0, electron);
-        /*const double x = spinUpElectrons.at(electron)->getPosition().at(0);
-        const double y = spinUpElectrons.at(electron)->getPosition().at(1);
-        const double z = spinUpElectrons.at(electron)->getPosition().at(2);
-
-        for (int dimension = 0; dimension < 3; dimension++) {
-            double sum = 0;
-            for (int j = 0; j < eUp; j++) {
-                sum += m_orbital->computeDerivative(x,y,z,j,dimension);
-            }
-            m_slaterGradientUp(electron, dimension) = sum;
-        }*/
-    }
-    for (int electron = 0; electron < eDown; electron++) {
-        updateSlaterGradient(1.0, electron);
-        /*const double x = spinDownElectrons.at(electron)->getPosition().at(0);
-        const double y = spinDownElectrons.at(electron)->getPosition().at(1);
-        const double z = spinDownElectrons.at(electron)->getPosition().at(2);
-
-        for (int dimension = 0; dimension < 3; dimension++) {
-            double sum = 0;
-            for (int j = 0; j < eDown; j++) {
-                sum += m_orbital->computeDerivative(x,y,z,j,dimension);
-            }
-            m_slaterGradientDown(electron, dimension) = sum;
-        }*/
+        updateJastrowGradient
     }
 }
 

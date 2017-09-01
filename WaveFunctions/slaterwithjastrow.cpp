@@ -9,6 +9,14 @@ using arma::zeros;
 using std::vector;
 
 
+SlaterWithJastrow::SlaterWithJastrow(System*    system,
+                                     double     alpha,
+                                     double     beta) :
+    WaveFunction(system) {
+    m_orbital = new HydrogenOrbital(alpha);
+}
+
+
 void SlaterWithJastrow::updateSlaterGradient(double Rsd, int electron) {
     int spin    = m_system->getElectrons().at(electron)->getSpin();
     int eLimit  = (spin==1 ? m_numberOfSpinUpElectrons : m_numberOfSpinDownElectrons);
@@ -50,6 +58,7 @@ void SlaterWithJastrow::updateJastrowGradient(int electron) {
     }
 }
 
+
 void SlaterWithJastrow::updateJastrowLaplacian(int electron) {
     Electron*   iElectron   = m_system->getElectrons().at(electron);
     const int   iSpin       = iElectron->getSpin();
@@ -70,16 +79,61 @@ void SlaterWithJastrow::updateJastrowLaplacian(int electron) {
     }
 }
 
-SlaterWithJastrow::SlaterWithJastrow(System*    system,
-                                     double     alpha,
-                                     double     beta) :
-    WaveFunction(system) {
-    m_orbital = new HydrogenOrbital(alpha);
+void SlaterWithJastrow::computeQuantumForce() {
+    m_energyCrossTerm = 0;
+    for (int electron = 0; electron < m_numberOfElectrons; electron++) {
+        Electron*   kElectron   = m_system->getElectrons().at(electron);
+        const int   kSpin       = kElectron->getSpin();
+
+        for (int dimension = 0; dimension < 3; dimension++) {
+            double sum = 0;
+            for (int i = 0; i < electron; i++) {
+                Electron*    iElectron  = m_system->getElectrons().at(electron);
+                const double xk         = kElectron->getPosition().at(dimension);
+                const double xi         = iElectron->getPosition().at(dimension);
+                const double rik        = computeInterEletronDistance(kElectron, iElectron);
+                sum += (xk - xi) / rik * m_jastrowGradient(i, electron);
+            }
+            for (int i = electron+1; i < m_numberOfElectrons; i++) {
+                Electron*    iElectron  = m_system->getElectrons().at(electron);
+                const double xk         = kElectron->getPosition().at(dimension);
+                const double xi         = iElectron->getPosition().at(dimension);
+                const double rik        = computeInterEletronDistance(iElectron, kElectron);
+                sum -= (xi - xk) / rik * m_jastrowGradient(i, electron);
+            }
+            if (spin==1) {
+                const spinIndex = kElectron->getSpinIndex();
+                m_quantumForce(electron, dimension) = 2 * m_slaterGradientUp(spinIndex,dimension);
+                if (m_jastrow) m_quantumForce(electron,dimension) += 2 * sum;
+                m_energyCrossTerm -= 0.5*sum*sum + (m_slaterGradientUp(spinIndex,dimension) * sum);
+            } else {
+                const spinIndex = kElectron->getSpinIndex();
+                m_quantumForce(electron, dimension) = 2 * m_slaterGradientDown(spinIndex,dimension);
+                if (m_jastrow) m_quantumForce(electron,dimension) += 2 * sum;
+                m_energyCrossTerm -= 0.5*sum*sum + (m_slaterGradientDown(spinIndex,dimension) * sum);
+            }
+        }
+    }
 }
+
 
 void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     const int eUp   = m_numberOfSpinUpElectrons;
     const int eDown = m_numberOfSpinDownElectrons;
+
+    // Label all the electrons so we know which index in the total electron
+    // array correspond to the same electrons in the spin-restricted electron
+    // arrays.
+    for (int electron = 0; electron < m_system->getElectrons().size(); electron++) {
+        m_system->getElectrons().at(electron)->setIndex(electron);
+    }
+    for (int electron = 0; electron < m_system->getSpinUpElectrons().size(); electron++) {
+        m_system->getSpinUpElectrons().at(electron)->setSpinIndex(electron);
+    }
+    for (int electron = 0; electron < m_system->getSpinDownElectrons().size(); electron++) {
+        m_system->getSpinDownElectrons().at(electron)->setSpinIndex(electron);
+    }
+
 
     m_slaterUp   = zeros<mat>(eUp,   eUp);
     m_slaterDown = zeros<mat>(eDown, eDown);
@@ -114,9 +168,11 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
 
     for (int electron = 0; electron < m_numberOfElectrons; electron++) {
         updateSlaterGradient(1.0, electron);
-        updateJastrowGradient(electron);
-        updateJastrowLaplacian(electron);
+        if (m_jastrow) updateJastrowGradient(electron);
+        if (m_jastrow) updateJastrowLaplacian(electron);
     }
+
+    m_quantumForce = zeros<mat>(m_numberOfElectrons,3);
 }
 
 void SlaterWithJastrow::updateWaveFunction(int electronChanged, int dimensionChanged) {

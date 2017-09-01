@@ -11,9 +11,11 @@ class System;
 
 class SlaterWithJastrow : public WaveFunction {
 private:
-    double      m_alpha = 1;
-    double      m_beta  = 1;
-    int         m_spinChanged = -1;
+    bool        m_jastrow           = true;
+    int         m_spinChanged       = -1;
+    double      m_alpha             = 1;
+    double      m_beta              = 1;
+    double      m_energyCrossTerm;
     arma::mat   m_slaterUp;
     arma::mat   m_slaterDown;
     arma::mat   m_slaterGradientUp;
@@ -31,6 +33,9 @@ private:
         const double z = a->getPosition().at(2) - b->getPosition().at(2);
         return std::sqrt(x*x + y*y + z*z);
     }
+
+protected:
+    void computeQuantumForce();
 
 public:
     SlaterWithJastrow(System* system, double alpha, double beta);

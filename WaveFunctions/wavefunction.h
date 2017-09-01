@@ -19,11 +19,13 @@ protected:
     double          m_stepLengthSquared;
     double          m_2stepLengthInverse;
     double          m_stepLengthSquaredInverse;
+    arma::mat       m_quantumForce;
     class System*   m_system;
 
     virtual void    setup();
     void            updateOldWaveFunctionValue();
     virtual void    evaluateWaveFunctionInitial();
+    virtual void    computeQuantumForce() {}
     virtual double  computeWaveFunctionRatio(int changedElectronIndex);
 
 public:

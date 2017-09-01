@@ -27,7 +27,7 @@ public:
                       double alpha,
                       double constant);
     double operator()(double x, double y, double z);
-    double evaluateRelativeTo
+    double getCurrentValue() { return m_currentValue; }
 
     double xDerivative(double x, double y, double z);
     double yDerivative(double x, double y, double z);

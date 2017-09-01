@@ -42,12 +42,20 @@ void Atom::clearElectrons() {
     m_electrons.clear();
 }
 
-Atom::Atom(System* system, arma::vec position, int charge) :
+Atom::Atom(System* system, arma::vec position, int charge, int spinUpElectrons, int spinDownElectrons) :
         Core(system, position) {
     m_charge            = charge;
     m_generalizedCharge = (double) charge;
     m_electrons.reserve(charge);
-    createElectrons();
+    if ((spinUpElectrons==-1) && (spinDownElectrons==-1)) {
+        createElectrons();
+    } else if ((spinUpElectrons==-1) || (spinDownElectrons==-1)) {
+        // Only one of the default spinUp/DownElectrons overwritten, need to
+        // input both.
+        cout << "Something wrong in Atom::Atom()" << endl;
+    }else {
+        createElectrons(spinUpElectrons,spinDownElectrons);
+    }
 }
 
 double Atom::computeCoreCoreInteraction() {

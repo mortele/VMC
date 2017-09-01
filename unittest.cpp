@@ -39,8 +39,8 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! HO3d())    return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
@@ -202,10 +202,11 @@ bool UnitTest::testGaussianSlaterHydrogenMolecule() {
     printf("%-40s", "Slater (HF basis) (H molecule)"); fflush(stdout);
     System* test = setupNewTestSystem();
     HartreeFockBasisParser* parser = new HartreeFockBasisParser();
-    parser->parseBasisFile("../../HartreeFock/HartreeFockBases/basis-2016-11-16-17.37.51");
+    //parser->parseBasisFile("../HartreeFock/HartreeFockBases/basis-2017-08-31-20.29.20");
+    parser->parseBasisFile("../HartreeFock/HartreeFockBases/basis-2017-09-01-12.34.04");
     test->setWaveFunction(new GaussianSlater(test, parser));
-    test->setStepLength(0.1);
-    test->runMetropolis(1000000);
+    //test->setStepLength(2.5);
+    test->runMetropolis((int) 1e7);
     return true;
 }
 

@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     WaveFunctions/Orbitals/contractedgaussian.cpp \
     WaveFunctions/gaussianslater.cpp \
     WaveFunctions/harmonicoscillatorwavefunction.cpp \
-    Cores/harmonicoscillator.cpp
+    Cores/harmonicoscillator.cpp \
+    WaveFunctions/Orbitals/hydrogenorbital.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -54,4 +55,5 @@ HEADERS += \
     WaveFunctions/gaussianslater.h \
     Math/exponentialapproximations.h \
     WaveFunctions/harmonicoscillatorwavefunction.h \
-    Cores/harmonicoscillator.h
+    Cores/harmonicoscillator.h \
+    WaveFunctions/Orbitals/hydrogenorbital.h

@@ -7,6 +7,7 @@ private:
     double                                  m_x;
     double                                  m_y;
     double                                  m_z;
+    double                                  m_currentValue;
     std::vector<class PrimitiveGaussian*>   m_primitives;
 
 public:
@@ -17,5 +18,7 @@ public:
     double xDerivative(double x, double y, double z);
     double yDerivative(double x, double y, double z);
     double zDerivative(double x, double y, double z);
+
+    double calculateLaplacian(double x, double y, double z);
 };
 

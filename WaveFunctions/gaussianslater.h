@@ -23,4 +23,5 @@ public:
     GaussianSlater(class System* system, class HartreeFockBasisParser* parser);
     double evaluateWaveFunction();
     void evaluateWaveFunctionInitial();
+    double evaluateLaplacian();
 };

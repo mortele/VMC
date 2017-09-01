@@ -42,7 +42,7 @@ private:
     double getBlockEnergy()         { return m_blockEnergy;         }
     double getBlockVariance()       { return m_blockVariance;       }
     double getBlockAcceptanceRate() { return m_blockAcceptanceRate; }
-    double getBLockVirialRatio()    { return m_blockVirialRatio;    }
+    double getBlockVirialRatio()    { return m_blockVirialRatio;    }
 
 public:
     Sampler(class System* system);

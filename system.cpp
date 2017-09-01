@@ -21,10 +21,10 @@ System::System() {
 void System::setup() {
     m_hamiltonian->setup();
     m_hamiltonian->setElectronInteraction(m_interactingElectrons);
-    m_waveFunction->setup();
     m_metropolis->setup();
     m_sampler->setup();
     setupSpinElectronArrays();
+    m_waveFunction->setup();
 }
 
 void System::setupSpinElectronArrays() {
@@ -43,6 +43,8 @@ void System::setupSpinElectronArrays() {
             std::cout << "Something is terribly wrong in System::setupSpinElectronArrays()." << std::endl;
         }
     }
+    m_numberOfSpinUpElectrons   = m_spinUpElectrons.size();
+    m_numberOfSpinDownElectrons = m_spinDownElectrons.size();
 }
 
 void System::runMetropolis(int steps) {

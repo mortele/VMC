@@ -43,7 +43,7 @@ void Metropolis::setup() {
         for (Core* core : m_system->getCores()) {
             minimumSize = std::min(minimumSize, core->getSize());
         }
-        m_stepLength     = 2.0 * minimumSize;
+        m_stepLength     = 4.0 * minimumSize;
         m_stepLengthHalf = 0.5 * m_stepLength;
     }
 }
@@ -88,20 +88,20 @@ void Metropolis::printInitialInfo() {
                                                                     core->getPosition()(2));
     }
     printf("      ------------------------------------------------------- \n\n");
-    printf(" ======================================================================== \n");
-    printf(" %17s %5s %21s %10s \n", " ", "Total", " ", "Block" );
-    printf(" %5s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Variance", "Energy", "Variance", "Acc. rate");
-    printf(" ------------------------------------------------------------------------ \n");
+    printf(" ==================================================================================== \n");
+    printf(" %18s %5s %27s %10s \n", " ", "Total", " ", "Block" );
+    printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Variance", "Energy", "Variance", "Acc. rate", "Virial r.");
+    printf(" ------------------------------------------------------------------------------------ \n");
     fflush(stdout);
 }
 
 void Metropolis::printIterationInfo(int iteration) {
     const int skip = 100000;
     if (iteration != 0 && iteration % (20 * skip) == 0) {
-        printf(" ======================================================================== \n");
-        printf(" %17s %5s %21s %10s \n", " ", "Total", " ", "Block" );
-        printf(" %5s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Variance", "Energy", "Variance", "Acc. rate");
-        printf(" ------------------------------------------------------------------------ \n");
+        printf(" ==================================================================================== \n");
+        printf(" %18s %5s %27s %10s \n", " ", "Total", " ", "Block" );
+        printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Variance", "Energy", "Variance", "Acc. rate", "Virial r.");
+        printf(" ------------------------------------------------------------------------------------ \n");
     }
     if (iteration != 0 && iteration % skip == 0) {
         const int exponent  = log10(iteration);
@@ -118,7 +118,7 @@ void Metropolis::printIterationInfo(int iteration) {
                 m_sampler->getBlockEnergy(),
                 m_sampler->getBlockVariance(),
                 m_sampler->getBlockAcceptanceRate(),
-                m_sampler->getBLockVirialRatio());
+                m_sampler->getBlockVirialRatio());
     }
     fflush(stdout);
 }

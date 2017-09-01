@@ -10,15 +10,16 @@ using std::vector;
 
 
 void SlaterWithJastrow::updateSlaterGradient(double Rsd, int electron) {
-    int spin = m_system->getElectrons().at(electron)->getSpin();
+    int spin    = m_system->getElectrons().at(electron)->getSpin();
+    int eLimit  = (spin==1 ? m_numberOfSpinUpElectrons : m_numberOfSpinDownElectrons);
 
-    const double x = m_system->getElectrons.at(electron)->getPosition().at(0);
-    const double y = m_system->getElectrons.at(electron)->getPosition().at(1);
-    const double z = m_system->getElectrons.at(electron)->getPosition().at(2);
+    const double x = m_system->getElectrons().at(electron)->getPosition().at(0);
+    const double y = m_system->getElectrons().at(electron)->getPosition().at(1);
+    const double z = m_system->getElectrons().at(electron)->getPosition().at(2);
 
     for (int dimension = 0; dimension < 3; dimension++) {
         double sum = 0;
-        for (int j = 0; j < eUp; j++) {
+        for (int j = 0; j < eLimit; j++) {
             sum += m_orbital->computeDerivative(x,y,z,j,dimension);
         }
         if (spin==1) {
@@ -46,6 +47,26 @@ void SlaterWithJastrow::updateJastrowGradient(int electron) {
         const double    rij         = computeInterEletronDistance(iElectron, jElectron);
         double          factor      = 1 + m_beta * rij;
         m_jastrowGradient(electron, j) = (iSpin==jSpin ? 0.25 : 0.5) / (factor*factor);
+    }
+}
+
+void SlaterWithJastrow::updateJastrowLaplacian(int electron) {
+    Electron*   iElectron   = m_system->getElectrons().at(electron);
+    const int   iSpin       = iElectron->getSpin();
+
+    for (int j = 0; j < electron; j++) {
+        Electron*       jElectron   = m_system->getElectrons().at(j);
+        const int       jSpin       = jElectron->getSpin();
+        const double    rij         = computeInterEletronDistance(iElectron, jElectron);
+        double          factor      = 1 + m_beta * rij;
+        m_jastrowGradient(j, electron) = -(iSpin==jSpin ? 0.25 : 0.5) / (factor*factor*factor);
+    }
+    for (int j = electron+1; j < m_numberOfElectrons; j++) {
+        Electron*       jElectron   = m_system->getElectrons().at(j);
+        const int       jSpin       = jElectron->getSpin();
+        const double    rij         = computeInterEletronDistance(iElectron, jElectron);
+        double          factor      = 1 + m_beta * rij;
+        m_jastrowGradient(electron, j) = -(iSpin==jSpin ? 0.25 : 0.5) / (factor*factor*factor);
     }
 }
 
@@ -89,10 +110,12 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
 
     m_slaterGradientUp   = zeros<mat>(eUp,   3);
     m_slaterGradientDown = zeros<mat>(eDown, 3);
+    m_jastrowGradient    = zeros<mat>(m_numberOfElectrons,m_numberOfElectrons);
 
-    for (int electron = 0; electron < m_numberOfElectrons; electron++)
+    for (int electron = 0; electron < m_numberOfElectrons; electron++) {
         updateSlaterGradient(1.0, electron);
-        updateJastrowGradient
+        updateJastrowGradient(electron);
+        updateJastrowLaplacian(electron);
     }
 }
 

@@ -23,7 +23,8 @@ private:
     HydrogenOrbital* m_orbital;
 
     void updateSlaterGradient(double Rsd, int electron);
-    void updateJastrowGradient(int particle);
+    void updateJastrowGradient(int electron);
+    void updateJastrowLaplacian(int electron);
     double computeInterEletronDistance(Electron* a, Electron* b) {
         const double x = a->getPosition().at(0) - b->getPosition().at(0);
         const double y = a->getPosition().at(1) - b->getPosition().at(1);

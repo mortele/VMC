@@ -29,5 +29,6 @@ public:
     double computeDerivativeX(double x, double y, double z, int index);
     double computeDerivativeY(double x, double y, double z, int index);
     double computeDerivativeZ(double x, double y, double z, int index);
+    double computeDerivative(double x, double y, double z, int index, int dimension);
     double computeLaplacian(double x, double y, double z, int index);
 };

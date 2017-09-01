@@ -15,8 +15,11 @@ WaveFunction::WaveFunction(System* system) {
 }
 
 void WaveFunction::setup() {
-    m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfElectrons  = m_system->getNumberOfElectrons();
+    m_numberOfDimensions        = m_system->getNumberOfDimensions();
+    m_numberOfElectrons         = m_system->getNumberOfElectrons();
+    m_numberOfSpinUpElectrons   = m_system->getNumberOfSpinUpElectrons();
+    m_numberOfSpinDownElectrons = m_system->getNumberOfSpinDownElectrons();
+
 }
 
 void WaveFunction::updateOldWaveFunctionValue() {

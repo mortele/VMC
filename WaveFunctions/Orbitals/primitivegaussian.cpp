@@ -65,6 +65,7 @@ double PrimitiveGaussian::xxDerivative(double x, double y, double z) {
 
 double PrimitiveGaussian::yyDerivative(double x, double y, double z) {
     //const double a2 = 2*m_alpha;
+    const double a2 = 2*m_alpha;
     if (m_y==0) {
         return a2*(a2*y*y - 1);
     } else if (m_y==1) {
@@ -75,7 +76,7 @@ double PrimitiveGaussian::yyDerivative(double x, double y, double z) {
 }
 
 double PrimitiveGaussian::zzDerivative(double x, double y, double z) {
-    //const double a2 = 2*m_alpha;
+    const double a2 = 2*m_alpha;
     if (m_z==0) {
         return a2*(a2*z*z - 1);
     } else if (m_z==1) {

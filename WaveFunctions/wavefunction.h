@@ -7,7 +7,11 @@ class WaveFunction {
 
 protected:
     int             m_numberOfElectrons;
+    int             m_numberOfSpinUpElectrons;
+    int             m_numberOfSpinDownElectrons;
     int             m_numberOfDimensions;
+    int             m_changedElectron;
+    int             m_changedDimension;
     bool            m_useNumericalDerivatives;
     double          m_currentValueSquared;
     double          m_oldValueSquared;
@@ -28,7 +32,7 @@ public:
     double evaluateWaveFunctionSquared();
 
     virtual double      evaluateWaveFunction () = 0;
-    virtual void        updateWaveFunction   () {}
+    virtual void        updateWaveFunction   (int electronChanged, int dimensionChanged) {}
     virtual double      evaluateLaplacian    ();
     virtual arma::mat   evaluateGradient     ();
 };

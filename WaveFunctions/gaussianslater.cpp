@@ -97,12 +97,13 @@ void GaussianSlater::evaluateWaveFunctionInitial() {
 }
 
 double GaussianSlater::evaluateLaplacian() {
-    double laplacian = 0;
+    /*double laplacian = 0;
     for (Electron* electron : m_system->getElectrons()) {
         for (ContractedGaussian* contracted : m_basis) {
 
         }
-    }
+    }*/
+    return 0;
 }
 
 double GaussianSlater::computeSpinUpOrbital(int electron, int orbital) {

@@ -34,7 +34,8 @@ public:
     double evaluateWaveFunctionSquared();
 
     virtual double      evaluateWaveFunction () = 0;
-    virtual void        passProposedChangeToWaveFunction(int electronChanged, int dimensionChanged) {}
+    virtual void        passProposedChangeToWaveFunction(int , int ) {}
+    virtual void        updateWaveFunctionAfterAcceptedStep() {}
     virtual double      evaluateLaplacian    ();
     virtual arma::mat   evaluateGradient     ();
 };

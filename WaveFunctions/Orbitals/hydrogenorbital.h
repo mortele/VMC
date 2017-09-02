@@ -5,7 +5,6 @@ class HydrogenOrbital {
 private:
     double  m_alpha  = 1.0;
     double  m_alpha2 = 1.0;
-    int     m_index  = -1;
 
     double evaluate1s (double r);
     double evaluate2s (double r);

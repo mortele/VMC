@@ -36,22 +36,22 @@ double PrimitiveGaussian::operator()(double x, double y, double z) {
     return value;
 }
 
-double PrimitiveGaussian::xDerivative(double x, double y, double z) {
+double PrimitiveGaussian::xDerivative(double x, double , double ) {
     //const double value = (*this)(x, y, z);
     return m_currentValue * ((m_x == 0) ? - 2 * m_alpha * x : m_x / x - 2 * m_alpha * x);
 }
 
-double PrimitiveGaussian::yDerivative(double x, double y, double z) {
+double PrimitiveGaussian::yDerivative(double , double y, double ) {
     //const double value = (*this)(x, y, z);
     return m_currentValue * ((m_y == 0) ? - 2 * m_alpha * y : m_y / y - 2 * m_alpha * y);
 }
 
-double PrimitiveGaussian::zDerivative(double x, double y, double z) {
+double PrimitiveGaussian::zDerivative(double , double , double z) {
     //const double value = (*this)(x, y, z);
     return m_currentValue * ((m_z == 0) ? - 2 * m_alpha * z : m_z / z - 2 * m_alpha * z);
 }
 
-double PrimitiveGaussian::xxDerivative(double x, double y, double z) {
+double PrimitiveGaussian::xxDerivative(double x, double , double ) {
     //m_currentValue = (*this)(x,y,z);
     const double a2 = 2*m_alpha;
     if (m_x==0) {
@@ -63,7 +63,7 @@ double PrimitiveGaussian::xxDerivative(double x, double y, double z) {
     }
 }
 
-double PrimitiveGaussian::yyDerivative(double x, double y, double z) {
+double PrimitiveGaussian::yyDerivative(double , double y, double ) {
     //const double a2 = 2*m_alpha;
     const double a2 = 2*m_alpha;
     if (m_y==0) {
@@ -75,7 +75,7 @@ double PrimitiveGaussian::yyDerivative(double x, double y, double z) {
     }
 }
 
-double PrimitiveGaussian::zzDerivative(double x, double y, double z) {
+double PrimitiveGaussian::zzDerivative(double , double , double z) {
     const double a2 = 2*m_alpha;
     if (m_z==0) {
         return a2*(a2*z*z - 1);

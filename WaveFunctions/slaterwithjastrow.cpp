@@ -13,7 +13,9 @@ SlaterWithJastrow::SlaterWithJastrow(System*    system,
                                      double     alpha,
                                      double     beta) :
     WaveFunction(system) {
-    m_orbital = new HydrogenOrbital(alpha);
+    m_orbital   = new HydrogenOrbital(alpha);
+    m_alpha     = alpha;
+    m_beta      = beta;
 }
 
 
@@ -40,42 +42,36 @@ void SlaterWithJastrow::updateSlaterGradient(double Rsd, int electron) {
 
 void SlaterWithJastrow::updateJastrowGradient(int electron) {
     Electron*   iElectron   = m_system->getElectrons().at(electron);
-    const int   iSpin       = iElectron->getSpin();
 
     for (int j = 0; j < electron; j++) {
         Electron*       jElectron   = m_system->getElectrons().at(j);
-        const int       jSpin       = jElectron->getSpin();
         const double    rij         = computeInterEletronDistance(iElectron, jElectron);
         double          factor      = 1 + m_beta * rij;
-        m_jastrowGradient(j, electron) = (iSpin==jSpin ? 0.25 : 0.5) / (factor*factor);
+        m_jastrowGradient(j, electron) = spinCoefficient(iElectron,jElectron) / (factor*factor);
     }
     for (int j = electron+1; j < m_numberOfElectrons; j++) {
         Electron*       jElectron   = m_system->getElectrons().at(j);
-        const int       jSpin       = jElectron->getSpin();
         const double    rij         = computeInterEletronDistance(iElectron, jElectron);
         double          factor      = 1 + m_beta * rij;
-        m_jastrowGradient(electron, j) = (iSpin==jSpin ? 0.25 : 0.5) / (factor*factor);
+        m_jastrowGradient(electron, j) = spinCoefficient(jElectron,iElectron) / (factor*factor);
     }
 }
 
 
 void SlaterWithJastrow::updateJastrowLaplacianTerms(int electron) {
     Electron*   iElectron   = m_system->getElectrons().at(electron);
-    const int   iSpin       = iElectron->getSpin();
 
     for (int j = 0; j < electron; j++) {
         Electron*       jElectron   = m_system->getElectrons().at(j);
-        const int       jSpin       = jElectron->getSpin();
         const double    rij         = computeInterEletronDistance(iElectron, jElectron);
         double          factor      = 1 + m_beta * rij;
-        m_jastrowLaplacianTerms(j, electron) = -(iSpin==jSpin ? 0.25 : 0.5) / (factor*factor*factor);
+        m_jastrowLaplacianTerms(j, electron) = -spinCoefficient(iElectron,jElectron) / (factor*factor*factor);
     }
     for (int j = electron+1; j < m_numberOfElectrons; j++) {
         Electron*       jElectron   = m_system->getElectrons().at(j);
-        const int       jSpin       = jElectron->getSpin();
         const double    rij         = computeInterEletronDistance(iElectron, jElectron);
         double          factor      = 1 + m_beta * rij;
-        m_jastrowLaplacianTerms(electron, j) = -(iSpin==jSpin ? 0.25 : 0.5) / (factor*factor*factor);
+        m_jastrowLaplacianTerms(electron, j) = -spinCoefficient(jElectron,iElectron) / (factor*factor*factor);
     }
 }
 
@@ -96,6 +92,40 @@ void SlaterWithJastrow::computeJastrowLaplacian() {
         }
     }
     m_jastrowLaplacian = -0.5*sum;
+}
+
+void SlaterWithJastrow::computeSlaterRatio() {
+    double sum = 0;
+    Electron* iElectron = m_system->getElectrons().at(m_changedElectron);
+    const int    i  = iElectron->getSpinIndex();
+    const double xi = iElectron->getPosition().at(0);
+    const double yi = iElectron->getPosition().at(1);
+    const double zi = iElectron->getPosition().at(2);
+
+    if (m_spinChanged==1) {
+        for (int j = 0; j < m_numberOfSpinUpElectrons; j++) {
+            sum += (*m_orbital)(xi,yi,zi,j) * m_slaterUp(j,i);
+        }
+    } else {
+        for (int j = 0; j < m_numberOfSpinDownElectrons; j++) {
+            sum += (*m_orbital)(xi,yi,zi,j) * m_slaterDown(j,i);
+        }
+    }
+    m_Rsd = sum;
+}
+
+void SlaterWithJastrow::computeJastrowRatio() {
+    double sum = 0;
+
+    int k = m_changedElectron;
+    for (int i = 0; i < k; i++) {
+        sum += m_correlationMatrix(i,k) - m_correlationMatrixOld(i,k);
+    }
+    for (int i = k+1; i < m_numberOfElectrons; i++) {
+        sum += m_correlationMatrix(k,i) - m_correlationMatrixOld(k,i);
+    }
+
+    m_Rc = exp(sum);
 }
 
 
@@ -119,6 +149,37 @@ void SlaterWithJastrow::computeSlaterLaplacian(int electron) {
     if (kSpin==1)   m_slaterLaplacianUp = value;
     else            m_slaterLaplacianDown = value;
     m_slaterLaplacian = m_slaterLaplacianUp + m_slaterLaplacianDown;
+}
+
+void SlaterWithJastrow::fillCorrelationMatrix() {
+    for (int k = 0; k < m_numberOfElectrons; k++) {
+        Electron* kElectron = m_system->getElectrons().at(k);
+
+        for (int i = k+1; i < m_numberOfElectrons; i++) {
+            Electron* iElectron = m_system->getElectrons().at(i);
+            m_correlationMatrix(k,i) = computeJastrowFactor(kElectron,iElectron);
+        }
+    }
+    for (int k = 0; k < m_numberOfElectrons; k++) {
+        for (int i = k+1; i < m_numberOfElectrons; i++) {
+            m_correlationMatrix(i,k) = m_correlationMatrix(k,i);
+        }
+    }
+}
+
+void SlaterWithJastrow::updateCorrelationsMatrix() {
+    int k = m_changedElectron;
+    Electron* kElectron = m_system->getElectrons().at(m_changedElectron);
+    for (int i = 0; i < m_changedElectron; i++) {
+        Electron* iElectron = m_system->getElectrons().at(i);
+        m_correlationMatrix(i,k) = computeJastrowFactor(iElectron,kElectron);
+        m_correlationMatrix(k,i) = m_correlationMatrix(i,k);
+    }
+    for (int i = m_changedElectron+1; i < m_numberOfElectrons; i++) {
+        Electron* iElectron = m_system->getElectrons().at(i);
+        m_correlationMatrix(k,i) = computeJastrowFactor(kElectron,iElectron);
+        m_correlationMatrix(i,k) = m_correlationMatrix(k,i);
+    }
 }
 
 void SlaterWithJastrow::computeQuantumForce() {
@@ -166,13 +227,13 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     // Label all the electrons so we know which index in the total electron
     // array correspond to the same electrons in the spin-restricted electron
     // arrays.
-    for (int electron = 0; electron < m_system->getElectrons().size(); electron++) {
+    for (unsigned long electron = 0; electron < m_system->getElectrons().size(); electron++) {
         m_system->getElectrons().at(electron)->setIndex(electron);
     }
-    for (int electron = 0; electron < m_system->getSpinUpElectrons().size(); electron++) {
+    for (unsigned long electron = 0; electron < m_system->getSpinUpElectrons().size(); electron++) {
         m_system->getSpinUpElectrons().at(electron)->setSpinIndex(electron);
     }
-    for (int electron = 0; electron < m_system->getSpinDownElectrons().size(); electron++) {
+    for (unsigned long electron = 0; electron < m_system->getSpinDownElectrons().size(); electron++) {
         m_system->getSpinDownElectrons().at(electron)->setSpinIndex(electron);
     }
 
@@ -220,12 +281,50 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
 
     m_quantumForce = zeros<mat>(m_numberOfElectrons,3);
     computeQuantumForce();
+
+    m_positionsOld = zeros<mat>(m_numberOfElectrons, 3);
+    for (int electron = 0; electron < m_numberOfElectrons; electron++) {
+        Electron* iElectron = m_system->getElectrons().at(electron);
+
+        for (int dimension = 0; dimension < 3; dimension++) {
+            const double x = iElectron->getPosition().at(dimension);
+            m_positionsOld(electron,dimension) = x;
+        }
+    }
+
+    m_correlationMatrix    = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
+    m_correlationMatrixOld = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
+    fillCorrelationMatrix();
+    m_correlationMatrixOld = m_correlationMatrix;
+
 }
 
 void SlaterWithJastrow::passProposedChangeToWaveFunction(int electronChanged, int dimensionChanged) {
     m_changedElectron   = electronChanged;
     m_changedDimension  = dimensionChanged;
     m_spinChanged       = m_system->getElectrons().at(electronChanged)->getSpin();
+    updateCorrelationsMatrix();
+}
+
+void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
+    // Update the matrix of old positions.
+    Electron* iElectron = m_system->getElectrons().at(m_changedElectron);
+    for (int dimension = 0; dimension < 3; dimension++) {
+        const double x = iElectron->getPosition().at(dimension);
+        m_positionsOld(m_changedElectron, dimension) = x;
+    }
+    m_correlationMatrixOld = m_correlationMatrix;
+}
+
+double SlaterWithJastrow::computeWaveFunctionRatio(int changedElectronIndex) {
+    m_changedElectron = changedElectronIndex;
+    computeSlaterRatio();
+    if (m_jastrow) {
+        computeJastrowRatio();
+        return m_Rc*m_Rsd;
+    } else {
+        return m_Rsd;
+    }
 }
 
 double SlaterWithJastrow::evaluateLaplacian() {

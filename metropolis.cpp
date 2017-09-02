@@ -22,6 +22,7 @@ bool Metropolis::step() {
     m_waveFunction->updateOldWaveFunctionValue();
     const double R = m_waveFunction->computeWaveFunctionRatio(electron);
     if (R > Random::nextDouble(0, 1)) {
+        m_waveFunction->updateWaveFunctionAfterAcceptedStep();
         return true;
     } else {
         m_system->getElectrons().at(electron)->adjustPosition(-proposedChange, dimension);

@@ -12,7 +12,7 @@ using std::vector;
 SlaterWithJastrow::SlaterWithJastrow(System*    system,
                                      double     alpha,
                                      double     beta) :
-    WaveFunction(system) {
+        DirectEvaluationSlaterWithJastrow(system,alpha,beta,-1,-1) {
     m_orbital   = new HydrogenOrbital(alpha);
     m_alpha     = alpha;
     m_beta      = beta;
@@ -92,6 +92,41 @@ void SlaterWithJastrow::computeJastrowLaplacian() {
         }
     }
     m_jastrowLaplacian = -0.5*sum;
+}
+
+void SlaterWithJastrow::updateSlaterInverse() {
+    Electron* iElectron = m_system->getElectrons().at(m_changedElectron);
+    int iSpin   = iElectron->getSpin();
+    int i       = m_changedElectron;
+    const double x = iElectron->getPosition().at(0);
+    const double y = iElectron->getPosition().at(1);
+    const double z = iElectron->getPosition().at(2);
+
+    int  eLimit;
+    mat& newS = m_slaterUp;
+    mat& oldS = m_slaterUpOld;
+    eLimit = m_numberOfSpinUpElectrons;
+    if (iSpin==0) {
+        newS = m_slaterDown;
+        oldS = m_slaterDownOld;
+        eLimit = m_numberOfSpinDownElectrons;
+    }
+
+    for (int k = 0; k < eLimit; k++) {
+        for (int j = 0; j < eLimit; j++) {
+            if (j != i) {
+                double sum = 0;
+                for (int l = 0; l < eLimit; l++) {
+                    // Maybe should be using the spinIndex instead of global
+                    // index for the x,y,z here
+                    sum += oldS(l,j) * m_orbital->evaluate(x,y,z,l);
+                }
+                newS(k,j) = oldS(k,j) - oldS(k,i) * sum / m_Rsd;
+            } else {
+                newS(k,j) = oldS(k,i) / m_Rsd;
+            }
+        }
+    }
 }
 
 void SlaterWithJastrow::computeSlaterRatio() {
@@ -264,6 +299,8 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     }
     m_slaterUp      = m_slaterUp.i();
     m_slaterDown    = m_slaterDown.i();
+    m_slaterUpOld   = m_slaterUp;
+    m_slaterDownOld = m_slaterDown;
 
     m_slaterGradientUp   = zeros<mat>(eUp,   3);
     m_slaterGradientDown = zeros<mat>(eDown, 3);

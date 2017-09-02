@@ -1,5 +1,6 @@
 #pragma once
-#include "wavefunction.h"
+#include "WaveFunctions/wavefunction.h"
+#include "WaveFunctions/directevaluationslaterwithjastrow.h"
 #include "WaveFunctions/Orbitals/hydrogenorbital.h"
 #include "electron.h"
 #include <armadillo>
@@ -8,8 +9,9 @@
 
 class System;
 
-
-class SlaterWithJastrow : public WaveFunction {
+// Inherit from DirectEvaluationSlaterWithJastrow instead of WaveFunction to
+// be able to use the evaluateWaveFunctionSquared() in the former.
+class SlaterWithJastrow : public DirectEvaluationSlaterWithJastrow {
 private:
     bool        m_jastrow                   = true;
     int         m_spinChanged               = -1;
@@ -25,6 +27,8 @@ private:
     double      m_Rc;
     arma::mat   m_slaterUp;
     arma::mat   m_slaterDown;
+    arma::mat   m_slaterUpOld;
+    arma::mat   m_slaterDownOld;
     arma::mat   m_slaterGradientUp;
     arma::mat   m_slaterGradientDown;
     arma::mat   m_jastrowGradient;
@@ -39,7 +43,7 @@ private:
     void updateJastrowGradient(int electron);
     void updateJastrowLaplacianTerms(int electron);
     void computeJastrowLaplacian();
-    //void updateSlaterInverse();
+    void updateSlaterInverse();
     void computeSlaterRatio();
     void computeJastrowRatio();
     void computeSlaterLaplacian(int electron);
@@ -48,8 +52,7 @@ private:
     double computeInterEletronDistance(Electron*,Electron*);
     double computeJastrowFactor(Electron*,Electron*);
     double spinCoefficient(Electron*,Electron*);
-
-protected:
+    double getQuantumForce(int,int);
     void computeQuantumForce();
 
 public:
@@ -78,7 +81,9 @@ inline double SlaterWithJastrow::computeJastrowFactor(Electron* a,Electron* b) {
 inline double SlaterWithJastrow::spinCoefficient(Electron* a, Electron* b) {
     return (a->getSpin() == b->getSpin() ? 0.25 : 0.5);
 }
-
+inline double SlaterWithJastrow::getQuantumForce(int electron, int dimension) {
+    return m_quantumForce(electron, dimension);
+}
 
 
 

@@ -9,8 +9,11 @@ private:
     int                 m_numberOfMetropolisSteps;
     bool                m_silent = false;
     bool                m_stepLengthSetManually = false;
+    bool                m_importanceSampling = false;
     double              m_stepLength = 1.0;
     double              m_stepLengthHalf;
+    double              m_dt;
+    double              m_dtSqrt;
     class System*       m_system;
     class Sampler*      m_sampler;
     class WaveFunction* m_waveFunction;
@@ -24,6 +27,7 @@ private:
 
 public:
     Metropolis(class System* system);
+    void setImportanceSampling(bool importanceSampling);
     void runSteps(int steps);
     void runStepsSilent(int steps);
 };

@@ -29,6 +29,7 @@ public:
     void setWaveFunction              (class WaveFunction* waveFunction);
     void setElectronInteraction       (bool interacting);
     void setStepLength                (double stepLength);
+    void setImportanceSampling        (bool importanceSampling);
     int  getNumberOfDimensions        () { return m_numberOfDimensions;        }
     int  getNumberOfElectrons         () { return m_numberOfElectrons;         }
     int  getNumberOfSpinUpElectrons   () { return m_numberOfSpinUpElectrons;   }

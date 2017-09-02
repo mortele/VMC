@@ -25,7 +25,7 @@ protected:
     virtual void    setup();
     void            updateOldWaveFunctionValue();
     virtual void    evaluateWaveFunctionInitial();
-    virtual void    computeQuantumForce() {}
+    virtual double  getQuantumForce(int,int) { return nan(""); }
     virtual double  computeWaveFunctionRatio(int changedElectronIndex);
 
 public:

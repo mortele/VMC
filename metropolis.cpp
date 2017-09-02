@@ -15,24 +15,59 @@ using std::pow;
 
 bool Metropolis::step() {
     int    electron       = Random::nextInt(0, m_numberOfElectrons  - 1);
-    int    dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
+    int    dimension      = -1;
+    double proposedChange;
+    double xProposedChangeImportanceSampling;
+    double yProposedChangeImportanceSampling;
+    double zProposedChangeImportanceSampling;
+    if (! m_importanceSampling) {
+        dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
+        proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
+    } else {
+        double D = 0.5;
+        xProposedChangeImportanceSampling
+                =   Random::nextGaussian(0,1) * m_dtSqrt +
+                    m_waveFunction->getQuantumForce(electron,0) * m_dt * D;
+        yProposedChangeImportanceSampling
+                =   Random::nextGaussian(0,1) * m_dtSqrt +
+                    m_waveFunction->getQuantumForce(electron,1) * m_dt * D;
+        zProposedChangeImportanceSampling
+                =   Random::nextGaussian(0,1) * m_dtSqrt +
+                    m_waveFunction->getQuantumForce(electron,2) * m_dt * D;
+    }
     m_waveFunction->passProposedChangeToWaveFunction(electron, dimension);
-    double proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
-    m_system->getElectrons().at(electron)->adjustPosition(proposedChange, dimension);
+    if (! m_importanceSampling) {
+        m_system->getElectrons().at(electron)->adjustPosition(proposedChange, dimension);
+    } else {
+        m_system->getElectrons().at(electron)->adjustPosition(xProposedChangeImportanceSampling, 0);
+        m_system->getElectrons().at(electron)->adjustPosition(yProposedChangeImportanceSampling, 1);
+        m_system->getElectrons().at(electron)->adjustPosition(zProposedChangeImportanceSampling, 2);
+    }
     m_waveFunction->updateOldWaveFunctionValue();
     const double R = m_waveFunction->computeWaveFunctionRatio(electron);
     if (R > Random::nextDouble(0, 1)) {
         m_waveFunction->updateWaveFunctionAfterAcceptedStep();
         return true;
     } else {
-        m_system->getElectrons().at(electron)->adjustPosition(-proposedChange, dimension);
+        if (! m_importanceSampling) {
+            m_system->getElectrons().at(electron)->adjustPosition(-proposedChange, dimension);
+        } else {
+            m_system->getElectrons().at(electron)->adjustPosition(-xProposedChangeImportanceSampling, 0);
+            m_system->getElectrons().at(electron)->adjustPosition(-yProposedChangeImportanceSampling, 1);
+            m_system->getElectrons().at(electron)->adjustPosition(-zProposedChangeImportanceSampling, 2);
+        }
         return false;
     }
 }
 
+
 Metropolis::Metropolis(System* system) {
     m_system = system;
     m_stepLengthHalf = 0.5 * m_stepLength;
+}
+
+void Metropolis::setImportanceSampling(bool importanceSampling) {
+    m_importanceSampling = importanceSampling;
 }
 
 void Metropolis::setup() {
@@ -41,22 +76,30 @@ void Metropolis::setup() {
     m_numberOfElectrons  = m_system->getNumberOfElectrons();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     if (! m_stepLengthSetManually) {
-        double minimumSize = 10.0;
-        for (Core* core : m_system->getCores()) {
-            minimumSize = std::min(minimumSize, core->getSize());
+        if (! m_importanceSampling) {
+            double minimumSize = 10.0;
+            for (Core* core : m_system->getCores()) {
+                minimumSize = std::min(minimumSize, core->getSize());
+            }
+            m_stepLength     = 4.0 * minimumSize;
+            m_stepLengthHalf = 0.5 * m_stepLength;
+        } else {
+            m_dt        = 0.01;
+            m_dtSqrt    = sqrt(m_dt);
         }
-        m_stepLength     = 4.0 * minimumSize;
-        m_stepLengthHalf = 0.5 * m_stepLength;
     }
 }
 
 void Metropolis::setStepLength(double stepLength) {
     m_stepLength     = stepLength;
     m_stepLengthHalf = 0.5 * m_stepLength;
+    m_dt             = stepLength;
+    m_dtSqrt         = sqrt(m_dt);
     m_stepLengthSetManually = true;
 }
 
 void Metropolis::runSteps(int steps) {
+    setup();
     m_numberOfMetropolisSteps = steps;
     if (! m_silent) printInitialInfo();
     m_waveFunction->evaluateWaveFunctionInitial();

@@ -10,6 +10,7 @@
 #include "WaveFunctions/directevaluationslaterwithjastrow.h"
 #include "WaveFunctions/gaussianslater.h"
 #include "WaveFunctions/harmonicoscillatorwavefunction.h"
+#include "WaveFunctions/slaterwithjastrow.h"
 #include "RandomNumberGenerator/random.h"
 #include "hartreefockbasisparser.h"
 #include <armadillo>
@@ -34,14 +35,14 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testHydrogen())                          return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testNonInteractingHelium())              return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testHelium())                            return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "4; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testHeliumWithJastrowNumerical())        return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! HO3d())    return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -224,6 +225,21 @@ bool UnitTest::HO3d() {
                                                              beta,
                                                              omega));
     test->addCore(new HarmonicOscillator(test, pos, 2, omega));
+    test->runMetropolis(5000000);
+    return true;
+}
+
+bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
+    printf("%-40s", "Imp. sampling Slater w. Jastrow (Be)"); fflush(stdout);
+    System* test = setupNewTestSystem();
+    arma::vec pos = {0,0,0};
+    double alpha = 3.983;
+    double beta  = 0.094;
+    test->setElectronInteraction(true);
+    test->setStepLength(1.5);
+    test->setWaveFunction(new  SlaterWithJastrow(test,alpha,beta));
+    test->addCore(new Atom(test,pos,4,2,2));
+    test->setImportanceSampling(true);
     test->runMetropolis(5000000);
     return true;
 }

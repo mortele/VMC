@@ -69,6 +69,10 @@ void System::setStepLength(double stepLength) {
     m_metropolis->setStepLength(stepLength);
 }
 
+void System::setImportanceSampling(bool importanceSampling) {
+    m_metropolis->setImportanceSampling(importanceSampling);
+}
+
 void System::adjustPositionOfElectron(int       electron,
                                       int       dimension,
                                       double    adjustment) {

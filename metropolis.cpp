@@ -16,7 +16,7 @@ using std::pow;
 bool Metropolis::step() {
     int    electron       = Random::nextInt(0, m_numberOfElectrons  - 1);
     int    dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
-    m_waveFunction->updateWaveFunction(electron, dimension);
+    m_waveFunction->passProposedChangeToWaveFunction(electron, dimension);
     double proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
     m_system->getElectrons().at(electron)->adjustPosition(proposedChange, dimension);
     m_waveFunction->updateOldWaveFunctionValue();

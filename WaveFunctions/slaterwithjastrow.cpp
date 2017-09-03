@@ -103,20 +103,15 @@ void SlaterWithJastrow::computeJastrowLaplacian() {
 void SlaterWithJastrow::updateSlaterInverse() {
     Electron* iElectron = m_system->getElectrons().at(m_changedElectron);
     int iSpin   = iElectron->getSpin();
-    int i       = m_changedElectron;
+    int i       = iElectron->getSpinIndex();
     const double x = iElectron->getPosition().at(0);
     const double y = iElectron->getPosition().at(1);
     const double z = iElectron->getPosition().at(2);
 
     int  eLimit;
-    mat& newS = m_slaterUp;
-    mat& oldS = m_slaterUpOld;
-    eLimit = m_numberOfSpinUpElectrons;
-    if (iSpin==0) {
-        newS = m_slaterDown;
-        oldS = m_slaterDownOld;
-        eLimit = m_numberOfSpinDownElectrons;
-    }
+    mat& newS   = (iSpin==1 ? m_slaterUp    : m_slaterDown);
+    mat& oldS   = (iSpin==1 ? m_slaterUpOld : m_slaterDownOld);
+    eLimit      = (iSpin==1 ? m_numberOfSpinUpElectrons : m_numberOfSpinDownElectrons);
 
     for (int k = 0; k < eLimit; k++) {
         for (int j = 0; j < eLimit; j++) {
@@ -431,7 +426,7 @@ void SlaterWithJastrow::passProposedChangeToWaveFunction(int electronChanged, in
 }
 
 void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
-    m_electronPositionsOld.col(m_changedElectron) = m_electronPositions.col(m_changedElectron);
+    m_electronPositionsOld      = m_electronPositions;
     m_quantumForceOld           = m_quantumForce;
     m_correlationMatrixOld      = m_correlationMatrix;
     m_jastrowGradientOld        = m_jastrowGradient;
@@ -441,12 +436,23 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
     slaterGradientOld           = slaterGradient;
 
     updateSlaterInverse();
-    mat& slaterInverse          = (m_spinChanged == 1 ? m_slaterUp    : m_slaterDown);
-    mat& slaterInverseOld       = (m_spinChanged == 1 ? m_slaterUpOld : m_slaterDownOld);
+    if (m_spinChanged==1) {
+        m_slaterUpOld = m_slaterUp;
+    } else {
+        m_slaterDownOld = m_slaterDown;
+    }
     m_interElectronDistancesOld = m_interElectronDistances;
+}
 
-    cout << slaterInverse << endl;
-    exit(1);
+void SlaterWithJastrow::updateWaveFunctionAfterRejectedStep() {
+    m_electronPositions         = m_electronPositionsOld;
+    m_correlationMatrix         = m_correlationMatrixOld;
+    m_slaterGradientUp          = m_slaterGradientUpOld;
+    m_slaterGradientDown        = m_slaterGradientDownOld;
+    m_jastrowGradient           = m_jastrowGradientOld;
+    m_jastrowLaplacianTerms     = m_jastrowLaplacianTermsOld;
+    m_quantumForce              = m_quantumForceOld;
+    m_interElectronDistances    = m_interElectronDistancesOld;
 }
 
 double SlaterWithJastrow::computeWaveFunctionRatio(int changedElectronIndex) {

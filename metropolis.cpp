@@ -25,22 +25,14 @@ bool Metropolis::step() {
         dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
         proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
     } else {
-        double gauss0=-0.121306234388914;
-        double gauss1=-0.3710031328107  ;
-        double gauss2=-2.30144269915718 ;
-        electron = 0;
-
         double D = 0.5;
-        xProposedChangeImportanceSampling = gauss0 * m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
-        yProposedChangeImportanceSampling = gauss1 * m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
-        zProposedChangeImportanceSampling = gauss2 * m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
-        /*xProposedChangeImportanceSampling
+        xProposedChangeImportanceSampling
                 =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
         yProposedChangeImportanceSampling
                 =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
         zProposedChangeImportanceSampling
                 =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
-        */
+
     }
 
     m_waveFunction->passProposedChangeToWaveFunction(electron, dimension);
@@ -61,6 +53,7 @@ bool Metropolis::step() {
         m_waveFunction->updateWaveFunctionAfterAcceptedStep();
         return true;
     } else {
+        m_waveFunction->updateWaveFunctionAfterRejectedStep();
         if (! m_importanceSampling) {
             m_system->getElectrons().at(electron)->adjustPosition(-proposedChange, dimension);
         } else {

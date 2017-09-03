@@ -69,6 +69,7 @@ public:
     void evaluateWaveFunctionInitial();
     void passProposedChangeToWaveFunction(int electronChanged, int dimensionChanged);
     void updateWaveFunctionAfterAcceptedStep();
+    void updateWaveFunctionAfterRejectedStep();
     double computeWaveFunctionRatio(int electronChanged);
     double evaluateLaplacian();
 };

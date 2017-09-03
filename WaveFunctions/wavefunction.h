@@ -43,6 +43,7 @@ public:
     virtual double      evaluateWaveFunction () = 0;
     virtual void        passProposedChangeToWaveFunction(int , int ) {}
     virtual void        updateWaveFunctionAfterAcceptedStep() {}
+    virtual void        updateWaveFunctionAfterRejectedStep() {}
     virtual double      evaluateLaplacian    ();
     virtual arma::mat   evaluateGradient     ();
 };

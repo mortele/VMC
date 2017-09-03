@@ -24,6 +24,7 @@ private:
     void printInitialInfo();
     void printIterationInfo(int iteration);
     void printFinalInfo();
+    double computeGreensFunction();
 
 public:
     Metropolis(class System* system);

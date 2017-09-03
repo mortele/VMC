@@ -7,6 +7,7 @@
 #include "RandomNumberGenerator/random.h"
 #include <iostream>
 #include <cmath>
+#include <iomanip>
 
 using std::cout;
 using std::endl;
@@ -24,17 +25,24 @@ bool Metropolis::step() {
         dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
         proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
     } else {
+        double gauss0=-0.121306234388914;
+        double gauss1=-0.3710031328107  ;
+        double gauss2=-2.30144269915718 ;
+        electron = 0;
+
         double D = 0.5;
-        xProposedChangeImportanceSampling
-                =   Random::nextGaussian(0,1) * m_dtSqrt +
-                    m_waveFunction->getQuantumForce(electron,0) * m_dt * D;
+        xProposedChangeImportanceSampling = gauss0 * m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
+        yProposedChangeImportanceSampling = gauss1 * m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
+        zProposedChangeImportanceSampling = gauss2 * m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
+        /*xProposedChangeImportanceSampling
+                =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
         yProposedChangeImportanceSampling
-                =   Random::nextGaussian(0,1) * m_dtSqrt +
-                    m_waveFunction->getQuantumForce(electron,1) * m_dt * D;
+                =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
         zProposedChangeImportanceSampling
-                =   Random::nextGaussian(0,1) * m_dtSqrt +
-                    m_waveFunction->getQuantumForce(electron,2) * m_dt * D;
+                =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
+        */
     }
+
     m_waveFunction->passProposedChangeToWaveFunction(electron, dimension);
     if (! m_importanceSampling) {
         m_system->getElectrons().at(electron)->adjustPosition(proposedChange, dimension);
@@ -44,7 +52,11 @@ bool Metropolis::step() {
         m_system->getElectrons().at(electron)->adjustPosition(zProposedChangeImportanceSampling, 2);
     }
     m_waveFunction->updateOldWaveFunctionValue();
-    const double R = m_waveFunction->computeWaveFunctionRatio(electron);
+    double R = m_waveFunction->computeWaveFunctionRatio(electron);
+    if (m_importanceSampling) {
+        double greensFunction = computeGreensFunction();
+        R *= greensFunction;
+    }
     if (R > Random::nextDouble(0, 1)) {
         m_waveFunction->updateWaveFunctionAfterAcceptedStep();
         return true;
@@ -128,9 +140,9 @@ void Metropolis::printInitialInfo() {
     printf("      ------------------------------------------------------- \n");
     for (Core* core : m_system->getCores()) {
         printf("      | %-20s (%5.3f, %5.3f, %5.3f)          | \n", core->getInfo().c_str(),
-                                                                    core->getPosition()(0),
-                                                                    core->getPosition()(1),
-                                                                    core->getPosition()(2));
+               core->getPosition()(0),
+               core->getPosition()(1),
+               core->getPosition()(2));
     }
     printf("      ------------------------------------------------------- \n\n");
     printf(" ==================================================================================== \n");
@@ -156,14 +168,14 @@ void Metropolis::printIterationInfo(int iteration) {
         m_sampler->computeBlockAverages();
 
         printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g %12.5g\n",
-                preFactor,
-                exponent,
-                m_sampler->getEnergy(),
-                m_sampler->getVariance(),
-                m_sampler->getBlockEnergy(),
-                m_sampler->getBlockVariance(),
-                m_sampler->getBlockAcceptanceRate(),
-                m_sampler->getBlockVirialRatio());
+               preFactor,
+               exponent,
+               m_sampler->getEnergy(),
+               m_sampler->getVariance(),
+               m_sampler->getBlockEnergy(),
+               m_sampler->getBlockVariance(),
+               m_sampler->getBlockAcceptanceRate(),
+               m_sampler->getBlockVirialRatio());
     }
     fflush(stdout);
 }
@@ -180,9 +192,19 @@ void Metropolis::printFinalInfo() {
     fflush(stdout);
 }
 
-
-
-
+double Metropolis::computeGreensFunction() {
+    const double D = 0.5;
+    WaveFunction* wf = m_waveFunction;
+    double greensFunction = 0;
+    for (int i = 0; i < m_numberOfElectrons; i++) {
+        for (int j = 0; j < 3; j++) {
+            greensFunction += 0.5 * (wf->getQuantumForceOld(i,j) + wf->getQuantumForce(i,j))
+                                  * (D * m_dt * 0.5 * (wf->getQuantumForceOld(i,j) - wf->getQuantumForce(i,j))
+                                     - wf->getPosition(i,j) + wf->getPositionOld(i,j));
+        }
+    }
+    return exp(greensFunction);
+}
 
 
 

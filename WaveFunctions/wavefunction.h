@@ -20,13 +20,20 @@ protected:
     double          m_2stepLengthInverse;
     double          m_stepLengthSquaredInverse;
     arma::mat       m_quantumForce;
+    arma::mat       m_quantumForceOld;
+    arma::mat       m_electronPositions;
+    arma::mat       m_electronPositionsOld;
+
     class System*   m_system;
 
     virtual void    setup();
     void            updateOldWaveFunctionValue();
     virtual void    evaluateWaveFunctionInitial();
-    virtual double  getQuantumForce(int,int) { return nan(""); }
+    virtual double  getQuantumForce   (int,int) { return nan(""); }
+    virtual double  getQuantumForceOld(int,int) { return nan(""); }
     virtual double  computeWaveFunctionRatio(int changedElectronIndex);
+    double          getPosition(int,int);
+    double          getPositionOld(int,int);
 
 public:
     WaveFunction(class System* system);
@@ -40,3 +47,10 @@ public:
     virtual arma::mat   evaluateGradient     ();
 };
 
+
+inline double WaveFunction::getPosition(int i, int j) {
+    return m_electronPositions(i,j);
+}
+inline double WaveFunction::getPositionOld(int i, int j) {
+    return m_electronPositionsOld(i,j);
+}

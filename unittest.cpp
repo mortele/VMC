@@ -43,6 +43,7 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -236,7 +237,7 @@ bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
     double alpha = 3.983;
     double beta  = 0.094;
     test->setElectronInteraction(true);
-    test->setStepLength(1.5);
+    test->setStepLength(0.01);
     test->setWaveFunction(new  SlaterWithJastrow(test,alpha,beta));
     test->addCore(new Atom(test,pos,4,2,2));
     test->setImportanceSampling(true);

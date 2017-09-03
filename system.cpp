@@ -15,7 +15,6 @@ System::System() {
     m_sampler                   = new Sampler(this);
     m_metropolis                = new Metropolis(this);
     m_hamiltonian               = new Hamiltonian(this);
-    Random::seed(42413213);
 }
 
 void System::setup() {

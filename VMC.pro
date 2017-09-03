@@ -6,8 +6,8 @@ CONFIG -= qt
 LIBS += -L/usr/local/lib -larmadillo -llapack -lblas
 INCLUDEPATH += /usr/local/include
 
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3
+#QMAKE_CXXFLAGS_RELEASE -= -O2
+#QMAKE_CXXFLAGS_RELEASE += -O3
 #QMAKE_CXXFLAGS_RELEASE += -O3 -unroll-aggressive -opt-prefetch -fast -xCORE-AVX2
 
 SOURCES += main.cpp \
@@ -58,4 +58,5 @@ HEADERS += \
     WaveFunctions/harmonicoscillatorwavefunction.h \
     Cores/harmonicoscillator.h \
     WaveFunctions/Orbitals/hydrogenorbital.h \
-    WaveFunctions/slaterwithjastrow.h
+    WaveFunctions/slaterwithjastrow.h \
+    /usr/local/include/armadillo_bits/config.hpp

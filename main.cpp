@@ -7,6 +7,12 @@
 #include <cmath>
 #include <chrono>
 #include "Math/exponentialapproximations.h"
+#include "RandomNumberGenerator/random.h"
+
+// #define ARMA_NO_DEBUG
+
+// Location of the armadillo 'config.hpp' file:
+// /usr/local/include/armadillo_bits/config.hpp
 
 using std::cout;
 using std::endl;

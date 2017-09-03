@@ -31,11 +31,18 @@ private:
     arma::mat   m_slaterDownOld;
     arma::mat   m_slaterGradientUp;
     arma::mat   m_slaterGradientDown;
+    arma::mat   m_slaterGradientUpOld;
+    arma::mat   m_slaterGradientDownOld;
     arma::mat   m_jastrowGradient;
+    arma::mat   m_jastrowGradientOld;
     arma::mat   m_jastrowLaplacianTerms;
-    arma::mat   m_positionsOld;
+    arma::mat   m_jastrowLaplacianTermsOld;
+    //arma::mat   m_positionsOld;
     arma::mat   m_correlationMatrix;
     arma::mat   m_correlationMatrixOld;
+    arma::mat   m_interElectronDistances;
+    arma::mat   m_interElectronDistancesOld;
+    arma::mat   m_spinMatrix;
 
     HydrogenOrbital* m_orbital;
 
@@ -49,10 +56,12 @@ private:
     void computeSlaterLaplacian(int electron);
     void fillCorrelationMatrix();
     void updateCorrelationsMatrix();
+    void updateElectronDistanceMatrices();
     double computeInterEletronDistance(Electron*,Electron*);
     double computeJastrowFactor(Electron*,Electron*);
     double spinCoefficient(Electron*,Electron*);
     double getQuantumForce(int,int);
+    double getQuantumForceOld(int,int);
     void computeQuantumForce();
 
 public:
@@ -60,7 +69,7 @@ public:
     void evaluateWaveFunctionInitial();
     void passProposedChangeToWaveFunction(int electronChanged, int dimensionChanged);
     void updateWaveFunctionAfterAcceptedStep();
-    double computeWaveFunctionRatio(int changedElectronIndex);
+    double computeWaveFunctionRatio(int electronChanged);
     double evaluateLaplacian();
 };
 
@@ -84,7 +93,9 @@ inline double SlaterWithJastrow::spinCoefficient(Electron* a, Electron* b) {
 inline double SlaterWithJastrow::getQuantumForce(int electron, int dimension) {
     return m_quantumForce(electron, dimension);
 }
-
+inline double SlaterWithJastrow::getQuantumForceOld(int electron, int dimension) {
+    return m_quantumForceOld(electron, dimension);
+}
 
 
 

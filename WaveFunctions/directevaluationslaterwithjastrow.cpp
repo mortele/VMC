@@ -20,7 +20,6 @@ DirectEvaluationSlaterWithJastrow::DirectEvaluationSlaterWithJastrow(System* sys
                                numberOfSpinDownElectrons) {
     m_beta = beta;
     m_useNumericalDerivatives = true;
-
 }
 
 void DirectEvaluationSlaterWithJastrow::evaluateWaveFunctionInitial() {

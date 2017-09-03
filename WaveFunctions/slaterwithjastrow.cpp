@@ -323,10 +323,10 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     coordinatesNew(3,2) = 3.6983;
     */
 
-    m_system->getElectrons().at(0)->setPosition(vec{-1.5037, -1.2662, 0.3342});
-    m_system->getElectrons().at(1)->setPosition(vec{ 0.2958,  0.9744, 0.6983});
-    m_system->getElectrons().at(2)->setPosition(vec{-2.5037, -2.2662, 2.3342});
-    m_system->getElectrons().at(3)->setPosition(vec{ 1.2958, -0.9744, 3.6983});
+    //m_system->getElectrons().at(0)->setPosition(vec{-1.5037, -1.2662, 0.3342});
+    //m_system->getElectrons().at(1)->setPosition(vec{ 0.2958,  0.9744, 0.6983});
+    //m_system->getElectrons().at(2)->setPosition(vec{-2.5037, -2.2662, 2.3342});
+    //m_system->getElectrons().at(3)->setPosition(vec{ 1.2958, -0.9744, 3.6983});
 
     m_spinMatrix             = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
     m_electronPositions      = zeros<mat>(m_numberOfElectrons, 3);

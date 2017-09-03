@@ -4,6 +4,7 @@ class Metropolis {
     friend class System;
 
 private:
+    int                 m_i;
     int                 m_numberOfElectrons;
     int                 m_numberOfDimensions;
     int                 m_numberOfMetropolisSteps;

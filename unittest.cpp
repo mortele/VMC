@@ -241,7 +241,7 @@ bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
     test->setWaveFunction(new  SlaterWithJastrow(test,alpha,beta));
     test->addCore(new Atom(test,pos,4,2,2));
     test->setImportanceSampling(true);
-    test->runMetropolis(5000000);
+    test->runMetropolis((int) 1e7);
     return true;
 }
 

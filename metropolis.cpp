@@ -2,6 +2,7 @@
 #include "system.h"
 #include "sampler.h"
 #include "electron.h"
+#include "hamiltonian.h"
 #include "Cores/core.h"
 #include "WaveFunctions/wavefunction.h"
 #include "RandomNumberGenerator/random.h"
@@ -26,14 +27,29 @@ bool Metropolis::step() {
         proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
     } else {
         double D = 0.5;
-        xProposedChangeImportanceSampling
-                =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
-        yProposedChangeImportanceSampling
-                =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
-        zProposedChangeImportanceSampling
-                =   Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
 
+        xProposedChangeImportanceSampling
+                = Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
+        yProposedChangeImportanceSampling
+                = Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
+        zProposedChangeImportanceSampling
+                = Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
+
+        /*electron = m_i % 4;
+        double gauss0 =  1.12562532;
+        double gauss1 = -0.10989429851;
+        double gauss2 = -0.50153;
+
+        xProposedChangeImportanceSampling = gauss0* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
+        yProposedChangeImportanceSampling = gauss1* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
+        zProposedChangeImportanceSampling = gauss2* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
+        */
     }
+
+    //electron = 2;
+    //xProposedChangeImportanceSampling =  1.12562532;
+    //yProposedChangeImportanceSampling = -0.10989429851;
+    //zProposedChangeImportanceSampling = -0.50153;
 
     m_waveFunction->passProposedChangeToWaveFunction(electron, dimension);
     if (! m_importanceSampling) {
@@ -47,7 +63,7 @@ bool Metropolis::step() {
     double R = m_waveFunction->computeWaveFunctionRatio(electron);
     if (m_importanceSampling) {
         double greensFunction = computeGreensFunction();
-        R *= greensFunction;
+        R *= R * greensFunction;
     }
     if (R > Random::nextDouble(0, 1)) {
         m_waveFunction->updateWaveFunctionAfterAcceptedStep();
@@ -108,10 +124,10 @@ void Metropolis::runSteps(int steps) {
     m_numberOfMetropolisSteps = steps;
     if (! m_silent) printInitialInfo();
     m_waveFunction->evaluateWaveFunctionInitial();
-    for (int i = 0; i < steps; i++) {
+    for (m_i = 0; m_i < steps; m_i++) {
         bool acceptedStep = step();
         m_sampler->sample(acceptedStep);
-        if (! m_silent) printIterationInfo(i);
+        if (! m_silent) printIterationInfo(m_i);
     }
     if (! m_silent) printFinalInfo();
 }

@@ -51,7 +51,7 @@ void Sampler::computeAverages() {
     const double E2            = m_cumulativeEnergySquared / m_totalSamplesTaken;
     m_acceptanceRate           = m_totalAccepted           / m_totalSamplesTaken;
     m_energy                   = E;
-    m_variance                 = E2-E*E;
+    m_variance                 = (E2-E*E) / m_totalSamplesTaken;
     m_numberOfMetropolisSteps  = m_totalSamplesTaken;
 }
 
@@ -70,7 +70,7 @@ void Sampler::computeBlockAverages() {
     const double T        = m_blockCumulativeKineticEnergy      / N;
     const double V        = m_blockCumulativePotentialEnergy    / N;
     m_blockEnergy         = E;
-    m_blockVariance       = E2 - E*E;
+    m_blockVariance       = (E2 - E*E) / m_blockSamplesTaken;
 
     m_blockAcceptanceRate = m_blockAccepted / N;
     m_blockVirialRatio    = T / V;

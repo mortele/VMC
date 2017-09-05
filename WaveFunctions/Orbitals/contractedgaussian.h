@@ -14,6 +14,7 @@ public:
     ContractedGaussian(int numberOfPrimitives, double x, double y, double z);
     void addPrimitive(class PrimitiveGaussian* primitive);
     double operator()(double x, double y, double z);
+    double evaluate(double x, double y, double z);
 
     double xDerivative(double x, double y, double z);
     double yDerivative(double x, double y, double z);

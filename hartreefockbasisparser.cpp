@@ -42,8 +42,14 @@ void HartreeFockBasisParser::parseBasisFile(string fileName) {
     std::ifstream basisFile;
     basisFile.open(fileName, std::ios::in);
     if (! basisFile.is_open()) {
+        basisFile.open("../HartreeFock/HartreeFockBases/"+fileName, std::ios::in);
+        if (! basisFile.is_open()) {
+            basisFile.open("/Users/morten/Documents/Master/HartreeFock/HartreeFockBases/"+fileName, std::ios::in);
+        }
+    }
+    if (! basisFile.is_open()) {
         std::cout << "Unable to open file: " << fileName << std::endl;
-        return;
+        exit(1);
     }
 
     basisFile >> m_numberOfElectrons

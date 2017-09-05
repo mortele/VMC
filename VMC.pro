@@ -6,9 +6,10 @@ CONFIG -= qt
 LIBS += -L/usr/local/lib -larmadillo -llapack -lblas
 INCLUDEPATH += /usr/local/include
 
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3
-#QMAKE_CXXFLAGS_RELEASE += -O3 -unroll-aggressive -opt-prefetch -fast -xCORE-AVX2
+QMAKE_CXXFLAGS_RELEASE -= -O2 -fPIC -fpic
+QMAKE_CXXFLAGS_RELEASE += -O3 #-ffast-math
+QMAKE_CFLAGS_APP -= -fPIC
+QMAKE_CXXFLAGS_RELEASE += -fno-pic -O3 # -unroll-aggressive -qopt-prefetch -fast -xCORE-AVX2 -ipo# -prof_use
 
 SOURCES += main.cpp \
     hamiltonian.cpp \
@@ -33,7 +34,8 @@ SOURCES += main.cpp \
     Cores/harmonicoscillator.cpp \
     WaveFunctions/Orbitals/hydrogenorbital.cpp \
     WaveFunctions/slaterwithjastrow.cpp \
-    WaveFunctions/Orbitals/orbital.cpp
+    WaveFunctions/Orbitals/orbital.cpp \
+    WaveFunctions/Orbitals/gaussianorbital.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -61,4 +63,5 @@ HEADERS += \
     WaveFunctions/Orbitals/hydrogenorbital.h \
     WaveFunctions/slaterwithjastrow.h \
     /usr/local/include/armadillo_bits/config.hpp \
-    WaveFunctions/Orbitals/orbital.h
+    WaveFunctions/Orbitals/orbital.h \
+    WaveFunctions/Orbitals/gaussianorbital.h

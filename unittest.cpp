@@ -12,12 +12,15 @@
 #include "WaveFunctions/harmonicoscillatorwavefunction.h"
 #include "WaveFunctions/slaterwithjastrow.h"
 #include "WaveFunctions/Orbitals/hydrogenorbital.h"
+#include "WaveFunctions/Orbitals/gaussianorbital.h"
 #include "RandomNumberGenerator/random.h"
 #include "hartreefockbasisparser.h"
 #include <armadillo>
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <boost/timer.hpp>
+
 
 using std::cout;
 using std::endl;
@@ -44,7 +47,8 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
-    cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
+    //cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
+    cout << testSlaterWithJastrowGaussianBe() << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -232,25 +236,54 @@ bool UnitTest::HO3d() {
 }
 
 bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
+    boost::timer t;
+
     Random::randomSeed();
     printf("%-40s", "Imp. sampling Slater w. Jastrow (Be)"); fflush(stdout);
     System* test = setupNewTestSystem();
     arma::vec pos = {0,0,0};
-    double alpha = 1.843;//3.983;
-    double beta  = 0.347;//0.094;
+    double alpha = 3.983; // 1.843;
+    double beta  = 0.094; // 0.347;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
     test->setStepLength(0.01);
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
     test->setOrbital     (new HydrogenOrbital(alpha));
+    test->addCore        (new Atom(test,pos,4,2,2));
+    test->runMetropolis((int) 1e6);
+
+    double elapsedTime = t.elapsed();
+    cout << "Elapsed time: " << elapsedTime << endl;
+    return true;
+}
+
+bool UnitTest::testSlaterWithJastrowGaussianBe() {
+    boost::timer t;
+    Random::randomSeed();
+
+    printf("%-40s", "Imp. sampling Slater w. Jastrow (Gaussian basis) (Be)"); fflush(stdout);
+    System* test = setupNewTestSystem();
+    arma::vec pos = {0,0,0};
+    double alpha = 1.843; // 3.983;
+    double beta  = 0.1; //0.347; // 0.094;
+    test->setElectronInteraction(true);
+    test->setImportanceSampling (true);
+    test->setStepLength(0.01);
+    test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
+    test->setOrbital     (new GaussianOrbital("He-321G"));
     test->addCore        (new Atom(test,pos,2,1,1));
-    test->runMetropolis((int) 1e7);
+    test->runMetropolis((int) 1e6);
+
+    double elapsedTime = t.elapsed();
+    cout << "Elapsed time: " << elapsedTime << endl;
     return true;
 }
 
 
-
-
+// clang++ plain :          109.777
+// icpc fast :              111.038
+// clang++ -ffast-math :    110.777
+// icpc -fp-model fast=2 :  107.399
 
 
 

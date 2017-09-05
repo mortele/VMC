@@ -26,6 +26,10 @@ double ContractedGaussian::operator()(double x, double y, double z) {
     return result;
 }
 
+double ContractedGaussian::evaluate(double x, double y, double z) {
+    return (*this)(x,y,z);
+}
+
 double ContractedGaussian::xDerivative(double x, double y, double z) {
     double result = 0;
     for (int i = 0; i < m_numberOfPrimitives; i++) {

@@ -1,7 +1,8 @@
 #pragma once
 #include <cmath>
+#include "WaveFunctions/Orbitals/orbital.h"
 
-class HydrogenOrbital {
+class HydrogenOrbital : public Orbital {
 private:
     double  m_alpha  = 1.0;
     double  m_alpha2 = 1.0;
@@ -23,7 +24,6 @@ private:
 public:
     HydrogenOrbital(double alpha);
 
-    double operator()(double x, double y, double z, int index);
     double evaluate(double x, double y, double z, int index);
     double computeDerivativeX(double x, double y, double z, int index);
     double computeDerivativeY(double x, double y, double z, int index);

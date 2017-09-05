@@ -1,7 +1,7 @@
 #pragma once
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/directevaluationslaterwithjastrow.h"
-#include "WaveFunctions/Orbitals/hydrogenorbital.h"
+#include "WaveFunctions/Orbitals/orbital.h"
 #include "electron.h"
 #include <armadillo>
 #include <vector>
@@ -9,13 +9,11 @@
 
 class System;
 
-// Inherit from DirectEvaluationSlaterWithJastrow instead of WaveFunction to
-// be able to use the evaluateWaveFunctionSquared() in the former.
-class SlaterWithJastrow : public DirectEvaluationSlaterWithJastrow {
+
+class SlaterWithJastrow : public WaveFunction {
 private:
     bool        m_jastrow                   = true;
     int         m_spinChanged               = -1;
-    double      m_alpha                     = 1;
     double      m_beta                      = 1;
     double      m_energyCrossTerm;
     double      m_jastrowLaplacian;
@@ -44,7 +42,6 @@ private:
     arma::mat   m_interElectronDistancesOld;
     arma::mat   m_spinMatrix;
 
-    HydrogenOrbital* m_orbital;
 
     void updateSlaterGradient(double Rsd, int electron);
     void updateJastrowGradient(int electron);
@@ -65,7 +62,7 @@ private:
     void computeQuantumForce();
 
 public:
-    SlaterWithJastrow(System* system, double alpha, double beta);
+    SlaterWithJastrow(System* system, double beta, bool useJastrow=true);
     void evaluateWaveFunctionInitial();
     void passProposedChangeToWaveFunction(int electronChanged, int dimensionChanged);
     void updateWaveFunctionAfterAcceptedStep();

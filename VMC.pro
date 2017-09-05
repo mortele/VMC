@@ -32,7 +32,8 @@ SOURCES += main.cpp \
     WaveFunctions/harmonicoscillatorwavefunction.cpp \
     Cores/harmonicoscillator.cpp \
     WaveFunctions/Orbitals/hydrogenorbital.cpp \
-    WaveFunctions/slaterwithjastrow.cpp
+    WaveFunctions/slaterwithjastrow.cpp \
+    WaveFunctions/Orbitals/orbital.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -59,4 +60,5 @@ HEADERS += \
     Cores/harmonicoscillator.h \
     WaveFunctions/Orbitals/hydrogenorbital.h \
     WaveFunctions/slaterwithjastrow.h \
-    /usr/local/include/armadillo_bits/config.hpp
+    /usr/local/include/armadillo_bits/config.hpp \
+    WaveFunctions/Orbitals/orbital.h

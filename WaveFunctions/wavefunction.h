@@ -12,6 +12,7 @@ protected:
     int             m_numberOfDimensions;
     int             m_changedElectron;
     int             m_changedDimension;
+    bool            m_orbitalSet = false;
     bool            m_useNumericalDerivatives;
     double          m_currentValueSquared;
     double          m_oldValueSquared;
@@ -25,6 +26,7 @@ protected:
     arma::mat       m_electronPositionsOld;
 
     class System*   m_system;
+    class Orbital*  m_orbital;
 
     virtual void    setup();
     void            updateOldWaveFunctionValue();
@@ -38,9 +40,10 @@ protected:
 public:
     WaveFunction(class System* system);
     void   setStepLength(double stepLength);
+    void   setOrbital(class Orbital* orbital);
     double evaluateWaveFunctionSquared();
 
-    virtual double      evaluateWaveFunction () = 0;
+    virtual double      evaluateWaveFunction () { return nan(""); }
     virtual void        passProposedChangeToWaveFunction(int , int ) {}
     virtual void        updateWaveFunctionAfterAcceptedStep() {}
     virtual void        updateWaveFunctionAfterRejectedStep() {}

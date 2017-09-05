@@ -1,5 +1,6 @@
 #include "wavefunction.h"
 #include "system.h"
+#include "WaveFunctions/Orbitals/orbital.h"
 
 using arma::vec;
 using arma::mat;
@@ -41,6 +42,11 @@ void WaveFunction::setStepLength(double stepLength) {
     m_2stepLengthInverse        = 1.0 / (2.0 * m_stepLength);
     m_stepLengthSquared         = m_stepLength * m_stepLength;
     m_stepLengthSquaredInverse  = 1.0 / m_stepLengthSquared;
+}
+
+void WaveFunction::setOrbital(Orbital* orbital) {
+    m_orbitalSet = true;
+    m_orbital = orbital;
 }
 
 double WaveFunction::evaluateWaveFunctionSquared() {

@@ -16,13 +16,12 @@ using std::setprecision;
 
 
 SlaterWithJastrow::SlaterWithJastrow(System*    system,
-                                     double     alpha,
-                                     double     beta) :
-        DirectEvaluationSlaterWithJastrow(system,alpha,beta,-1,-1) {
-    m_orbital   = new HydrogenOrbital(alpha);
-    m_alpha     = alpha;
-    m_beta      = beta;
-    m_useNumericalDerivatives = false;
+                                     double     beta,
+                                     bool       useJastrow) :
+        WaveFunction(system) {
+    m_beta                      = beta;
+    m_useNumericalDerivatives   = false;
+    m_jastrow                   = useJastrow;
 }
 
 
@@ -140,11 +139,11 @@ void SlaterWithJastrow::computeSlaterRatio() {
 
     if (m_spinChanged==1) {
         for (int j = 0; j < m_numberOfSpinUpElectrons; j++) {
-            sum += (*m_orbital)(xi,yi,zi,j) * m_slaterUp(j,i);
+            sum += m_orbital->evaluate(xi,yi,zi,j) * m_slaterUp(j,i);
         }
     } else {
         for (int j = 0; j < m_numberOfSpinDownElectrons; j++) {
-            sum += (*m_orbital)(xi,yi,zi,j) * m_slaterDown(j,i);
+            sum += m_orbital->evaluate(xi,yi,zi,j) * m_slaterDown(j,i);
         }
     }
     m_Rsd = sum;
@@ -283,6 +282,10 @@ void SlaterWithJastrow::computeQuantumForce() {
 
 
 void SlaterWithJastrow::evaluateWaveFunctionInitial() {
+    if (m_orbitalSet==false) {
+        std::cout << "No orbital to use in SlaterWithJastrow wavefunction set." << std::endl;
+        exit(1);
+    }
     m_numberOfSpinUpElectrons   = m_system->getSpinUpElectrons().size();
     m_numberOfSpinDownElectrons = m_system->getSpinDownElectrons().size();
     const int eUp   = m_numberOfSpinUpElectrons;
@@ -370,7 +373,7 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
         const double z = spinUpElectrons.at(electron)->getPosition().at(2);
 
         for (int basis = 0; basis < eUp; basis++) {
-            m_slaterUp(electron, basis) = (*m_orbital)(x,y,z,basis);
+            m_slaterUp(electron, basis) = m_orbital->evaluate(x,y,z,basis);
         }
     }
     for (int electron = 0; electron < eDown; electron++) {
@@ -379,7 +382,7 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
         const double z = spinDownElectrons.at(electron)->getPosition().at(2);
 
         for (int basis = 0; basis < eUp; basis++) {
-            m_slaterDown(electron, basis) = (*m_orbital)(x,y,z,basis);
+            m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis);
         }
     }
 

@@ -11,6 +11,7 @@
 #include "WaveFunctions/gaussianslater.h"
 #include "WaveFunctions/harmonicoscillatorwavefunction.h"
 #include "WaveFunctions/slaterwithjastrow.h"
+#include "WaveFunctions/Orbitals/hydrogenorbital.h"
 #include "RandomNumberGenerator/random.h"
 #include "hartreefockbasisparser.h"
 #include <armadillo>
@@ -231,16 +232,18 @@ bool UnitTest::HO3d() {
 }
 
 bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
+    Random::randomSeed();
     printf("%-40s", "Imp. sampling Slater w. Jastrow (Be)"); fflush(stdout);
     System* test = setupNewTestSystem();
     arma::vec pos = {0,0,0};
-    double alpha = 3.983;
-    double beta  = 0.094;
+    double alpha = 1.843;//3.983;
+    double beta  = 0.347;//0.094;
     test->setElectronInteraction(true);
+    test->setImportanceSampling (true);
     test->setStepLength(0.01);
-    test->setWaveFunction(new  SlaterWithJastrow(test,alpha,beta));
-    test->addCore(new Atom(test,pos,4,2,2));
-    test->setImportanceSampling(true);
+    test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
+    test->setOrbital     (new HydrogenOrbital(alpha));
+    test->addCore        (new Atom(test,pos,2,1,1));
     test->runMetropolis((int) 1e7);
     return true;
 }

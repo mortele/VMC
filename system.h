@@ -12,6 +12,7 @@ private:
     class Metropolis*               m_metropolis;
     class Hamiltonian*              m_hamiltonian;
     class WaveFunction*             m_waveFunction;
+    class Orbital*                  m_orbital;
     std::vector<class Core*>        m_cores;
     std::vector<class Electron*>    m_electrons;
     std::vector<class Electron*>    m_spinUpElectrons;
@@ -30,6 +31,7 @@ public:
     void setElectronInteraction       (bool interacting);
     void setStepLength                (double stepLength);
     void setImportanceSampling        (bool importanceSampling);
+    void setOrbital                   (Orbital* orbital);
     int  getNumberOfDimensions        () { return m_numberOfDimensions;        }
     int  getNumberOfElectrons         () { return m_numberOfElectrons;         }
     int  getNumberOfSpinUpElectrons   () { return m_numberOfSpinUpElectrons;   }

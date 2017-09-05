@@ -9,6 +9,10 @@
 #include "Math/exponentialapproximations.h"
 #include "RandomNumberGenerator/random.h"
 
+#ifdef ARMA_NO_DEBUG
+    #undef ARMA_NO_DEBUG
+#endif
+
 // #define ARMA_NO_DEBUG
 
 // Location of the armadillo 'config.hpp' file:

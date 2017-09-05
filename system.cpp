@@ -72,6 +72,10 @@ void System::setImportanceSampling(bool importanceSampling) {
     m_metropolis->setImportanceSampling(importanceSampling);
 }
 
+void System::setOrbital(Orbital* orbital) {
+    m_waveFunction->setOrbital(orbital);
+}
+
 void System::adjustPositionOfElectron(int       electron,
                                       int       dimension,
                                       double    adjustment) {

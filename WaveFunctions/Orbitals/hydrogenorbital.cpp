@@ -6,12 +6,15 @@ using std::cout;
 using std::endl;
 
 
-HydrogenOrbital::HydrogenOrbital(double alpha) {
+HydrogenOrbital::HydrogenOrbital(double alpha) :
+        Orbital() {
+
     m_alpha  = alpha;
     m_alpha2 = m_alpha*m_alpha;
 }
 
-double HydrogenOrbital::operator()(double x, double y, double z, int index) {
+
+double HydrogenOrbital::evaluate(double x, double y, double z, int index) {
     const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
         return evaluate1s(r);
@@ -27,10 +30,6 @@ double HydrogenOrbital::operator()(double x, double y, double z, int index) {
         cout << "0 Invalid hydrogen orbital index: " << index << endl;
         exit(1);
     }
-}
-
-double HydrogenOrbital::evaluate(double x, double y, double z, int index) {
-    return (*this)(x,y,z,index);
 }
 
 double HydrogenOrbital::computeDerivativeX(double x, double y, double z, int index) {

@@ -2,10 +2,14 @@
 #include "WaveFunctions/Orbitals/orbital.h"
 #include <string>
 #include <vector>
+#include <armadillo>
 
 
 class GaussianOrbital : public Orbital {
 private:
+    int         m_basisSize;
+    arma::mat   m_spinUpCoefficients;
+    arma::mat   m_spinDownCoefficients;
     class HartreeFockBasisParser* m_parser;
     std::vector<class ContractedGaussian*> m_basis;
 

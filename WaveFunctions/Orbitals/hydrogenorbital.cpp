@@ -132,7 +132,7 @@ double HydrogenOrbital::evaluate2p(double r, double x) {
 }
 
 double HydrogenOrbital::computeDerivative1s(double r, double x) {
-    // x ≡ x or y or z, the variable we are differentiation w.r.t.
+    // x ≡ x or y or z, the variable we are differentiating w.r.t.
     return -m_alpha * x * exp(-m_alpha*r) / r;
 }
 
@@ -145,7 +145,7 @@ double HydrogenOrbital::computeDerivative2px(double  r,
                                              double  y,
                                              double  z,
                                              int     i) {
-    // i determines which variable we are differentiation w.r.t., x, y, or z.
+    // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
         return -(m_alpha*x*x - 2*r) * exp(-0.5*m_alpha*r) / (2*r);
     } else if (i==1) { // y derivative
@@ -160,7 +160,7 @@ double HydrogenOrbital::computeDerivative2py(double r,
                                              double y,
                                              double z,
                                              int    i) {
-    // i determines which variable we are differentiation w.r.t., x, y, or z.
+    // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
         return -m_alpha*x*y * exp(-0.5*m_alpha*r) / (2*r);
     } else if (i==1) { // y derivative
@@ -175,7 +175,7 @@ double HydrogenOrbital::computeDerivative2pz(double r,
                                              double y,
                                              double z,
                                              int i) {
-    // i determines which variable we are differentiation w.r.t., x, y, or z.
+    // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
         return -m_alpha*x*z * exp(-0.5*m_alpha*r) / (2*r);
     } else if (i==1) { // y derivative

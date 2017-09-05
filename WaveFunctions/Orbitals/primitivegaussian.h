@@ -4,9 +4,9 @@ class PrimitiveGaussian {
     friend class ContractedGaussian;
 
 private:
-    int     m_x;
-    int     m_y;
-    int     m_z;
+    int     m_i;
+    int     m_j;
+    int     m_k;
     double  m_Ax;
     double  m_Ay;
     double  m_Az;

@@ -19,9 +19,9 @@ PrimitiveGaussian::PrimitiveGaussian(int    i,
                                      double Az,
                                      double alpha,
                                      double constant) :
-        m_x         (i),
-        m_y         (j),
-        m_z         (k),
+        m_i         (i),
+        m_j         (j),
+        m_k         (k),
         m_Ax        (Ax),
         m_Ay        (Ay),
         m_Az        (Az),
@@ -31,58 +31,61 @@ PrimitiveGaussian::PrimitiveGaussian(int    i,
 
 double PrimitiveGaussian::operator()(double x, double y, double z) {
     const double r2 = x*x + y*y + z*z;
-    const double value = m_constant * pow(x, m_x) * pow(y, m_y) * pow(z, m_z) * exp(- m_alpha * r2);
+    const double value = m_constant * pow(x, m_i) * pow(y, m_j) * pow(z, m_k) * exp(- m_alpha * r2);
     m_currentValue = value;
     return value;
 }
 
 double PrimitiveGaussian::xDerivative(double x, double , double ) {
-    //const double value = (*this)(x, y, z);
-    return m_currentValue * ((m_x == 0) ? - 2 * m_alpha * x : m_x / x - 2 * m_alpha * x);
+    double value = m_currentValue;
+    //double value = 1;
+    return value * ((m_i == 0) ? - 2 * m_alpha * x : m_i / x - 2 * m_alpha * x);
 }
 
 double PrimitiveGaussian::yDerivative(double , double y, double ) {
-    //const double value = (*this)(x, y, z);
-    return m_currentValue * ((m_y == 0) ? - 2 * m_alpha * y : m_y / y - 2 * m_alpha * y);
+    double value = m_currentValue;
+    //double value = 1;
+    return value * ((m_j == 0) ? - 2 * m_alpha * y : m_j / y - 2 * m_alpha * y);
 }
 
 double PrimitiveGaussian::zDerivative(double , double , double z) {
-    //const double value = (*this)(x, y, z);
-    return m_currentValue * ((m_z == 0) ? - 2 * m_alpha * z : m_z / z - 2 * m_alpha * z);
+    double value = m_currentValue;
+    //double value = 1;
+    return value * ((m_k == 0) ? - 2 * m_alpha * z : m_k / z - 2 * m_alpha * z);
 }
 
 double PrimitiveGaussian::xxDerivative(double x, double , double ) {
     //m_currentValue = (*this)(x,y,z);
     const double a2 = 2*m_alpha;
-    if (m_x==0) {
+    if (m_i==0) {
         return a2*(a2*x*x - 1);
-    } else if (m_x==1) {
+    } else if (m_i==1) {
         return a2*(a2*x*x - 3);
     } else {
-        return (a2*x*x*(a2*x*x - 2*m_x - 1) + m_x*m_x - m_x) / (x*x);
+        return (a2*x*x*(a2*x*x - 2*m_i - 1) + m_i*m_i - m_i) / (x*x);
     }
 }
 
 double PrimitiveGaussian::yyDerivative(double , double y, double ) {
     //const double a2 = 2*m_alpha;
     const double a2 = 2*m_alpha;
-    if (m_y==0) {
+    if (m_j==0) {
         return a2*(a2*y*y - 1);
-    } else if (m_y==1) {
+    } else if (m_j==1) {
         return a2*(a2*y*y - 3);
     } else {
-        return (a2*y*y*(a2*y*y - 2*m_y - 1) + m_y*m_y - m_y) / (y*y);
+        return (a2*y*y*(a2*y*y - 2*m_j - 1) + m_j*m_j - m_j) / (y*y);
     }
 }
 
 double PrimitiveGaussian::zzDerivative(double , double , double z) {
     const double a2 = 2*m_alpha;
-    if (m_z==0) {
+    if (m_k==0) {
         return a2*(a2*z*z - 1);
-    } else if (m_z==1) {
+    } else if (m_k==1) {
         return a2*(a2*z*z - 3);
     } else {
-        return (a2*z*z*(a2*z*z - 2*m_z - 1) + m_z*m_z - m_z) / (z*z);
+        return (a2*z*z*(a2*z*z - 2*m_k - 1) + m_k*m_k - m_k) / (z*z);
     }
 }
 

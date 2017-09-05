@@ -270,7 +270,8 @@ bool UnitTest::testSlaterWithJastrowGaussianBe() {
     test->setImportanceSampling (true);
     test->setStepLength(0.01);
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
-    test->setOrbital     (new GaussianOrbital("He-321G"));
+    //test->setOrbital     (new GaussianOrbital("He-321G"));
+    test->setOrbital     (new GaussianOrbital("He-6311++G**"));
     test->addCore        (new Atom(test,pos,2,1,1));
     test->runMetropolis((int) 1e6);
 

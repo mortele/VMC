@@ -2,6 +2,8 @@
 #include <vector>
 
 class ContractedGaussian {
+    friend class PrimitiveGaussian;
+
 private:
     int                                     m_numberOfPrimitives;
     double                                  m_x;

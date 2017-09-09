@@ -315,7 +315,7 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
     test->setStepLength(0.03);
-    test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
+    test->setWaveFunction(new SlaterWithJastrow(test,beta,false));
     //test->setOrbital     (new GaussianOrbital("He-321G"));
     //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
     //test->setOrbital     (new GaussianOrbital("Be-STO-6G"));

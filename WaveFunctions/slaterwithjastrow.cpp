@@ -474,6 +474,8 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
             cout << endl;
         }
         cout << endl;
+
+        cout << m_system->getHamiltonian()->getKineticEnergy() << endl;
         exit(1);
     }
 }

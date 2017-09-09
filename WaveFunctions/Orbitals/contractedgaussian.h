@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <iostream>
 
 class ContractedGaussian {
     friend class PrimitiveGaussian;
@@ -23,5 +24,6 @@ public:
     double zDerivative(double x, double y, double z);
 
     double calculateLaplacian(double x, double y, double z);
+    friend std::ostream& operator<<(std::ostream& stream, const ContractedGaussian& contracted);
 };
 

@@ -47,8 +47,6 @@ double ContractedGaussian::xDerivative(double x, double y, double z) {
     for (int i = 0; i < m_numberOfPrimitives; i++) {
         PrimitiveGaussian*& primitive = m_primitives.at(i);
         result += primitive->xDerivative(x,y,z);// * primitive->getCurrentValue();
-
-        if (debugprint) printf("G(%10.6g,%d,%d,%d,%10.6g,r(x,y,z))\n",primitive->m_constant,primitive->m_i,primitive->m_j,primitive->m_k,primitive->m_alpha,primitive->getCurrentValue(),primitive->xDerivative(x,y,z));
     }
 
     double tmp = result;// /m_currentValue;
@@ -115,6 +113,19 @@ double ContractedGaussian::calculateLaplacian(double x, double y, double z) {
     return totalLaplacian;// / m_currentValue;
 }
 
+std::ostream& operator<<(std::ostream& stream, const ContractedGaussian& contracted) {
+
+    cout << "nucleus: " << "(" << contracted.m_x << ","
+                               << contracted.m_y << ","
+                               << contracted.m_z << ")" << endl;
+
+    int i = 0;
+    for (PrimitiveGaussian* primitive : contracted.m_primitives) {
+        stream << "   * primitive" << i << ": " << *primitive << endl;
+        i++;
+    }
+    return stream;
+}
 
 
 

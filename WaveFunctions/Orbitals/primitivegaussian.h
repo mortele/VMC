@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 class PrimitiveGaussian {
     friend class ContractedGaussian;
@@ -26,6 +27,8 @@ public:
                       double Az,
                       double alpha,
                       double constant);
+    double getConstantTerm() { return m_constant; }
+
     double operator()(double x, double y, double z);
     double getCurrentValue() { return m_currentValue; }
 
@@ -36,4 +39,6 @@ public:
     double xxDerivative(double x, double y, double z);
     double yyDerivative(double x, double y, double z);
     double zzDerivative(double x, double y, double z);
+
+    friend std::ostream& operator<<(std::ostream& stream, const PrimitiveGaussian& primitive);
 };

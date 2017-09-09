@@ -1,9 +1,10 @@
 #include "primitivegaussian.h"
 #include <cmath>
+#include <iomanip>
 
 using std::exp;
 
-double PrimitiveGaussian::pow(double a, int n) {
+inline double PrimitiveGaussian::pow(double a, int n) {
     double result = 1;
     for (int i=0; i<n; i++) {
         result *= a;
@@ -55,7 +56,6 @@ double PrimitiveGaussian::zDerivative(double , double , double z) {
 }
 
 double PrimitiveGaussian::xxDerivative(double x, double , double ) {
-    //m_currentValue = (*this)(x,y,z);
     const double a2 = 2*m_alpha;
     if (m_i==0) {
         return a2*(a2*x*x - 1);
@@ -67,7 +67,6 @@ double PrimitiveGaussian::xxDerivative(double x, double , double ) {
 }
 
 double PrimitiveGaussian::yyDerivative(double , double y, double ) {
-    //const double a2 = 2*m_alpha;
     const double a2 = 2*m_alpha;
     if (m_j==0) {
         return a2*(a2*y*y - 1);
@@ -89,3 +88,23 @@ double PrimitiveGaussian::zzDerivative(double , double , double z) {
     }
 }
 
+
+std::ostream& operator<<(std::ostream& stream, const PrimitiveGaussian& primitive) {
+    stream << std::setprecision(5) << primitive.m_constant;
+    stream << "(";
+    stream << primitive.m_i << ",";
+    stream << primitive.m_j << ",";
+    stream << primitive.m_k << ")";
+
+    /*if (primitive.xExponent() != 0) {
+        stream << " x^" << primitive.xExponent();
+    }
+    if (primitive.yExponent() != 0) {
+        stream << " y^" << primitive.yExponent();
+    }
+    if (primitive.zExponent() != 0) {
+        stream << " z^" << primitive.zExponent();
+    }*/
+    stream << " exp(- " << primitive.m_alpha << " r^2)";
+    return stream;
+}

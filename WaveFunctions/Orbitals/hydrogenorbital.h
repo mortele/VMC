@@ -24,10 +24,10 @@ private:
 public:
     HydrogenOrbital(double alpha);
 
-    double evaluate(double x, double y, double z, int index);
+    double evaluate(double x, double y, double z, int index, int spin=0);
     double computeDerivativeX(double x, double y, double z, int index);
     double computeDerivativeY(double x, double y, double z, int index);
     double computeDerivativeZ(double x, double y, double z, int index);
-    double computeDerivative(double x, double y, double z, int index, int dimension);
-    double computeLaplacian(double x, double y, double z, int index);
+    double computeDerivative(double x, double y, double z, int index, int dimension, int spin=0);
+    double computeLaplacian(double x, double y, double z, int index, int spin=0);
 };

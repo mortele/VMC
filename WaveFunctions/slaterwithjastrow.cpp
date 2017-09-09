@@ -40,7 +40,7 @@ void SlaterWithJastrow::updateSlaterGradient(double Rsd, int electron) {
     for (int dimension = 0; dimension < 3; dimension++) {
         double sum = 0;
         for (int j = 0; j < eLimit; j++) {
-            sum += m_orbital->computeDerivative(x,y,z,j,dimension) * slaterInverse(j,spinIndex);
+            sum += m_orbital->computeDerivative(x,y,z,j,dimension,spin) * slaterInverse(j,spinIndex);
         }
         slaterGradient(spinIndex, dimension) = sum / Rsd;
     }
@@ -120,7 +120,7 @@ void SlaterWithJastrow::updateSlaterInverse() {
                 for (int l = 0; l < eLimit; l++) {
                     // Maybe should be using the spinIndex instead of global
                     // index for the x,y,z here
-                    sum += oldS(l,j) * m_orbital->evaluate(x,y,z,l);
+                    sum += oldS(l,j) * m_orbital->evaluate(x,y,z,l,iSpin);
                 }
                 newS(k,j) = oldS(k,j) - oldS(k,i) * sum / m_Rsd;
             } else {
@@ -140,11 +140,11 @@ void SlaterWithJastrow::computeSlaterRatio() {
 
     if (m_spinChanged==1) {
         for (int j = 0; j < m_numberOfSpinUpElectrons; j++) {
-            sum += m_orbital->evaluate(xi,yi,zi,j) * m_slaterUp(j,i);
+            sum += m_orbital->evaluate(xi,yi,zi,j,1) * m_slaterUp(j,i);
         }
     } else {
         for (int j = 0; j < m_numberOfSpinDownElectrons; j++) {
-            sum += m_orbital->evaluate(xi,yi,zi,j) * m_slaterDown(j,i);
+            sum += m_orbital->evaluate(xi,yi,zi,j,0) * m_slaterDown(j,i);
         }
     }
     m_Rsd = sum;
@@ -178,7 +178,7 @@ void SlaterWithJastrow::computeSlaterLaplacian(int electron) {
         const double zi = iElectron->getPosition().at(2);
 
         for (int j = 0; j < eLimit; j++) {
-            const double jLaplacian = m_orbital->computeLaplacian(xi,yi,zi,j);
+            const double jLaplacian = m_orbital->computeLaplacian(xi,yi,zi,j,kSpin);
             value += (kSpin==1 ? m_slaterUp(j,i) : m_slaterDown(j,i)) * jLaplacian;
         }
     }
@@ -346,7 +346,7 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
         const double z = spinUpElectrons.at(electron)->getPosition().at(2);
 
         for (int basis = 0; basis < eUp; basis++) {
-            m_slaterUp(electron, basis) = m_orbital->evaluate(x,y,z,basis);
+            m_slaterUp(electron, basis) = m_orbital->evaluate(x,y,z,basis,1);
         }
     }
     for (int electron = 0; electron < eDown; electron++) {
@@ -355,7 +355,7 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
         const double z = spinDownElectrons.at(electron)->getPosition().at(2);
 
         for (int basis = 0; basis < eUp; basis++) {
-            m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis);
+            m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis,0);
         }
     }
 
@@ -419,16 +419,16 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
     }
     m_interElectronDistancesOld = m_interElectronDistances;
 
-    int i = m_system->getMetropolis()->getStep();
-    if (i == -1) {
+    int iii = m_system->getMetropolis()->getStep();
+    if (iii == 10) {
         cout << "==============================" << endl;
         cout << "==============================" << endl;
         cout << "==============================" << endl;
         cout << "==============================" << endl;
         cout << "==============================" << endl;
         cout << "==============================" << endl;
-        int eUp = 1;
-        int eDown= 1;
+        int eUp = 2;
+        int eDown= 2;
         m_slaterUp   = zeros<mat>(eUp,   eUp);
         m_slaterDown = zeros<mat>(eDown, eDown);
 
@@ -441,7 +441,7 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
             const double z = spinUpElectrons.at(electron)->getPosition().at(2);
 
             for (int basis = 0; basis < eUp; basis++) {
-                m_slaterUp(electron, basis) = m_orbital->evaluate(x,y,z,basis);
+                m_slaterUp(electron, basis) = m_orbital->evaluate(x,y,z,basis,1);
             }
         }
         for (int electron = 0; electron < eDown; electron++) {
@@ -450,14 +450,30 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
             const double z = spinDownElectrons.at(electron)->getPosition().at(2);
 
             for (int basis = 0; basis < eUp; basis++) {
-                m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis);
+                m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis,0);
             }
         }
 
-        cout << setprecision(13) << "DD1 = value(D()," << m_system->getElectrons().at(0)->getPosition()[0] << ", " << m_system->getElectrons().at(0)->getPosition()[1] << ", " << m_system->getElectrons().at(0)->getPosition()[2]<< ")" << endl;
-        cout << setprecision(13) << "DD2 = value(D()," << m_system->getElectrons().at(1)->getPosition()[0] << ", " << m_system->getElectrons().at(1)->getPosition()[1] << ", " << m_system->getElectrons().at(1)->getPosition()[2]<< ")" <<  endl;
-        cout << setprecision(13) << m_slaterUp  (0,0) << endl;
-        cout << setprecision(13) << m_slaterDown(0,0) << endl;
+        cout << setprecision(13) << "R = [[" << m_system->getElectrons().at(0)->getPosition()[0] << ", " << m_system->getElectrons().at(0)->getPosition()[1] << ", " << m_system->getElectrons().at(0)->getPosition()[2]<< "]," << endl;
+        cout << setprecision(13) << "     [" << m_system->getElectrons().at(1)->getPosition()[0] << ", " << m_system->getElectrons().at(1)->getPosition()[1] << ", " << m_system->getElectrons().at(1)->getPosition()[2]<< "]," <<  endl;
+        cout << setprecision(13) << "     [" << m_system->getElectrons().at(2)->getPosition()[0] << ", " << m_system->getElectrons().at(2)->getPosition()[1] << ", " << m_system->getElectrons().at(2)->getPosition()[2]<< "]," <<  endl;
+        cout << setprecision(13) << "     [" << m_system->getElectrons().at(3)->getPosition()[0] << ", " << m_system->getElectrons().at(3)->getPosition()[1] << ", " << m_system->getElectrons().at(3)->getPosition()[2]<< "]]" <<  endl;
+
+
+        for (int i =0; i<2; i++) {
+            for (int j =0; j<2; j++) {
+                cout << setprecision(13) << m_slaterUp(i,j)  << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+        for (int i =0; i<2; i++) {
+            for (int j =0; j<2; j++) {
+                cout << setprecision(13) << m_slaterDown(i,j)  << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
         exit(1);
     }
 }

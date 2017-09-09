@@ -14,7 +14,7 @@ HydrogenOrbital::HydrogenOrbital(double alpha) :
 }
 
 
-double HydrogenOrbital::evaluate(double x, double y, double z, int index) {
+double HydrogenOrbital::evaluate(double x, double y, double z, int index, int spin) {
     const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
         return evaluate1s(r);
@@ -90,7 +90,8 @@ double HydrogenOrbital::computeDerivative(double x,
                                           double y,
                                           double z,
                                           int    index,
-                                          int    dimension) {
+                                          int    dimension,
+                                          int    spin) {
     if (dimension==0) {
         return computeDerivativeX(x,y,z,index);
     } else if (dimension==1) {
@@ -100,7 +101,7 @@ double HydrogenOrbital::computeDerivative(double x,
     }
 }
 
-double HydrogenOrbital::computeLaplacian(double x, double y, double z, int index) {
+double HydrogenOrbital::computeLaplacian(double x, double y, double z, int index, int spin) {
     const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
         return computeLaplacian1s(r);

@@ -51,8 +51,8 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
-    cout << testSlaterWithJastrowGaussian() << endl;
-    //cout << testSlaterWithJastrowGaussianHe() << endl;
+    //cout << testSlaterWithJastrowGaussian() << endl;
+    cout << testSlaterWithJastrowGaussianHe() << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -305,19 +305,22 @@ bool UnitTest::testSlaterWithJastrowGaussian() {
 
 bool UnitTest::testSlaterWithJastrowGaussianHe() {
     boost::timer t;
-    Random::randomSeed();
+    //Random::randomSeed();
+    Random::seed(92573385);
 
     System* test = setupNewTestSystem();
     arma::vec pos = {0,0,0};
     //double alpha = 1.843;
-    double beta  = 0.00100;
+    double beta  = 0.094;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.1);
+    test->setStepLength(0.03);
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
     //test->setOrbital     (new GaussianOrbital("He-321G"));
-    test->setOrbital     (new GaussianOrbital("He-6311++G**"));
-    test->addCore        (new Atom(test,pos,2,1,1));
+    //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
+    //test->setOrbital     (new GaussianOrbital("Be-STO-6G"));
+    test->setOrbital     (new GaussianOrbital("Be-3-21G"));
+    test->addCore        (new Atom(test,pos,4,2,2));
     double E = test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;

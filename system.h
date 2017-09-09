@@ -23,8 +23,8 @@ private:
 
 public:
     System();
-    void runMetropolis                (int steps);
-    void runMetropolisSilent          (int steps);
+    double runMetropolis                (int steps);
+    double runMetropolisSilent          (int steps);
     void adjustPositionOfElectron     (int electron, int dimension, double adjustment);
     void addCore                      (class Core* core);
     void setWaveFunction              (class WaveFunction* waveFunction);
@@ -39,6 +39,7 @@ public:
     class Sampler*               getSampler()           { return m_sampler;            }
     class Hamiltonian*           getHamiltonian()       { return m_hamiltonian;        }
     class WaveFunction*          getWaveFunction()      { return m_waveFunction;       }
+    class Metropolis*            getMetropolis()        { return m_metropolis;         }
     std::vector<class Core*>     getCores()             { return m_cores;              }
     std::vector<class Electron*> getElectrons()         { return m_electrons;          }
     std::vector<class Electron*> getSpinUpElectrons()   { return m_spinUpElectrons;    }

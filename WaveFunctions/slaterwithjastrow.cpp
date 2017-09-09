@@ -2,6 +2,7 @@
 #include "system.h"
 #include "electron.h"
 #include "hamiltonian.h"
+#include "metropolis.h"
 #include <armadillo>
 #include <vector>
 #include <iomanip>
@@ -18,7 +19,7 @@ using std::setprecision;
 SlaterWithJastrow::SlaterWithJastrow(System*    system,
                                      double     beta,
                                      bool       useJastrow) :
-        WaveFunction(system) {
+    WaveFunction(system) {
     m_beta                      = beta;
     m_useNumericalDerivatives   = false;
     m_jastrow                   = useJastrow;
@@ -304,37 +305,9 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
         m_system->getSpinDownElectrons().at(electron)->setSpinIndex(electron);
     }
 
-    /*
-    vec{-1.5037, -1.2662, 0.3342}
-    coordinatesNew(0,0) = -1.5037;
-    coordinatesNew(0,1) = -1.2662;
-    coordinatesNew(0,2) = 0.3342;
-
-    vec{0.2958, 0.9744, 0.6983}
-    coordinatesNew(1,0) = 0.2958;
-    coordinatesNew(1,1) = 0.9744;
-    coordinatesNew(1,2) = 0.6983;
-
-    vec{-2.5037, -2.2662, 2.3342}
-    coordinatesNew(2,0) = -2.5037;
-    coordinatesNew(2,1) = -2.2662;
-    coordinatesNew(2,2) = 2.3342;
-
-    vec{1.2958, -0.9744, 3.6983}
-    coordinatesNew(3,0) = 1.2958;
-    coordinatesNew(3,1) = -0.9744;
-    coordinatesNew(3,2) = 3.6983;
-    */
-
-    //m_system->getElectrons().at(0)->setPosition(vec{-1.5037, -1.2662, 0.3342});
-    //m_system->getElectrons().at(1)->setPosition(vec{ 0.2958,  0.9744, 0.6983});
-    //m_system->getElectrons().at(2)->setPosition(vec{-2.5037, -2.2662, 2.3342});
-    //m_system->getElectrons().at(3)->setPosition(vec{ 1.2958, -0.9744, 3.6983});
-
     m_spinMatrix             = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
     m_electronPositions      = zeros<mat>(m_numberOfElectrons, 3);
     m_interElectronDistances = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
-
 
     for (int i = 0; i < m_numberOfElectrons; i++) {
         Electron* iElectron = m_system->getElectrons().at(i);
@@ -404,8 +377,8 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     for (int electron = 0; electron < m_numberOfElectrons; electron++) {
         updateSlaterGradient(1.0, electron);
         computeSlaterLaplacian(electron);   // This is called N-2 too many times,
-                                            // but that shouldnt affect runtime
-                                            // in any substantial way.
+        // but that shouldnt affect runtime
+        // in any substantial way.
         if (m_jastrow) {
             updateJastrowGradient(electron);
             updateJastrowLaplacianTerms(electron);
@@ -445,6 +418,48 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
         m_slaterDownOld = m_slaterDown;
     }
     m_interElectronDistancesOld = m_interElectronDistances;
+
+    int i = m_system->getMetropolis()->getStep();
+    if (i == -1) {
+        cout << "==============================" << endl;
+        cout << "==============================" << endl;
+        cout << "==============================" << endl;
+        cout << "==============================" << endl;
+        cout << "==============================" << endl;
+        cout << "==============================" << endl;
+        int eUp = 1;
+        int eDown= 1;
+        m_slaterUp   = zeros<mat>(eUp,   eUp);
+        m_slaterDown = zeros<mat>(eDown, eDown);
+
+        vector<Electron*> spinUpElectrons   = m_system->getSpinUpElectrons();
+        vector<Electron*> spinDownElectrons = m_system->getSpinDownElectrons();
+
+        for (int electron = 0; electron < eUp; electron++) {
+            const double x = spinUpElectrons.at(electron)->getPosition().at(0);
+            const double y = spinUpElectrons.at(electron)->getPosition().at(1);
+            const double z = spinUpElectrons.at(electron)->getPosition().at(2);
+
+            for (int basis = 0; basis < eUp; basis++) {
+                m_slaterUp(electron, basis) = m_orbital->evaluate(x,y,z,basis);
+            }
+        }
+        for (int electron = 0; electron < eDown; electron++) {
+            const double x = spinDownElectrons.at(electron)->getPosition().at(0);
+            const double y = spinDownElectrons.at(electron)->getPosition().at(1);
+            const double z = spinDownElectrons.at(electron)->getPosition().at(2);
+
+            for (int basis = 0; basis < eUp; basis++) {
+                m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis);
+            }
+        }
+
+        cout << setprecision(13) << "DD1 = value(D()," << m_system->getElectrons().at(0)->getPosition()[0] << ", " << m_system->getElectrons().at(0)->getPosition()[1] << ", " << m_system->getElectrons().at(0)->getPosition()[2]<< ")" << endl;
+        cout << setprecision(13) << "DD2 = value(D()," << m_system->getElectrons().at(1)->getPosition()[0] << ", " << m_system->getElectrons().at(1)->getPosition()[1] << ", " << m_system->getElectrons().at(1)->getPosition()[2]<< ")" <<  endl;
+        cout << setprecision(13) << m_slaterUp  (0,0) << endl;
+        cout << setprecision(13) << m_slaterDown(0,0) << endl;
+        exit(1);
+    }
 }
 
 void SlaterWithJastrow::updateWaveFunctionAfterRejectedStep() {

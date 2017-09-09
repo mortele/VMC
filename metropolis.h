@@ -32,5 +32,6 @@ public:
     void setImportanceSampling(bool importanceSampling);
     void runSteps(int steps);
     void runStepsSilent(int steps);
+    int  getStep() { return m_i; }
 };
 

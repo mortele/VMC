@@ -46,14 +46,16 @@ void System::setupSpinElectronArrays() {
     m_numberOfSpinDownElectrons = m_spinDownElectrons.size();
 }
 
-void System::runMetropolis(int steps) {
+double System::runMetropolis(int steps) {
     setup();
     m_metropolis->runSteps(steps);
+    return m_sampler->getEnergy();
 }
 
-void System::runMetropolisSilent(int steps) {
+double System::runMetropolisSilent(int steps) {
     setup();
     m_metropolis->runStepsSilent(steps);
+    return m_sampler->getEnergy();
 }
 
 void System::setWaveFunction(WaveFunction* waveFunction) {

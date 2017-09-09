@@ -19,11 +19,14 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 #include <boost/timer.hpp>
+#include <fstream>
 
 
 using std::cout;
 using std::endl;
+using std::setprecision;
 using arma::zeros;
 using arma::vec;
 
@@ -48,7 +51,8 @@ bool UnitTest::runAllTests() {
     //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
     //cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
-    cout << testSlaterWithJastrowGaussianBe() << endl;
+    cout << testSlaterWithJastrowGaussian() << endl;
+    //cout << testSlaterWithJastrowGaussianHe() << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
     return true;
@@ -257,24 +261,64 @@ bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
     return true;
 }
 
-bool UnitTest::testSlaterWithJastrowGaussianBe() {
+bool UnitTest::testSlaterWithJastrowGaussian() {
     boost::timer t;
     Random::randomSeed();
 
-    printf("%-40s", "Imp. sampling Slater w. Jastrow (Gaussian basis) (Be)"); fflush(stdout);
+
+    //printf("%-40s", "Imp. sampling Slater w. Jastrow (Gaussian basis) (Be)"); fflush(stdout);
+
+    std::ofstream outFile;
+    outFile.open("betaEnergy.txt", std::ios::out);
+    if (! outFile.is_open()) {
+        cout << "coudlnt open file." << endl;
+        exit(1);
+    }
+
+    int    n     = 100;
+    double beta0 = 0.1;
+    double beta1 = 0.9;
+    double db    = (beta1-beta0)/n;
+
+    for (int i = 0; i < n; i++) {
+        System* test = setupNewTestSystem();
+        arma::vec pos = {0,0,0};
+        //double alpha = 1.843; // 3.983;
+        double beta  = beta0+db*i; //0.4; //0.347; // 0.094;
+        test->setElectronInteraction(true);
+        test->setImportanceSampling (true);
+        test->setStepLength(0.01);
+        test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
+        test->setOrbital     (new GaussianOrbital("He-321G"));
+        //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
+        test->addCore        (new Atom(test,pos,2,1,1));
+        double E = test->runMetropolisSilent((int) 5e5);
+        outFile << setprecision(16) << beta << " " << E << endl;
+        printf("%10g %10g \n", beta, E);
+        if (i % 1 == 0) fflush(stdout);
+    }
+    outFile.close();
+    double elapsedTime = t.elapsed();
+    cout << "Elapsed time: " << elapsedTime << endl;
+    return true;
+}
+
+bool UnitTest::testSlaterWithJastrowGaussianHe() {
+    boost::timer t;
+    Random::randomSeed();
+
     System* test = setupNewTestSystem();
     arma::vec pos = {0,0,0};
-    double alpha = 1.843; // 3.983;
-    double beta  = 0.1; //0.347; // 0.094;
+    //double alpha = 1.843;
+    double beta  = 0.00100;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.01);
+    test->setStepLength(0.1);
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
     //test->setOrbital     (new GaussianOrbital("He-321G"));
     test->setOrbital     (new GaussianOrbital("He-6311++G**"));
     test->addCore        (new Atom(test,pos,2,1,1));
-    test->runMetropolis((int) 1e6);
-
+    double E = test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;
     return true;

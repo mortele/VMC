@@ -18,6 +18,7 @@ public:
     static bool testGaussianSlaterHydrogenMolecule();
     static bool HO3d();
     static bool testImportanceSampledSlaterWithJastrowBe();
-    static bool testSlaterWithJastrowGaussianBe();
+    static bool testSlaterWithJastrowGaussian();
+    static bool testSlaterWithJastrowGaussianHe();
 };
 

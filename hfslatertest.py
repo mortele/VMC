@@ -30,9 +30,9 @@ class Contracted :
 		self.primitives.append(primitive)
 	def __call__(self, x,y,z) :
 		x,y,z = x-self.Ax,y-self.Ay,z-self.Az
-		v = self.primitives[0](x,y,z)
+		v = self.primitives[0]([x,y,z])
 		for i in range(1,self.numberOfPrimitives) :
-			v += self.primitives[i](x,y,z)
+			v += self.primitives[i]([x,y,z])
 		return v
 	def __str__(self) :
 		string = "Contracted @(%3.1g,%3.1g,%3.1g) :\n" % \
@@ -46,15 +46,15 @@ class Basis :
 		self.Cu = Cu
 		self.Cd = Cd
 		self.basis = []
-	def addBasisFunction(f) :
+	def addBasisFunction(self, f) :
 		self.basis.append(f)
 	def __call__(self, x,y,z,index,spin) :
 		C = self.Cu
 		if spin==0 :
 			C = self.Cd
-		v = self.Cu[index][0] * self.basis[0](x,y,z)
+		v = C[index][0] * self.basis[0](x,y,z)
 		for i in range(1,len(self.basis)) :
-			v += self.Cu[index][i] * self.basis[i](x,y,z)
+			v += C[index][i] * self.basis[i](x,y,z)
 		return v
 
 
@@ -108,10 +108,14 @@ for i in range(numberOfSpinDownElectrons) :
 inFile.close()
 
 #===========================================================================
-R = [[0.278167628856, -4.238416802148, -0.5432147532112],
-     [-1.88033748609, 1.867496255763, 2.707593002034],
-     [-2.993552651848, -1.081825109678, -1.583887689758],
-     [-1.880942784354, 2.157179898052, -1.021396690302]]
+R = [[-2.232577556201, -2.027172478823, -1.847618479869],
+     [-0.09484430410055, 0.6015963661268, -0.4881592969004],
+     [-0.5670967224069, -3.856472063511, -0.4809414284783],
+     [0.5196217494483, 0.621255038224, 1.99644060499]]
+Ru = [	[R[0][0], R[0][1], R[0][2]],
+		[R[1][0], R[1][1], R[1][2]]]
+Rd = [	[R[2][0], R[2][1], R[2][2]],
+		[R[3][0], R[3][1], R[3][2]]]
 #===========================================================================
 x1,y1,z1 = symbols('x_1 y_1 z_1')
 x2,y2,z2 = symbols('x_2 y_2 z_2')
@@ -123,19 +127,80 @@ r1 		 = [x1,y1,z1]
 r2 		 = [x2,y2,z2]
 r3 		 = [x3,y3,z3]
 r4 		 = [x4,y4,z4]
+rr 		 = [r1,r2,r3,r4]
+ru 		 = [r1,r2]
+rd 		 = [r3,r4]
 #===========================================================================
 
 class Det :
-	def __init__(self) :
+	def __init__(self, spin=None) :
+		self.spin = spin
 		self.du = [[None for i in range(numberOfSpinUpElectrons)] \
-					for j in range(numberOfSpinUpElectrons)]
+						 for j in range(numberOfSpinUpElectrons)]
 		self.dd = [[None for i in range(numberOfSpinDownElectrons)] \
-					for j in range(numberOfSpinDownElectrons)]
+						 for j in range(numberOfSpinDownElectrons)]
+		if spin==None :
+			self.setupDu()
+			self.setupDd()
+		else :
+			if spin==1 :
+				self.setupDu()
+			else :
+				self.setupDd()
 	def setupDu(self) :
-		
+		for i in range(numberOfSpinUpElectrons) :
+			for j in range(numberOfSpinUpElectrons) :
+				self.du[i][j] = basis(*ru[i],j,1)
+		self.du = Matrix(self.du)
+	def setupDd(self) :
+		for i in range(numberOfSpinDownElectrons) :
+			for j in range(numberOfSpinDownElectrons) :
+				self.dd[i][j] = basis(*rd[i],j,0)
+		self.dd = Matrix(self.dd)
+	def __call__(self, spin=None) :
+		if spin==None :
+			if self.spin != None :
+				spin = self.spin
+			else :
+				spin = 1
+		return self.du if (spin==1) else self.dd
+	def value(self, spin=None) :
+		if spin==None :
+			if self.spin != None :
+				spin = self.spin
+			else :
+				spin = 1
+		if spin==1 :
+			return self.du.subs({x1:R[0][0],y1:R[0][1],z1:R[0][2],
+								 x2:R[1][0],y2:R[1][1],z2:R[1][2],
+								 x3:R[2][0],y3:R[2][1],z3:R[2][2],
+								 x4:R[3][0],y4:R[3][1],z4:R[3][2]})
+		else :
+			return self.dd.subs({x1:R[0][0],y1:R[0][1],z1:R[0][2],
+								 x2:R[1][0],y2:R[1][1],z2:R[1][2],
+								 x3:R[2][0],y3:R[2][1],z3:R[2][2],
+								 x4:R[3][0],y4:R[3][1],z4:R[3][2]})
 
+def laplacian(f) :
+	return 	diff(f,x1,x1) + diff(f,y1,y1) + diff(f,z1,z1) + \
+			diff(f,x2,x2) + diff(f,y2,y2) + diff(f,z2,z2) + \
+			diff(f,x3,x3) + diff(f,y3,y3) + diff(f,z3,z3) + \
+			diff(f,x4,x4) + diff(f,y4,y4) + diff(f,z4,z4)
 
+def value(f) :
+	return f.subs({x1:R[0][0],y1:R[0][1],z1:R[0][2],
+				   x2:R[1][0],y2:R[1][1],z2:R[1][2],
+				   x3:R[2][0],y3:R[2][1],z3:R[2][2],
+				   x4:R[3][0],y4:R[3][1],z4:R[3][2]})
 
+Du = Det(1)
+Dd = Det(0)
+
+Su = det(Du.du)
+Sd = det(Dd.dd)
+
+print(value(laplacian(Su)/Su))
+print(value(laplacian(Sd)/Sd))
 
 sys.exit(1)
 

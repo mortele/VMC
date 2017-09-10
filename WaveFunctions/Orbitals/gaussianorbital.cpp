@@ -3,14 +3,15 @@
 #include "WaveFunctions/Orbitals/contractedgaussian.h"
 #include <iostream>
 #include <iomanip>
+#include "system.h"
 
 using std::cout;
 using std::endl;
 using std::setprecision;
 
-GaussianOrbital::GaussianOrbital(std::string basisFileName) {
+GaussianOrbital::GaussianOrbital(System* system, std::string basisFileName) {
     m_parser = new HartreeFockBasisParser();
-    m_parser->parseBasisFile(basisFileName);
+    m_parser->parseBasisFile(system, basisFileName);
     m_basis = m_parser->getBasis();
     m_spinUpCoefficients   = m_parser->getSpinUpCoefficients();
     m_spinDownCoefficients = m_parser->getSpinDownCoefficients();

@@ -1,4 +1,6 @@
 #include "hartreefockbasisparser.h"
+#include "system.h"
+#include "Cores/atom.h"
 #include "WaveFunctions/Orbitals/primitivegaussian.h"
 #include "WaveFunctions/Orbitals/contractedgaussian.h"
 #include <fstream>
@@ -38,7 +40,8 @@ using arma::zeros;
  * ...
  * ____________________________________________________________________________
  */
-void HartreeFockBasisParser::parseBasisFile(string fileName) {
+void HartreeFockBasisParser::parseBasisFile(System* system, string fileName) {
+    m_system = system;
     std::ifstream basisFile;
     basisFile.open(fileName, std::ios::in);
     if (! basisFile.is_open()) {
@@ -60,7 +63,10 @@ void HartreeFockBasisParser::parseBasisFile(string fileName) {
 
     m_atomCharges  .reserve(m_numberOfAtoms);
     m_atomPositions.reserve(m_numberOfAtoms);
+    m_atoms        .reserve(m_numberOfAtoms);
 
+    int eUp     = 0;
+    int eDown   = 0;
     for (int atom = 0; atom < m_numberOfAtoms; atom++) {
         int    Z = 0;
         double x = 0;
@@ -69,9 +75,29 @@ void HartreeFockBasisParser::parseBasisFile(string fileName) {
         basisFile >> Z >> x >> y >> z;
         m_atomCharges.push_back(Z);
         m_atomPositions.push_back(vec{x,y,z});
-    }
-    m_basis.reserve(m_basisSize);
 
+        int eUpNext, eDownNext;
+        if ((eUp != eDown) && ((Z % 2) != 0)) {
+            if (eUp > eDown) {
+                eUpNext     = Z / 2;
+                eDownNext   = Z / 2 + 1;
+            } else {
+                eUpNext     = Z / 2 + 1;
+                eDownNext   = Z / 2;
+            }
+        } else {
+            eUpNext     = Z / 2;
+            eDownNext   = Z / 2;
+        }
+        m_atoms.push_back(new Atom(m_system,m_atomPositions.at(atom),Z,eUpNext,eDownNext));
+        eUp     += eUpNext;
+        eDown   += eDownNext;
+    }
+    for (int atom = 0; atom < m_numberOfAtoms; atom++) {
+        m_system->addCore(m_atoms.at(atom));
+    }
+
+    m_basis.reserve(m_basisSize);
     for (int basisFunction = 0; basisFunction < m_basisSize; basisFunction++) {
         int primitives;
         double atomx, atomy, atomz;

@@ -214,7 +214,7 @@ bool UnitTest::testGaussianSlaterHydrogenMolecule() {
     System* test = setupNewTestSystem();
     HartreeFockBasisParser* parser = new HartreeFockBasisParser();
     //parser->parseBasisFile("../HartreeFock/HartreeFockBases/basis-2017-08-31-20.29.20");
-    parser->parseBasisFile("../HartreeFock/HartreeFockBases/basis-2017-09-01-12.34.04");
+    parser->parseBasisFile(test, "../HartreeFock/HartreeFockBases/basis-2017-09-01-12.34.04");
     test->setWaveFunction(new GaussianSlater(test, parser));
     //test->setStepLength(2.5);
     test->runMetropolis((int) 1e7);
@@ -289,7 +289,7 @@ bool UnitTest::testSlaterWithJastrowGaussian() {
         test->setImportanceSampling (true);
         test->setStepLength(0.01);
         test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
-        test->setOrbital     (new GaussianOrbital("He-321G"));
+        test->setOrbital     (new GaussianOrbital(test, "He-321G"));
         //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
         test->addCore        (new Atom(test,pos,2,1,1));
         double E = test->runMetropolisSilent((int) 5e5);
@@ -309,8 +309,6 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     Random::seed(92573385);
 
     System* test = setupNewTestSystem();
-    arma::vec pos = {0,0,0};
-    //double alpha = 1.843;
     double beta  = 0.094;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
@@ -319,9 +317,8 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     //test->setOrbital     (new GaussianOrbital("He-321G"));
     //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
     //test->setOrbital     (new GaussianOrbital("Be-STO-6G"));
-    test->setOrbital     (new GaussianOrbital("Be-3-21G"));
-    test->addCore        (new Atom(test,pos,4,2,2));
-    double E = test->runMetropolis((int) 1e7);
+    test->setOrbital     (new GaussianOrbital(test, "Be-3-21G"));
+    test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;
     return true;

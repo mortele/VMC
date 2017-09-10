@@ -13,12 +13,14 @@ private:
     arma::mat       m_spinUpCoefficients;
     arma::mat       m_spinDownCoefficients;
     std::string     m_fileName;
+    class System*                           m_system;
     std::vector<int>                        m_atomCharges;
     std::vector<arma::vec>                  m_atomPositions;
     std::vector<class ContractedGaussian*>  m_basis;
+    std::vector<class Atom*>                m_atoms;
 
 public:
-    void parseBasisFile(std::string fileName);
+    void parseBasisFile(class System* system, std::string fileName);
 
     int getNumberOfElectrons()               { return m_numberOfElectrons; }
     int getNumberOfSpinUpElectrons()         { return m_numberOfSpinUpElectrons; }

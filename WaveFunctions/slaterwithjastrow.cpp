@@ -354,7 +354,7 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
         const double y = spinDownElectrons.at(electron)->getPosition().at(1);
         const double z = spinDownElectrons.at(electron)->getPosition().at(2);
 
-        for (int basis = 0; basis < eUp; basis++) {
+        for (int basis = 0; basis < eDown; basis++) {
             m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis,0);
         }
     }
@@ -449,7 +449,7 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
             const double y = spinDownElectrons.at(electron)->getPosition().at(1);
             const double z = spinDownElectrons.at(electron)->getPosition().at(2);
 
-            for (int basis = 0; basis < eUp; basis++) {
+            for (int basis = 0; basis < eDown; basis++) {
                 m_slaterDown(electron, basis) = m_orbital->evaluate(x,y,z,basis,0);
             }
         }
@@ -475,7 +475,7 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
         }
         cout << endl;
 
-        cout << m_system->getHamiltonian()->getKineticEnergy() << endl;
+        cout << m_slaterLaplacianDown << " " << m_slaterLaplacianUp << " " << m_slaterLaplacian << endl;
         exit(1);
     }
 }

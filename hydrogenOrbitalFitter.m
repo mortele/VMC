@@ -16,7 +16,8 @@ m = 0;
 
 norm = sqrt(4)*(alpha)^(3/2); %((2*Z)/n)^(1/4) * sqrt(factorial(n-l-1)/(2*n*factorial(n+l)));
 
-s1 = @(x) norm .* exp(-alpha.*x);
+s1 = @(x) norm .* exp(-1.0*alpha.*x);
+s11 = @(x) 2.734 .* exp(-1.228.*x);
 y = s1(x);
 
 
@@ -33,6 +34,7 @@ g1_6 = @(x) G(0.00916359628,35.52322122,x)  + G(0.04936149294,6.513143725,x)  + 
 
 dx = mean(diff(x));
 Is1   = sum(dx * x.^2.*s1  (x).^2)
+%Is11  = sum(dx * x.^2.*s11 (x).^2)
 Ig4_2 = sum(dx * x.^2.*g4_2(x).^2)
 Ig4_3 = sum(dx * x.^2.*g4_3(x).^2)
 Ig4_6 = sum(dx * x.^2.*g4_6(x).^2)
@@ -40,6 +42,8 @@ Ig4_6 = sum(dx * x.^2.*g4_6(x).^2)
 Ig1_2 = sum(dx * x.^2.*g1_2(x).^2)
 Ig1_3 = sum(dx * x.^2.*g1_3(x).^2)
 Ig1_6 = sum(dx * x.^2.*g1_6(x).^2)
+
+y2 = g1_6(x);
 
 plot(x,x.^2.*s1(x),'k--', 'DisplayName', '1s')
 grid('on')

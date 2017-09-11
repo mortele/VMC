@@ -420,7 +420,7 @@ void SlaterWithJastrow::updateWaveFunctionAfterAcceptedStep() {
     m_interElectronDistancesOld = m_interElectronDistances;
 
     int iii = m_system->getMetropolis()->getStep();
-    if (iii == 200) {
+    if (iii == -1) {
         cout << "==============================" << endl;
         cout << "==============================" << endl;
         cout << "==============================" << endl;

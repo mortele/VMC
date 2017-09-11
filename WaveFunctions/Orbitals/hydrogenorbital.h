@@ -6,6 +6,9 @@ class HydrogenOrbital : public Orbital {
 private:
     double  m_alpha  = 1.0;
     double  m_alpha2 = 1.0;
+    double  m_1sNormalization = 1;
+    double  m_2sNormalization = 1;
+    double  m_2pNormalization = 1;
 
     double evaluate1s (double r);
     double evaluate2s (double r);

@@ -193,123 +193,60 @@ def value(f) :
 				   x3:R[2][0],y3:R[2][1],z3:R[2][2],
 				   x4:R[3][0],y4:R[3][1],z4:R[3][2]})
 
-Du = Det(1)
-Dd = Det(0)
-
-Su = det(Du.du)
-Sd = det(Dd.dd)
-
-print(value(laplacian(Su)/Su))
-print(value(laplacian(Sd)/Sd))
-
-sys.exit(1)
-
-
+#Du = Det(1)
+#Dd = Det(0)
+#
+#Su = det(Du.du)
+#Sd = det(Dd.dd)
+#
+#print(value(laplacian(Su)/Su))
+#print(value(laplacian(Sd)/Sd))
+#
+#sys.exit(1)
 
 
+x     = Symbol('x',     real=True)
+y     = Symbol('y',     real=True)
+z     = Symbol('z',     real=True)
+a     = Symbol('alpha', real=True, positive=True)
+r     = Symbol('r',     real=True, positive=True)
+phi   = Symbol('phi',   real=True)
+theta = Symbol('theta', real=True)
 
 
-i,j,k 		= symbols('i j k', integer=True)
-C, alpha 	= symbols('C alpha')
-x,y,z 		= symbols('x y z')
-r 			= [x,y,z]
+psi_1s  = exp(-a*sqrt(x**2+y**2+z**2))
+psi_2s  = (1-a*r/2)*exp(-a*r/2)
+psi_2px = x*exp(-a*r/2)
+psi_2py = y*exp(-a*r/2)
+psi_2pz = z*exp(-a*r/2)
 
-def Gp(C,i,j,k,a,R) :
-	r2 = np.dot(R,R)
-	return C*r[0]**i * r[1]**j * r[2]**k * exp(-a * r2)
+def integrand(f) :
+	return f*r**2*sin(theta)
 
-def Gc(p,R) :
-	if isinstance(p[0],list) :
-		s = Gp(*p[0],R)
-		for i in range(1,len(p)) :
-			s += Gp(*p[i],R)
-		return s
-	else :
-		return Gp(*p,R)
+def sphericalIntegral(f) :
+	f = f.subs(sqrt(x**2+y**2+z**2), r)
+	f = f.subs(x, r*sin(theta)*cos(phi))
+	f = f.subs(y, r*sin(theta)*sin(phi))
+	f = f.subs(z, r*cos(theta))
+	return integrate(integrate(integrate(integrand(f),(theta,0,pi)),(phi,0,2*pi)),(r,0,oo))
 
-#===========================================================================
-electrons = 4
-eUp       = 2
-eDown     = 2
-#===========================================================================
-HF = [[-0.99281, -0.076425,  0.028727], 
-	  [ 0.21571, -0.229340, -0.822350],
-	  [-0.99281, -0.076425,  0.028727], 
-	  [-0.21571,  0.229340,  0.822350]]
-#===========================================================================
-contracted1 = 	[[ 0.06442630000000,0,0,0,71.887600000000006], 
-				 [ 0.36609600000000,0,0,0,10.728899999999999],
-				 [ 0.69593400000000,0,0,0, 2.222050000000000]]
-contracted2 = 	[[-0.42106400000000,0,0,0, 1.295480000000000],
-				 [ 1.22407000000000,0,0,0, 0.268881000000000]]
-contracted3 = 	[[ 1.00000000000000,0,0,0, 0.077350000000000]]
-#===========================================================================
-basis = [contracted1,contracted2,contracted3]
-#===========================================================================
+N_1s  = simplify(sqrt(1/sphericalIntegral(psi_1s**2)))
+N_2s  = simplify(sqrt(1/sphericalIntegral(psi_2s**2)))
+N_2px = simplify(sqrt(1/sphericalIntegral(psi_2px**2)))
+N_2py = simplify(sqrt(1/sphericalIntegral(psi_2py**2)))
+N_2pz = simplify(sqrt(1/sphericalIntegral(psi_2pz**2)))
 
-
-
-x1,y1,z1 = symbols('x_1 y_1 z_1')
-x2,y2,z2 = symbols('x_2 y_2 z_2')
-x3,y3,z3 = symbols('x_3 y_3 z_3')
-x4,y4,z4 = symbols('x_4 y_4 z_4')
-
-Rs = [[x1,y1,z1],[x2,y2,z2],[x3,y3,z3],[x4,y4,z4]]
-
-def value(f,X,Y,Z) :
-	return f.subs({x:X, y:Y, z:Z})
-
-def Du(orbital,R) :
-	d = HF[orbital][0]*Gc(basis[0],R)
-	for i in range(1,3) :
-		d += HF[orbital][i]*Gc(basis[i],R)
-	return d
-
-
-SlaterUp      = [[None for i in range(2)] for j in range(2)]
-SlaterDown    = [[None for i in range(2)] for j in range(2)]
-
-for i in range(eUp) : # electron
-	for j in range(eUp) : # orbital
-		SlaterUp[i][j] = Du(j+2,Rs[i][:])
-
-for i in range(eUp) : # electron
-	for j in range(eUp) : # orbital
-		SlaterDown[i][j] = Du(j, Rs[2+i][:])
-
-
-def subsVal(a) :
-	return a.subs({x1:R[0][0],y1:R[0][1],z1:R[0][2],x2:R[1][0],y2:R[1][1],z2:R[1][2],x3:R[2][0],y3:R[2][1],z3:R[2][2],x4:R[3][0],y4:R[3][1],z4:R[3][2]})
-
-
-def laplacian(D) :
-	return 	diff(D,x1,x1)+diff(D,x2,x2)+diff(D,x3,x3) + \
-			diff(D,y1,y1)+diff(D,y2,y2)+diff(D,y3,y3) + \
-			diff(D,z1,z1)+diff(D,z2,z2)+diff(D,z3,z3)
-
-matUp 	= Matrix(SlaterUp)
-matDown = Matrix(SlaterDown)
-
-pprint(subsVal(matDown))
-pprint(subsVal(matUp))
-
-laplacianUp   = laplacian(det(matUp))
-laplacianDown = laplacian(det(matDown))
-
-Ku = subsVal(laplacianUp/det(matUp))
-Kd = subsVal(laplacianDown/det(matDown))
-print(Ku,Kd,Ku+Kd)
+print("", end="\n       ")
+print("N_1s:");   pprint(N_1s);  print("",end="\n       ")
+print("N_2s:");   pprint(N_2s);  print("",end="\n       ")
+print("N_2px:");  pprint(N_2px); print("",end="\n       ")
+print("N_2py:");  pprint(N_2py); print("",end="\n       ")
+print("N_2pz:");  pprint(N_2pz); print("",end="\n       ")
 
 
 
 
-
-
-
-
-
-
-
+pprint(diff(N_1s*psi_1s,x).subs(sqrt(x**2+y**2+z**2), r))
 
 
 

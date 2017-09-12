@@ -241,12 +241,13 @@ print("N_1s:");   pprint(N_1s);  print("",end="\n       ")
 print("N_2s:");   pprint(N_2s);  print("",end="\n       ")
 print("N_2px:");  pprint(N_2px); print("",end="\n       ")
 print("N_2py:");  pprint(N_2py); print("",end="\n       ")
-print("N_2pz:");  pprint(N_2pz); print("",end="\n       ")
+print("N_2pz:");  pprint(N_2pz); print("",end="\n\n")
 
 
+d = N_2s * psi_2s
+d = d.subs(r,sqrt(x**2+y**2+z**2))
 
-
-pprint(diff(N_1s*psi_1s,x).subs(sqrt(x**2+y**2+z**2), r))
+pprint(simplify((diff(d,x)/N_2s).subs(sqrt(x**2+y**2+z**2), r)))
 
 
 

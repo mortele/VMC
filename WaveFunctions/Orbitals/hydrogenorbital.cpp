@@ -143,11 +143,11 @@ double HydrogenOrbital::evaluate2p(double r, double x) {
 
 double HydrogenOrbital::computeDerivative1s(double r, double x) {
     // x ≡ x or y or z, the variable we are differentiating w.r.t.
-    return (-m_alpha) * x * exp(-m_alpha*r) / r;
+    return m_1sNormalization * (-m_alpha) * x * exp(-m_alpha*r) / r;
 }
 
 double HydrogenOrbital::computeDerivative2s(double r, double x) {
-    return 0.25*m_alpha * (m_alpha * r - 4) * x * exp(-0.5* m_alpha*r) / r;
+    return m_2sNormalization * 0.25*m_alpha * (m_alpha * r - 4) * x * exp(-0.5* m_alpha*r) / r;
 }
 
 double HydrogenOrbital::computeDerivative2px(double  r,
@@ -155,7 +155,7 @@ double HydrogenOrbital::computeDerivative2px(double  r,
                                              double  y,
                                              double  z,
                                              int     i) {
-    const double N = 1;
+    const double N = m_2pNormalization;
     // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
         return -N*(m_alpha*x*x - 2*r) * exp(-0.5*m_alpha*r) / (2*r);
@@ -172,7 +172,7 @@ double HydrogenOrbital::computeDerivative2py(double r,
                                              double z,
                                              int    i) {
     // i determines which variable we are differentiating w.r.t., x, y, or z.
-    const double N = 1;
+    const double N = m_2pNormalization;
     if (i==0) { // x derivative
         return -N*m_alpha*x*y * exp(-0.5*m_alpha*r) / (2*r);
     } else if (i==1) { // y derivative
@@ -187,7 +187,7 @@ double HydrogenOrbital::computeDerivative2pz(double r,
                                              double y,
                                              double z,
                                              int i) {
-    const double N = 1;
+    const double N = m_2pNormalization;
     // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
         return -N*m_alpha*x*z * exp(-0.5*m_alpha*r) / (2*r);
@@ -199,16 +199,16 @@ double HydrogenOrbital::computeDerivative2pz(double r,
 }
 
 double HydrogenOrbital::computeLaplacian1s(double r) {
-    return 1 * (m_alpha2 - 2 * m_alpha / r) * exp(-m_alpha * r);
+    return m_1sNormalization * (m_alpha2 - 2 * m_alpha / r) * exp(-m_alpha * r);
 }
 
 double HydrogenOrbital::computeLaplacian2s(double r) {
-    return 1 * (1.25 * m_alpha2 - 2 * m_alpha / r - 0.125 * m_alpha2*m_alpha * r) * exp(-0.5* m_alpha * r);
+    return m_2sNormalization * (1.25 * m_alpha2 - 2 * m_alpha / r - 0.125 * m_alpha2*m_alpha * r) * exp(-0.5* m_alpha * r);
 }
 
 double HydrogenOrbital::computeLaplacian2p(double r, double x) {
     // x ≡ x or y or z, for 2px, 2py, and 2pz, respectively.
-    return 1 * m_alpha*x * (m_alpha*r - 8.) * exp(-0.5*m_alpha*r) / (4*r);
+    return m_2pNormalization * m_alpha*x * (m_alpha*r - 8.) * exp(-0.5*m_alpha*r) / (4*r);
 }
 
 

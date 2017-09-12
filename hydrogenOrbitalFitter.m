@@ -5,51 +5,178 @@ clc;
 format;
 
 
-%% 
+%% Parameters
 N = 1000;
-alpha = 3.68; %3.69%1.2415; %3.983;
-x = logspace(0,log10(3),N)-1;%linspace(0,1.5,N);
-Z = 1;
-n = 1;
-l = 0;
-m = 0;
-
-norm = (alpha^3/(2*pi))^(1/2);%sqrt(4)*(alpha)^(3/2); %((2*Z)/n)^(1/4) * sqrt(factorial(n-l-1)/(2*n*factorial(n+l)));
-
-s1 = @(x) norm .* exp(-1.0*alpha.*x);
-s11 = @(x) 2.734 .* exp(-1.228.*x);
-y = s1(x);
+a = 3.983;
+x = logspace(0,log10(5),N)-1;
+x = x';
 
 
-%% GGGGGGGGGGGGG
+%% Wave function
+norm1 = sqrt(a^3/pi);
+norm2 = sqrt(a^3/(8*pi));
+s1 = @(x) norm1 .* exp(-1.0*a.*x);
+s2 = @(x) norm2 .* (1 - a * 0.5*x) .* exp(-a * 0.5 .* x);
+y = s2(x);
+figure(1);
+plot(x,y,'k--','DisplayName','1s');
+hold on;
+
+
+%% Primitive function
 g = @(c,a,x) c*exp(-a*x.^2);
-%% G111111111111
-a11 = 8.549;
-c11 = 2.222;
-G1 = @(c,a,x) g(c11,a11,x);
+
+
+%% STO-1G
+f = fit(x,y,'c1*exp(-a1*x.^2)',...
+        'StartPoint',randn([2 1]),...
+        'Lower',[0 -1e4],...
+        'Upper',[1e4 1e4],...
+        'Algorithm','Trust-Region',...
+        'Normalize','off',...
+        'MaxIter',1e4,...
+        'MaxFunEvals',1e4,...
+        'DiffMinChange',1e-8,...
+        'Robust','LAR')
+c11 = f.c1;
+a11 = f.a1;
+G1 = @(x) g(c11,a11,x);
+plot(x,G1(x),'DisplayName','STO-1G');
+
+%% STO-2G
+f = fit(x,y,'c1*exp(-a1*x.^2)+c2*exp(-a2*x.^2)',...
+        'StartPoint',randn([4 1]),...
+        'Lower',[0 0 -1e4 -1e4],...
+        'Upper',[1e4 1e4 1e4 1e4],...
+        'Algorithm','Trust-Region',...
+        'Normalize','off',...
+        'MaxIter',1e4,...
+        'MaxFunEvals',1e4,...
+        'DiffMinChange',1e-8,...
+        'Robust','LAR')
+c12 = f.c1;
+c22 = f.c2;
+a12 = f.a1;
+a22 = f.a2;
+G2 = @(x) g(c12,a12,x) + g(c22,a22,x);
+plot(x,G2(x),'DisplayName','STO-2G');
+
+%% STO-3G
+f = fit(x,y,'c1*exp(-a1*x.^2)+c2*exp(-a2*x.^2)+c3*exp(-a3*x.^2)',...
+        'StartPoint',randn([6 1]),...
+        'Lower',[0 0 0 -1e4 -1e4 -1e4],...
+        'Upper',[1e4 1e4 1e4 1e4 1e4 1e4],...
+        'Algorithm','Trust-Region',...
+        'Normalize','off',...
+        'MaxIter',1e4,...
+        'MaxFunEvals',1e4,...
+        'DiffMinChange',1e-8,...
+        'Robust','LAR')
+c13 = f.c1;
+c23 = f.c2;
+c33 = f.c3;
+a13 = f.a1;
+a23 = f.a2;
+a33 = f.a3;
+G3 = @(x) g(c13,a13,x) + g(c23,a23,x) + g(c33,a33,x);
+plot(x,G3(x),'DisplayName','STO-3G');
+
+%% STO-4G
+f = fit(x,y,'c1*exp(-a1*x.^2)+c2*exp(-a2*x.^2)+c3*exp(-a3*x.^2)+c4*exp(-a4*x.^2)',...
+        'StartPoint',randn([8 1]),...
+        'Lower',[0 0 0 0 -1e4 -1e4 -1e4 -1e4],...
+        'Upper',[1e4 1e4 1e4 1e4 1e4 1e4 1e4],...
+        'Algorithm','Trust-Region',...
+        'Normalize','off',...
+        'MaxIter',1e5,...
+        'MaxFunEvals',1e5,...
+        'DiffMinChange',1e-8,...
+        'Robust','LAR')
+c14 = f.c1;
+c24 = f.c2;
+c34 = f.c3;
+c44 = f.c4;
+a14 = f.a1;
+a24 = f.a2;
+a34 = f.a3;
+a44 = f.a4;
+G4 = @(x) g(c14,a14,x) + g(c24,a24,x) + g(c34,a34,x) + g(c44,a44,x);
+plot(x,G4(x),'DisplayName','STO-4G');
+
+%% STO-5G
+f = fit(x,y,'c1*exp(-a1*x.^2)+c2*exp(-a2*x.^2)+c3*exp(-a3*x.^2)+c4*exp(-a4*x.^2)+c5*exp(-a5*x.^2)',...
+        'StartPoint',randn([10 1]),...
+        'Lower',[0 0 0 0 0 -1e4 -1e4 -1e4 -1e4 -1e4],...
+        'Upper',[1e4 1e4 1e4 1e4 1e4 1e4 1e4 1e4 1e4],...
+        'Algorithm','Trust-Region',...
+        'Normalize','off',...
+        'MaxIter',1e4,...
+        'MaxFunEvals',1e4,...
+        'DiffMinChange',1e-8,...
+        'Robust','LAR')
+c15 = f.c1;
+c25 = f.c2;
+c35 = f.c3;
+c45 = f.c4;
+c55 = f.c5;
+a15 = f.a1;
+a25 = f.a2;
+a35 = f.a3;
+a45 = f.a4;
+a55 = f.a5;
+G5 = @(x) g(c15,a15,x) + g(c25,a25,x) + g(c35,a35,x) + g(c45,a45,x) + g(c55,a55,x);
+plot(x,G5(x),'DisplayName','STO-5G');
+
+%% STO-6G
+f = fit(x,y,'c1*exp(-a1*x.^2)+c2*exp(-a2*x.^2)+c3*exp(-a3*x.^2)+c4*exp(-a4*x.^2)+c5*exp(-a5*x.^2)+c6*exp(-a6*x.^2)',...
+        'StartPoint',randn([12 1]),...
+        'Lower',[0 0 0 0 0 0 -1e4 -1e4 -1e4 -1e4 -1e4 -1e4],...
+        'Upper',[1e4 1e4 1e4 1e4 1e4 1e4 1e4 1e4 1e4 1e4 1e4],...
+        'Algorithm','Trust-Region',...
+        'Normalize','off',...
+        'MaxIter',1e4,...
+        'MaxFunEvals',1e4,...
+        'DiffMinChange',1e-8,...
+        'Robust','LAR')
+c16 = f.c1;
+c26 = f.c2;
+c36 = f.c3;
+c46 = f.c4;
+c56 = f.c5;
+c66 = f.c6;
+a16 = f.a1;
+a26 = f.a2;
+a36 = f.a3;
+a46 = f.a4;
+a56 = f.a5;
+a66 = f.a6;
+G6 = @(x) g(c16,a16,x) + g(c26,a26,x) + g(c36,a36,x) + g(c46,a46,x) + g(c56,a56,x) + g(c66,a66,x);
+plot(x,G6(x),'DisplayName','STO-6G');
 
 
 
-%% G555555555555
-a1 = 0.7196;
-a2 = 38.68;
-a3 = 10.21;
-a4 = 1.584;
-a5 = 3.721;
-c1 = 0.02483;
-c2 = 0.7012;
-c3 = 0.7402;
-c4 = 0.2209;
-c5 = 0.5587;
-G5 = @(x) g(c1,a1,x)+g(c2,a2,x)+g(c3,a3,x)+g(c4,a4,x)+g(c5,a5,x);
 
-plot(x,G5(x));
-hold on
-plot(x,s1(x));
-
-
-
-
+% %% GGGGGGGGGGGGG
+% g = @(c,a,x) c*exp(-a*x.^2);
+% %% G111111111111
+% a11 = 8.549;
+% c11 = 2.222;
+% G1 = @(c,a,x) g(c11,a11,x);
+% 
+% 
+% 
+% %% G555555555555
+% a1 = 0.7196;
+% a2 = 38.68;
+% a3 = 10.21;
+% a4 = 1.584;
+% a5 = 3.721;
+% c1 = 0.02483;
+% c2 = 0.7012;
+% c3 = 0.7402;
+% c4 = 0.2209;
+% c5 = 0.5587;
+% G5 = @(x) g(c1,a1,x)+g(c2,a2,x)+g(c3,a3,x)+g(c4,a4,x)+g(c5,a5,x);
 % 
 % nor = @(a) (2*a/pi).^(3./4);
 % G   = @(c,a,x) nor(a) * c * exp(-a.*x.^2); 

@@ -313,14 +313,13 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     double beta  = 0.094;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.03);
+    test->setStepLength(0.01);
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
     //test->setOrbital     (new GaussianOrbital("He-321G"));
     //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
-    //test->setOrbital     (new GaussianOrbital("Be-STO-6G"));
-    //test->setOrbital     (new GaussianOrbital(test, "Be-3-21G"));
-    test->setOrbital(new HydrogenOrbital(alpha));
-    test->addCore(new Atom(test,vec{0,0,0},4,2,2));
+    test->setOrbital     (new GaussianOrbital(test, "Be-STO-6G"));
+    //test->setOrbital(new HydrogenOrbital(alpha));
+    //test->addCore(new Atom(test,vec{0,0,0},4,2,2));
     test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;

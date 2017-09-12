@@ -28,10 +28,10 @@ using std::setprecision;
 
 int main(int, char**) {
 
-    STOFitter fit(3.98);
-    fit.computeFit(3);
+    //STOFitter fit(3.98);
+    //fit.computeFit(3);
 
-    //UnitTest::runAllTests();
+    UnitTest::runAllTests();
     return 0;
 }
 

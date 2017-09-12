@@ -8,6 +8,7 @@
 #include <chrono>
 #include "Math/exponentialapproximations.h"
 #include "RandomNumberGenerator/random.h"
+#include "stofitter.h"
 
 #ifdef ARMA_NO_DEBUG
     #undef ARMA_NO_DEBUG
@@ -24,8 +25,13 @@ using std::exp;
 using std::log2;
 using std::setprecision;
 
+
 int main(int, char**) {
-    UnitTest::runAllTests();
+
+    STOFitter fit(3.98);
+    fit.computeFit(3);
+
+    //UnitTest::runAllTests();
     return 0;
 }
 

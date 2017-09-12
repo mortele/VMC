@@ -209,9 +209,14 @@ x     = Symbol('x',     real=True)
 y     = Symbol('y',     real=True)
 z     = Symbol('z',     real=True)
 a     = Symbol('alpha', real=True, positive=True)
+b 	  = Symbol('beta',  real=True, positive=True)
 r     = Symbol('r',     real=True, positive=True)
 phi   = Symbol('phi',   real=True)
 theta = Symbol('theta', real=True)
+C 	  = Symbol('C',     real=True)
+i     = Symbol('i',     real=True, positive=True)
+j     = Symbol('j',     real=True, positive=True)
+k     = Symbol('k',     real=True, positive=True)
 
 
 psi_1s  = exp(-a*sqrt(x**2+y**2+z**2))
@@ -231,23 +236,90 @@ def sphericalIntegral(f) :
 	return integrate(integrate(integrate(integrand(f),(theta,0,pi)),(phi,0,2*pi)),(r,0,oo))
 
 N_1s  = simplify(sqrt(1/sphericalIntegral(psi_1s**2)))
-N_2s  = simplify(sqrt(1/sphericalIntegral(psi_2s**2)))
-N_2px = simplify(sqrt(1/sphericalIntegral(psi_2px**2)))
-N_2py = simplify(sqrt(1/sphericalIntegral(psi_2py**2)))
-N_2pz = simplify(sqrt(1/sphericalIntegral(psi_2pz**2)))
+#N_2s  = simplify(sqrt(1/sphericalIntegral(psi_2s**2)))
+#N_2px = simplify(sqrt(1/sphericalIntegral(psi_2px**2)))
+#N_2py = simplify(sqrt(1/sphericalIntegral(psi_2py**2)))
+#N_2pz = simplify(sqrt(1/sphericalIntegral(psi_2pz**2)))
 
 print("", end="\n       ")
 print("N_1s:");   pprint(N_1s);  print("",end="\n       ")
-print("N_2s:");   pprint(N_2s);  print("",end="\n       ")
-print("N_2px:");  pprint(N_2px); print("",end="\n       ")
-print("N_2py:");  pprint(N_2py); print("",end="\n       ")
-print("N_2pz:");  pprint(N_2pz); print("",end="\n\n")
+#print("N_2s:");   pprint(N_2s);  print("",end="\n       ")
+#print("N_2px:");  pprint(N_2px); print("",end="\n       ")
+#print("N_2py:");  pprint(N_2py); print("",end="\n       ")
+#print("N_2pz:");  pprint(N_2pz); print("",end="\n\n")
+
+sys.modules[__name__].__dict__.clear()
+import numpy as np
+from math import factorial, sqrt, pi
+import matplotlib.pyplot as plt
 
 
-d = N_2s * psi_2s
-d = d.subs(r,sqrt(x**2+y**2+z**2))
+fact = factorial
+def doubleFactorial(n):
+  if n % 2 == 1:
+    k = (n+1)/2
+    return fact(2*k) / (2**k * fact(k))
+  else:
+    return 2**k * fact(k)
 
-pprint(simplify((diff(d,x)/N_2s).subs(sqrt(x**2+y**2+z**2), r)))
+G4_1s = [[[ 11.53566900,0.43012800000],[ 2.053343000,0.67891400000]],
+		 [[ 30.16787100,0.15432897000],[ 5.495115300,0.53532814000],[ 1.487192700,0.44463454000]],
+		 [[312.87049370,0.00916359628],[57.364462530,0.04936149294],[16.048509400,0.16853830490],[5.5130961190,0.37056279970],[2.1408965530,0.41649152980],[0.8817394283,0.13033408410]]]
+
+
+G4_2s = [[[ 0.508163000, 0.04947200000],[0.1288840000, 0.96378200000]],
+		 [[ 1.314833100,-0.09996723000],[0.3055389000, 0.39951283000],[0.0993707000, 0.70011547]],
+		 [[13.633247440,-0.01325278809],[2.6983754640,-0.04699171014],[0.8386530829,-0.03378537151],[0.3226600698, 0.25024178610],[0.1401314882, 0.59511725260],[0.0642325139, 0.24070617630]]]
+
+G4_2p = [[[ 0.508163000,0.5115410000],[0.1288840000,0.6128200000]],
+		 [[ 1.314833100,0.1559162700],[0.3055389000,0.6076837200],[0.0993707000,0.3919573900]],
+		 [[13.633247440,0.0037596966],[2.6983754640,0.0376793698],[0.8386530829,0.1738967435],[0.3226600698,0.4180364347],[0.1401314882,0.4258595477],[0.0642325139,0.1017082955]]]
+
+
+def psi_1s(a,r) :
+	return sqrt(a**3/pi) * np.exp(-a*r)
+def psi_2s(a,r) :
+	return sqrt(a**3/(3*pi)) * (a*r) * np.exp(-a*r)
+
+def norm(a,c,i,j,k) :
+	return  c*(2*a/pi)**(3/4.) * \
+			sqrt((4*a)**(i+j+k) / (doubleFactorial(2*i-1) * doubleFactorial(2*j-1) * doubleFactorial(2*k-1)))
+
+def prim(a,c,r,i,j,k) :
+	if (i+j+k) > 1 :
+		print("no")
+		sys.exit(1)
+	return norm(a,c,i,j,k) * r**(i+j+k) * np.exp(-a*r**2)
+
+def G(Z,n,index,r,i=0,j=0,k=0) :
+	l = [G4_1s,G4_2s,G4_2p]
+	b = l[n][index]
+	print(b)
+	val = prim(b[0][0],b[0][1],r,i,j,k)
+	for ii in range(1,len(b)) :
+		val += prim(b[ii][0],b[ii][1],r,i,j,k)
+	return val
+
+
+N = 1000
+r = np.linspace(0,3,N)
+y = G(4,1,0,r)
+psi = psi_2s(3.68,r)
+
+plt.plot(r,y**2*r**2)
+plt.hold('on')
+plt.plot(r,psi**2*r**2)
+plt.legend(['STO-2G','Hydro'])
+plt.show()
+
+
+
+
+
+
+
+
+
 
 
 

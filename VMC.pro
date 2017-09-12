@@ -35,7 +35,21 @@ SOURCES += main.cpp \
     WaveFunctions/Orbitals/hydrogenorbital.cpp \
     WaveFunctions/slaterwithjastrow.cpp \
     WaveFunctions/Orbitals/orbital.cpp \
-    WaveFunctions/Orbitals/gaussianorbital.cpp
+    WaveFunctions/Orbitals/gaussianorbital.cpp \
+    Optimization/interpolation.cpp \
+    Optimization/ap.cpp \
+    Optimization/dataanalysis.cpp \
+    Optimization/fasttransforms.cpp \
+    Optimization/integration.cpp \
+    Optimization/linalg.cpp \
+    Optimization/optimization.cpp \
+    Optimization/solvers.cpp \
+    Optimization/specialfunctions.cpp \
+    Optimization/statistics.cpp \
+    Optimization/alglibinternal.cpp \
+    Optimization/alglibmisc.cpp \
+    Optimization/diffequations.cpp \
+    stofitter.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -64,4 +78,19 @@ HEADERS += \
     WaveFunctions/slaterwithjastrow.h \
     /usr/local/include/armadillo_bits/config.hpp \
     WaveFunctions/Orbitals/orbital.h \
-    WaveFunctions/Orbitals/gaussianorbital.h
+    WaveFunctions/Orbitals/gaussianorbital.h \
+    Optimization/stdafx.h \
+    Optimization/interpolation.h \
+    Optimization/ap.h \
+    Optimization/dataanalysis.h \
+    Optimization/fasttransforms.h \
+    Optimization/integration.h \
+    Optimization/linalg.h \
+    Optimization/optimization.h \
+    Optimization/solvers.h \
+    Optimization/specialfunctions.h \
+    Optimization/statistics.h \
+    Optimization/alglibinternal.h \
+    Optimization/alglibmisc.h \
+    Optimization/diffequations.h \
+    stofitter.h

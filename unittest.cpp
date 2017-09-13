@@ -313,11 +313,11 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     System* test = setupNewTestSystem();
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.025);
+    test->setStepLength(0.01);
     //=========================================================================
-    /*====================*/ string atom     = "He";
-    /*====================*/ string orbital  = "Slater";
-    /*====================*/ string basis    = "He-STO-6G";
+    /*====================*/ string atom     = "Be";
+    /*====================*/ string orbital  = "Gaussian";
+    /*====================*/ string basis    = "Be-STO-3G";
     //=========================================================================
     double alpha, beta;
     if (atom=="He") {

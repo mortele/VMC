@@ -5,13 +5,13 @@ clc;
 format;
 
 %% Parameters
-n = 5;
-N = 100;
+n = 6;
+N = 1000;
 Z = 4;
 a = 3.983;
 x1 = logspace(0,log10(2+1),N)-1;
 x1 = x1';
-x2 = linspace(0,4.5,N);
+x2 = logspace(0,log10(6+1),N)-1;
 x2 = x2';
 A  = logical([ones(1,n) zeros(1,n)]);
 C  = logical([zeros(1,n) ones(1,n)]);

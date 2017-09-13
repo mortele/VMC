@@ -317,7 +317,7 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     //=========================================================================
     /*====================*/ string atom     = "Be";
     /*====================*/ string orbital  = "Gaussian";
-    /*====================*/ string basis    = "Be-STO-3G";
+    /*====================*/ string basis    = "Be-STO-6G";
     //=========================================================================
     double alpha, beta;
     if (atom=="He") {
@@ -341,7 +341,7 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     } else {
         test->setOrbital(new GaussianOrbital(test, basis));
     }
-    test->runMetropolis((int) 1e7);
+    test->runMetropolis((int) 5e6);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;
     return true;

@@ -310,8 +310,8 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     Random::seed(92573385);
 
     System* test = setupNewTestSystem();
-    double alpha = 1.843; //3.983;
-    double beta  = 0.347; //0.094;
+    double alpha = 10.22;//3.983;//1.843;
+    double beta  = 0.091;//0.094;//0.347;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
     test->setStepLength(0.015);
@@ -321,7 +321,7 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     //test->setOrbital     (new GaussianOrbital(test, "He-STO-6G"));
     test->setOrbital(new SlaterTypeOrbital(alpha));
     //test->setOrbital(new HydrogenOrbital(alpha));
-    test->addCore(new Atom(test,vec{0,0,0},2,1,1));
+    test->addCore(new Atom(test,vec{0,0,0},10,5,5));
     test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;

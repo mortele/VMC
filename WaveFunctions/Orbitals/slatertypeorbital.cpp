@@ -11,14 +11,14 @@ using std::setprecision;
 SlaterTypeOrbital::SlaterTypeOrbital(double alpha) :
         Orbital() {
 
-    double pi = acos(-1);
+    double pi = acos(-1.);
     m_alpha  = alpha;
     m_alpha2 = m_alpha*m_alpha;
     double a3 = pow(m_alpha,3);
     double a5 = pow(m_alpha,5);
     double a7 = pow(m_alpha,7);
     m_1sNormalization = sqrt(a3/pi);
-    m_2sNormalization = sqrt(a5/(3*pi));
+    m_2sNormalization = (1/4.)*sqrt(a5/(6*pi));
     m_2pNormalization = sqrt(2*a7/(15*pi));
 }
 
@@ -27,7 +27,7 @@ double SlaterTypeOrbital::evaluate1s(double r) {
 }
 
 double SlaterTypeOrbital::evaluate2s(double r) {
-    return m_2sNormalization * r * exp(-m_alpha * r);
+    return m_2sNormalization * r * exp(-0.5 * m_alpha * r);
 }
 
 double SlaterTypeOrbital::evaluate2p(double r, double x) {
@@ -35,11 +35,12 @@ double SlaterTypeOrbital::evaluate2p(double r, double x) {
 }
 
 double SlaterTypeOrbital::computeDerivative1s(double r, double x) {
-    return m_1sNormalization * (-m_alpha) * x * exp(-m_alpha*r) / r;
+    return -evaluate1s(r) * m_alpha * x / r ;
 }
 
 double SlaterTypeOrbital::computeDerivative2s(double r, double x) {
-    return m_2sNormalization * x * exp(-m_alpha * r) * (1/r - m_alpha);
+    //return m_2sNormalization * x * exp(-0.5 * m_alpha * r) * (m_alpha -2/r) / 2.;
+    return - sqrt(pow(m_alpha,5)/(6*acos(-1.))) * exp(-0.5*m_alpha*r) * x * (-2 + r*m_alpha) / (8 * r);
 }
 
 double SlaterTypeOrbital::computeDerivative2px(double r,
@@ -96,8 +97,9 @@ double SlaterTypeOrbital::computeLaplacian1s(double r) {
 }
 
 double SlaterTypeOrbital::computeLaplacian2s(double r) {
-    // N = √a^5 / √(3 pi)
-    return evaluate2s(r) / (r*r) * (2 - 4*r*m_alpha + r*r*m_alpha2);
+    // N = √a^5 / 4√(6 pi)
+    //return evaluate2s(r) / (r*r) * (2 - 4*r*m_alpha + r*r*m_alpha2);
+    return m_2sNormalization / (4 * r) * exp(-0.5*m_alpha*r) * (8 - 8*r*m_alpha + r*r*m_alpha2);
 }
 
 double SlaterTypeOrbital::computeLaplacian2p(double r, double x) {

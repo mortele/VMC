@@ -156,35 +156,36 @@ void Metropolis::printInitialInfo() {
     printf("      ------------------------------------------------------- \n\n");
     printf(" ==================================================================================== \n");
     printf(" %18s %5s %27s %10s \n", " ", "Total", " ", "Block" );
-    printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Variance", "Energy", "Variance", "Acc. rate", "Virial r.");
+    printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Std.dev.", "Energy", "Variance", "Acc. rate", "Virial r.");
     printf(" ------------------------------------------------------------------------------------ \n");
     fflush(stdout);
 }
 
 void Metropolis::printIterationInfo(int iteration) {
-    const int skip = 100000;
-    if (iteration != 0 && iteration % (20 * skip) == 0) {
+    const int skip = 2500;
+    if (iteration != 0 && iteration % (20*20 * skip) == 0) {
         printf(" ==================================================================================== \n");
         printf(" %18s %5s %27s %10s \n", " ", "Total", " ", "Block" );
-        printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Variance", "Energy", "Variance", "Acc. rate", "Virial r.");
+        printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Std.dev.", "Energy", "Variance", "Acc. rate", "Virial r.");
         printf(" ------------------------------------------------------------------------------------ \n");
     }
     if (iteration != 0 && iteration % skip == 0) {
         const int exponent  = log10(iteration);
         const int preFactor = iteration / pow(10, exponent);
 
-        m_sampler->computeAverages();
         m_sampler->computeBlockAverages();
-
+        m_sampler->computeAverages();
+        if (iteration % (20 * skip) == 0) {
         printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g %12.5g\n",
                preFactor,
                exponent,
                m_sampler->getEnergy(),
-               m_sampler->getVariance(),
+               m_sampler->getStandardDeviation(),
                m_sampler->getBlockEnergy(),
                m_sampler->getBlockVariance(),
                m_sampler->getBlockAcceptanceRate(),
                m_sampler->getBlockVirialRatio());
+        }
     }
     fflush(stdout);
 }

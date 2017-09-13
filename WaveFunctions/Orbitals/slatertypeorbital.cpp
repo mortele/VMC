@@ -1,12 +1,17 @@
 #include "slatertypeorbital.h"
 #include <cmath>
+#include <iostream>
+#include <iomanip>
 #include "WaveFunctions/Orbitals/orbital.h"
+
+using std::cout;
+using std::endl;
+using std::setprecision;
 
 SlaterTypeOrbital::SlaterTypeOrbital(double alpha) :
         Orbital() {
 
     double pi = acos(-1);
-
     m_alpha  = alpha;
     m_alpha2 = m_alpha*m_alpha;
     double a3 = pow(m_alpha,3);
@@ -30,7 +35,7 @@ double SlaterTypeOrbital::evaluate2p(double r, double x) {
 }
 
 double SlaterTypeOrbital::computeDerivative1s(double r, double x) {
-    return evaluate1s(r) * x/r;
+    return m_1sNormalization * (-m_alpha) * x * exp(-m_alpha*r) / r;
 }
 
 double SlaterTypeOrbital::computeDerivative2s(double r, double x) {
@@ -87,7 +92,7 @@ double SlaterTypeOrbital::computeDerivative2pz(double r,
 
 double SlaterTypeOrbital::computeLaplacian1s(double r) {
     // N = √a^3 / √pi
-    return evaluate1s(r) * m_alpha * (r*m_alpha - 2) / r;
+    return m_1sNormalization * (m_alpha2 - 2 * m_alpha / r) * exp(-m_alpha * r);
 }
 
 double SlaterTypeOrbital::computeLaplacian2s(double r) {

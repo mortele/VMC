@@ -31,6 +31,12 @@ private:
     double   m_blockCumulativePotentialEnergy    = 0;
     double   m_blockVirialRatio                  = 0;
 
+    double   m_blockingEnergy                    = 0;
+    double   m_blockingEnergy2                   = 0;
+    double   m_blockingVariance                  = 0;
+    double   m_blockingStandardDeviation         = 0;
+    int      m_numberOfBlocks                    = 0;
+
     class System*       m_system      = nullptr;
     class Hamiltonian*  m_hamiltonian = nullptr;
 
@@ -47,7 +53,8 @@ private:
 public:
     Sampler(class System* system);
 
-    double getEnergy()              { return m_energy;              }
-    double getVariance()            { return m_variance;            }
-    double getAcceptanceRate()      { return m_acceptanceRate;      }
+    double getEnergy()              { return m_energy;                      }
+    double getVariance()            { return m_blockingVariance;            }
+    double getStandardDeviation()   { return m_blockingStandardDeviation;   }
+    double getAcceptanceRate()      { return m_acceptanceRate;              }
 };

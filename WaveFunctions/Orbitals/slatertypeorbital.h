@@ -1,4 +1,5 @@
 #pragma once
+#include "WaveFunctions/Orbitals/orbital.h"
 
 class SlaterTypeOrbital : public Orbital {
 private:

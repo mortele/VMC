@@ -4,6 +4,7 @@
 #include "electron.h"
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 using std::cout;
 using std::endl;
@@ -47,12 +48,16 @@ void Sampler::sample(bool acceptedStep) {
 }
 
 void Sampler::computeAverages() {
-    const double E             = m_cumulativeEnergy        / m_totalSamplesTaken;
-    const double E2            = m_cumulativeEnergySquared / m_totalSamplesTaken;
-    m_acceptanceRate           = m_totalAccepted           / m_totalSamplesTaken;
-    m_energy                   = E;
-    m_variance                 = (E2-E*E) / m_totalSamplesTaken;
-    m_numberOfMetropolisSteps  = m_totalSamplesTaken;
+    const double E              = m_cumulativeEnergy        / m_totalSamplesTaken;
+    const double E2             = m_cumulativeEnergySquared / m_totalSamplesTaken;
+    const double blockingE      = m_blockingEnergy          / m_numberOfBlocks;
+    const double blockingE2     = m_blockingEnergy2         / m_numberOfBlocks;
+    m_acceptanceRate            = m_totalAccepted           / m_totalSamplesTaken;
+    m_energy                    = E;
+    m_variance                  = (E2-E*E) / m_totalSamplesTaken;
+    m_numberOfMetropolisSteps   = m_totalSamplesTaken;
+    m_blockingVariance          = (blockingE2-blockingE*blockingE) / m_numberOfBlocks;
+    m_blockingStandardDeviation = sqrt(m_blockingVariance);
 }
 
 void Sampler::computeBlockAverages() {
@@ -63,7 +68,13 @@ void Sampler::computeBlockAverages() {
         m_cumulativeEnergySquared  = 0;
         m_totalAccepted            = 0;
         m_totalSamplesTaken        = 0;
+        m_blockingEnergy           = 0;
+        m_blockingEnergy2          = 0;
+        m_blockingVariance         = 0;
+        m_numberOfBlocks           = 1;
     }
+    m_numberOfBlocks     += 1;
+
     const double N        = m_blockSamplesTaken;
     const double E        = m_blockCumulativeEnergy             / N;
     const double E2       = m_blockCumulativeEnergySquared      / N;
@@ -71,6 +82,8 @@ void Sampler::computeBlockAverages() {
     const double V        = m_blockCumulativePotentialEnergy    / N;
     m_blockEnergy         = E;
     m_blockVariance       = (E2 - E*E) / m_blockSamplesTaken;
+    m_blockingEnergy     += E;
+    m_blockingEnergy2    += E*E;
 
     m_blockAcceptanceRate = m_blockAccepted / N;
     m_blockVirialRatio    = T / V;

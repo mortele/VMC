@@ -12,6 +12,7 @@
 #include "WaveFunctions/harmonicoscillatorwavefunction.h"
 #include "WaveFunctions/slaterwithjastrow.h"
 #include "WaveFunctions/Orbitals/hydrogenorbital.h"
+#include "WaveFunctions/Orbitals/slatertypeorbital.h"
 #include "WaveFunctions/Orbitals/gaussianorbital.h"
 #include "RandomNumberGenerator/random.h"
 #include "hartreefockbasisparser.h"
@@ -313,13 +314,14 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     double beta  = 0.347; //0.094;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.01);
+    test->setStepLength(0.015);
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
     //test->setOrbital     (new GaussianOrbital("He-321G"));
     //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
-    test->setOrbital     (new GaussianOrbital(test, "He-STO-6G"));
+    //test->setOrbital     (new GaussianOrbital(test, "He-STO-6G"));
+    test->setOrbital(new SlaterTypeOrbital(alpha));
     //test->setOrbital(new HydrogenOrbital(alpha));
-    //test->addCore(new Atom(test,vec{0,0,0},2,1,1));
+    test->addCore(new Atom(test,vec{0,0,0},2,1,1));
     test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;

@@ -39,16 +39,19 @@ double PrimitiveGaussian::operator()(double x, double y, double z) {
 
 double PrimitiveGaussian::xDerivative(double x, double , double ) {
     double value = m_currentValue;
+    //double value = 1;
     return value * ((m_i == 0) ? - 2 * m_alpha * x : m_i / x - 2 * m_alpha * x);
 }
 
 double PrimitiveGaussian::yDerivative(double , double y, double ) {
     double value = m_currentValue;
+    //double value = 1;
     return value * ((m_j == 0) ? - 2 * m_alpha * y : m_j / y - 2 * m_alpha * y);
 }
 
 double PrimitiveGaussian::zDerivative(double , double , double z) {
     double value = m_currentValue;
+    //double value = 1;
     return value * ((m_k == 0) ? - 2 * m_alpha * z : m_k / z - 2 * m_alpha * z);
 }
 
@@ -92,6 +95,16 @@ std::ostream& operator<<(std::ostream& stream, const PrimitiveGaussian& primitiv
     stream << primitive.m_i << ",";
     stream << primitive.m_j << ",";
     stream << primitive.m_k << ")";
+
+    /*if (primitive.xExponent() != 0) {
+        stream << " x^" << primitive.xExponent();
+    }
+    if (primitive.yExponent() != 0) {
+        stream << " y^" << primitive.yExponent();
+    }
+    if (primitive.zExponent() != 0) {
+        stream << " z^" << primitive.zExponent();
+    }*/
     stream << " exp(- " << primitive.m_alpha << " r^2)";
     return stream;
 }

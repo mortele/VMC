@@ -75,6 +75,7 @@ double ContractedGaussian::calculateLaplacian(double x, double y, double z) {
         const double ddx     = primitive->xxDerivative(xA,yA,zA);
         const double ddy     = primitive->yyDerivative(xA,yA,zA);
         const double ddz     = primitive->zzDerivative(xA,yA,zA);
+        totalLaplacian      += (ddx + ddy + ddz) * primitive->getCurrentValue();
     }
     return totalLaplacian;
 }

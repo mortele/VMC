@@ -6,8 +6,8 @@ format;
 
 %% Parameters
 N = 1000;
-Z = 2;
-a = 1.843;
+Z = 4;
+a = 3.983;
 x = logspace(0,log10(5),N)-1;
 x = x';
 

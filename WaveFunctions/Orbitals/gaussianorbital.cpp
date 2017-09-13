@@ -24,11 +24,17 @@ double GaussianOrbital::evaluate(double x,
                                  int index,
                                  int spin) {
     double value = 0;
+    //cout << "x,y,z=" << x << " " << y << " " << z << endl;
     for (int i=0; i < m_basisSize; i++) {
         double c = (spin==1 ? m_spinUpCoefficients(i,index) : m_spinDownCoefficients(i,index));
+        if (fabs(c) > 1e-10) {
+            //cout << "index,spin,i: " << index << "," << spin << "," << i << " " << c << " " << m_basis.at(i)->evaluate(x,y,z) << " " <<  c*m_basis.at(i)->evaluate(x,y,z) << endl;
+            //cout << *m_basis.at(i) << endl;
+        }
         value += (spin==1 ? m_spinUpCoefficients(i,index) : m_spinDownCoefficients(i,index))
                  * m_basis.at(i)->evaluate(x,y,z);
     }
+    //cout << "TOTAL: " << value << endl << endl;
     return value;
 }
 

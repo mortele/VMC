@@ -316,8 +316,8 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     test->setStepLength(0.025);
     //=========================================================================
     /*====================*/ string atom     = "He";
-    /*====================*/ string orbital  = "Gaussian";
-    /*====================*/ string basis    = "He-STO-1G";
+    /*====================*/ string orbital  = "Slater";
+    /*====================*/ string basis    = "He-STO-6G";
     //=========================================================================
     double alpha, beta;
     if (atom=="He") {
@@ -352,8 +352,6 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
 // icpc fast :              111.038
 // clang++ -ffast-math :    110.777
 // icpc -fp-model fast=2 :  107.399
-
-
 
 
 

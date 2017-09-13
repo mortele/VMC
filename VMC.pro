@@ -49,7 +49,8 @@ SOURCES += main.cpp \
     Optimization/alglibinternal.cpp \
     Optimization/alglibmisc.cpp \
     Optimization/diffequations.cpp \
-    stofitter.cpp
+    stofitter.cpp \
+    WaveFunctions/Orbitals/slatertypeorbital.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -93,4 +94,5 @@ HEADERS += \
     Optimization/alglibinternal.h \
     Optimization/alglibmisc.h \
     Optimization/diffequations.h \
-    stofitter.h
+    stofitter.h \
+    WaveFunctions/Orbitals/slatertypeorbital.h

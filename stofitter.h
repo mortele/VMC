@@ -2,7 +2,7 @@
 #include "Optimization/interpolation.h"
 
 
-
+/*
 class STOFitter {
 private:
     double          m_alpha = 1.0;
@@ -32,3 +32,4 @@ public:
     STOFitter(double alpha);
     void computeFit(int n);
 };
+*/

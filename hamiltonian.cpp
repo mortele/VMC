@@ -44,9 +44,13 @@ double Hamiltonian::computeElectronElectronPotentialEnergy() {
         double electronElectronInteractionEnergy = 0;
         for (unsigned int i = 0; i < m_system->getElectrons().size(); i++) {
             for (unsigned int j = i+1; j < m_system->getElectrons().size(); j++) {
-                vec dr = m_system->getElectrons().at(i)->getPosition() -
-                         m_system->getElectrons().at(j)->getPosition();
-                electronElectronInteractionEnergy += 1.0 / norm(dr);
+                //vec dr = m_system->getElectrons().at(i)->getPosition() -
+                //         m_system->getElectrons().at(j)->getPosition();
+                const double dx = m_system->getElectrons().at(i)->getPosition().at(0) - m_system->getElectrons().at(j)->getPosition().at(0);
+                const double dy = m_system->getElectrons().at(i)->getPosition().at(1) - m_system->getElectrons().at(j)->getPosition().at(1);
+                const double dz = m_system->getElectrons().at(i)->getPosition().at(2) - m_system->getElectrons().at(j)->getPosition().at(2);
+                const double norm = sqrt(dx*dx + dy*dy + dz*dz);
+                electronElectronInteractionEnergy += 1.0 / norm;
             }
         }
         return electronElectronInteractionEnergy;

@@ -22,29 +22,29 @@ SlaterTypeOrbital::SlaterTypeOrbital(double alpha) :
     m_2pNormalization = (1/8.)*sqrt(a7/(15*pi));
 }
 
-double SlaterTypeOrbital::evaluate1s(double r) {
+inline double SlaterTypeOrbital::evaluate1s(double r) {
     return m_1sNormalization * exp(-m_alpha * r);
 }
 
-double SlaterTypeOrbital::evaluate2s(double r) {
+inline double SlaterTypeOrbital::evaluate2s(double r) {
     return m_2sNormalization * r * exp(-0.5 * m_alpha * r);
 }
 
-double SlaterTypeOrbital::evaluate2p(double r, double x) {
+inline double SlaterTypeOrbital::evaluate2p(double r, double x) {
     const double a = 0.5*m_alpha;
     return m_2pNormalization * r * x * exp(-a * r);
 }
 
-double SlaterTypeOrbital::computeDerivative1s(double r, double x) {
+inline double SlaterTypeOrbital::computeDerivative1s(double r, double x) {
     return -evaluate1s(r) * m_alpha * x / r ;
 }
 
-double SlaterTypeOrbital::computeDerivative2s(double r, double x) {
+inline double SlaterTypeOrbital::computeDerivative2s(double r, double x) {
     //return m_2sNormalization * x * exp(-0.5 * m_alpha * r) * (m_alpha -2/r) / 2.;
     return - sqrt(pow(m_alpha,5)/(6*acos(-1.))) * exp(-0.5*m_alpha*r) * x * (-2 + r*m_alpha) / (8 * r);
 }
 
-double SlaterTypeOrbital::computeDerivative2px(double r,
+inline double SlaterTypeOrbital::computeDerivative2px(double r,
                                                double x,
                                                double y,
                                                double z,
@@ -61,7 +61,7 @@ double SlaterTypeOrbital::computeDerivative2px(double r,
     }
 }
 
-double SlaterTypeOrbital::computeDerivative2py(double r,
+inline double SlaterTypeOrbital::computeDerivative2py(double r,
                                                double x,
                                                double y,
                                                double z,
@@ -78,7 +78,7 @@ double SlaterTypeOrbital::computeDerivative2py(double r,
     }
 }
 
-double SlaterTypeOrbital::computeDerivative2pz(double r,
+inline double SlaterTypeOrbital::computeDerivative2pz(double r,
                                                double x,
                                                double y,
                                                double z,
@@ -95,24 +95,24 @@ double SlaterTypeOrbital::computeDerivative2pz(double r,
     }
 }
 
-double SlaterTypeOrbital::computeLaplacian1s(double r) {
+inline double SlaterTypeOrbital::computeLaplacian1s(double r) {
     // N = √a^3 / √pi
     return m_1sNormalization * (m_alpha2 - 2 * m_alpha / r) * exp(-m_alpha * r);
 }
 
-double SlaterTypeOrbital::computeLaplacian2s(double r) {
+inline double SlaterTypeOrbital::computeLaplacian2s(double r) {
     // N = √a^5 / 4√(6 pi)
     //return evaluate2s(r) / (r*r) * (2 - 4*r*m_alpha + r*r*m_alpha2);
     return m_2sNormalization / (4 * r) * exp(-0.5*m_alpha*r) * (8 - 8*r*m_alpha + r*r*m_alpha2);
 }
 
-double SlaterTypeOrbital::computeLaplacian2p(double r, double x) {
+inline double SlaterTypeOrbital::computeLaplacian2p(double r, double x) {
     // N = √(2 a^7) / √(15 pi)
     const double a = 0.5*m_alpha;
     return m_2pNormalization * exp(-a * r) * x / r  * (4 - 6*r*a + r*r*a*a);
 }
 
-double SlaterTypeOrbital::evaluate(double x,
+inline double SlaterTypeOrbital::evaluate(double x,
                                    double y,
                                    double z,
                                    int index,
@@ -134,7 +134,7 @@ double SlaterTypeOrbital::evaluate(double x,
     }
 }
 
-double SlaterTypeOrbital::computeDerivativeX(double x,
+inline double SlaterTypeOrbital::computeDerivativeX(double x,
                                              double y,
                                              double z,
                                              int index) {
@@ -155,7 +155,7 @@ double SlaterTypeOrbital::computeDerivativeX(double x,
     }
 }
 
-double SlaterTypeOrbital::computeDerivativeY(double x,
+inline double SlaterTypeOrbital::computeDerivativeY(double x,
                                              double y,
                                              double z,
                                              int index) {
@@ -176,28 +176,28 @@ double SlaterTypeOrbital::computeDerivativeY(double x,
     }
 }
 
-double SlaterTypeOrbital::computeDerivativeZ(double x,
+inline double SlaterTypeOrbital::computeDerivativeZ(double x,
                                              double y,
                                              double z,
                                              int index) {
-    const double r = sqrt(x*x + y*y + z*z);
+    //const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
-        return computeDerivative1s(r, z);
+        return computeDerivative1s(sqrt(x*x + y*y + z*z), z);
     } else if (index==1) {
-        return computeDerivative2s(r, z);
+        return computeDerivative2s(sqrt(x*x + y*y + z*z), z);
     } else if (index==2) {
-        return computeDerivative2px(r, x, y, z, 2);
+        return computeDerivative2px(sqrt(x*x + y*y + z*z), x, y, z, 2);
     } else if (index==3) {
-        return computeDerivative2py(r, x, y, z, 2);
+        return computeDerivative2py(sqrt(x*x + y*y + z*z), x, y, z, 2);
     } else if (index==4) {
-        return computeDerivative2pz(r, x, y, z, 2);
+        return computeDerivative2pz(sqrt(x*x + y*y + z*z), x, y, z, 2);
     } else {
-        cout << "3 Invalid slater type orbital index: " << index << endl;
-        exit(1);
+        //cout << "3 Invalid slater type orbital index: " << index << endl;
+        return 0;
     }
 }
 
-double SlaterTypeOrbital::computeDerivative(double x,
+inline double SlaterTypeOrbital::computeDerivative(double x,
                                             double y,
                                             double z,
                                             int index,
@@ -212,24 +212,23 @@ double SlaterTypeOrbital::computeDerivative(double x,
     }
 }
 
-double SlaterTypeOrbital::computeLaplacian(double x,
+inline double SlaterTypeOrbital::computeLaplacian(double x,
                                            double y,
                                            double z,
                                            int index,
-                                           int ) {
-    const double r = sqrt(x*x + y*y + z*z);
+                                           int spin) {
+    //const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
-        return computeLaplacian1s(r);
+        return computeLaplacian1s(sqrt(x*x + y*y + z*z));
     } else if (index==1) {
-        return computeLaplacian2s(r);
+        return computeLaplacian2s(sqrt(x*x + y*y + z*z));
     } else if (index==2) {
-        return computeLaplacian2p(r, x);
+        return computeLaplacian2p(sqrt(x*x + y*y + z*z), x);
     } else if (index==3) {
-        return computeLaplacian2p(r, y);
+        return computeLaplacian2p(sqrt(x*x + y*y + z*z), y);
     } else if (index==4) {
-        return computeLaplacian2p(r, z);
+        return computeLaplacian2p(sqrt(x*x + y*y + z*z), z);
     } else {
-        cout << "4 Invalid slater type orbital index: " << index << endl;
-        exit(1);
+        return 0;
     }
 }

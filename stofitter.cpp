@@ -1,12 +1,13 @@
-#include "stofitter.h"
+//#include "stofitter.h"
 #include "Optimization/stdafx.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "Optimization/interpolation.h"
+//#include "Optimization/interpolation.h"
 #include "RandomNumberGenerator/random.h"
 
-using namespace alglib;
+/*
+//using namespace alglib;
 using std::cout;
 using std::endl;
 
@@ -150,3 +151,4 @@ void STOFitter::computeFit(int n) {
     printf("%d\n", int(info));
     printf("%s\n", c.tostring(6).c_str());
 }
+*/

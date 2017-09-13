@@ -23,11 +23,13 @@
 #include <iomanip>
 #include <boost/timer.hpp>
 #include <fstream>
+#include <string>
 
 
 using std::cout;
 using std::endl;
 using std::setprecision;
+using std::string;
 using arma::zeros;
 using arma::vec;
 
@@ -306,22 +308,39 @@ bool UnitTest::testSlaterWithJastrowGaussian() {
 
 bool UnitTest::testSlaterWithJastrowGaussianHe() {
     boost::timer t;
-    //Random::randomSeed();
-    Random::seed(92573385);
-
+    Random::randomSeed();
+    //Random::seed(92573385);
     System* test = setupNewTestSystem();
-    double alpha = 10.22;//3.983;//1.843;
-    double beta  = 0.091;//0.094;//0.347;
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.015);
+    test->setStepLength(0.025);
+    //=========================================================================
+    /*====================*/ string atom     = "He";
+    /*====================*/ string orbital  = "Gaussian";
+    /*====================*/ string basis    = "He-STO-1G";
+    //=========================================================================
+    double alpha, beta;
+    if (atom=="He") {
+        alpha = 1.843;
+        beta  = 0.347;
+        if (orbital != "Gaussian") test->addCore(new Atom(test,vec{0,0,0},2,1,1));
+    } else if (atom == "Be") {
+        alpha = 3.983;
+        beta  = 0.094;
+        if (orbital != "Gaussian") test->addCore(new Atom(test,vec{0,0,0},4,2,2));
+    } else {
+        alpha = 10.22;
+        beta  = 0.091;
+        if (orbital != "Gaussian") test->addCore(new Atom(test,vec{0,0,0},4,2,2));
+    }
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
-    //test->setOrbital     (new GaussianOrbital("He-321G"));
-    //test->setOrbital     (new GaussianOrbital("He-6311++G**"));
-    //test->setOrbital     (new GaussianOrbital(test, "He-STO-6G"));
-    test->setOrbital(new SlaterTypeOrbital(alpha));
-    //test->setOrbital(new HydrogenOrbital(alpha));
-    test->addCore(new Atom(test,vec{0,0,0},10,5,5));
+    if (orbital == "Slater") {
+        test->setOrbital(new SlaterTypeOrbital(alpha));
+    } else if (orbital == "Hydrogen") {
+        test->setOrbital(new HydrogenOrbital(alpha));
+    } else {
+        test->setOrbital(new GaussianOrbital(test, basis));
+    }
     test->runMetropolis((int) 1e7);
     double elapsedTime = t.elapsed();
     cout << "Elapsed time: " << elapsedTime << endl;

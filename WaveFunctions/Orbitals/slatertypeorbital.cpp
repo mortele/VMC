@@ -19,7 +19,7 @@ SlaterTypeOrbital::SlaterTypeOrbital(double alpha) :
     double a7 = pow(m_alpha,7);
     m_1sNormalization = sqrt(a3/pi);
     m_2sNormalization = (1/4.)*sqrt(a5/(6*pi));
-    m_2pNormalization = sqrt(2*a7/(15*pi));
+    m_2pNormalization = (1/8.)*sqrt(a7/(15*pi));
 }
 
 double SlaterTypeOrbital::evaluate1s(double r) {
@@ -31,7 +31,8 @@ double SlaterTypeOrbital::evaluate2s(double r) {
 }
 
 double SlaterTypeOrbital::evaluate2p(double r, double x) {
-    return m_2pNormalization * r * x * exp(-m_alpha * r);
+    const double a = 0.5*m_alpha;
+    return m_2pNormalization * r * x * exp(-a * r);
 }
 
 double SlaterTypeOrbital::computeDerivative1s(double r, double x) {
@@ -48,14 +49,15 @@ double SlaterTypeOrbital::computeDerivative2px(double r,
                                                double y,
                                                double z,
                                                int i) {
+    const double a = 0.5*m_alpha;
     const double N = m_2pNormalization;
     // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
-        return N*exp(-m_alpha * r) / r * (r*r + x*x*(1 - r*m_alpha));
+        return N*exp(-a * r) / r * (r*r + x*x*(1 - r*a));
     } else if (i==1) { // y derivative
-        return N*exp(-m_alpha * r) * x * y / r * (1 - r*m_alpha);
+        return N*exp(-a * r) * x * y / r * (1 - r*a);
     } else { // z derivative
-        return N*exp(-m_alpha * r) * x * z / r * (1 - r*m_alpha);
+        return N*exp(-a * r) * x * z / r * (1 - r*a);
     }
 }
 
@@ -64,14 +66,15 @@ double SlaterTypeOrbital::computeDerivative2py(double r,
                                                double y,
                                                double z,
                                                int i) {
+    const double a = 0.5*m_alpha;
     const double N = m_2pNormalization;
     // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
-        return N*exp(-m_alpha * r) * x * y / r * (1 - r*m_alpha);
+        return N*exp(-a * r) * x * y / r * (1 - r*a);
     } else if (i==1) { // y derivative
-        return N*exp(-m_alpha * r) / r * (r*r + y*y*(1 - r*m_alpha));
+        return N*exp(-a * r) / r * (r*r + y*y*(1 - r*a));
     } else { // z derivative
-        return N*exp(-m_alpha * r) * y * z / r * (1 - r*m_alpha);
+        return N*exp(-a * r) * y * z / r * (1 - r*a);
     }
 }
 
@@ -80,14 +83,15 @@ double SlaterTypeOrbital::computeDerivative2pz(double r,
                                                double y,
                                                double z,
                                                int i) {
+    const double a = 0.5*m_alpha;
     const double N = m_2pNormalization;
     // i determines which variable we are differentiating w.r.t., x, y, or z.
     if (i==0) { // x derivative
-        return N*exp(-m_alpha * r) * x * z / r * (1 - r*m_alpha);
+        return N*exp(-a * r) * x * z / r * (1 - r*a);
     } else if (i==1) { // y derivative
-        return N*exp(-m_alpha * r) * y * z / r * (1 - r*m_alpha);
+        return N*exp(-a * r) * y * z / r * (1 - r*a);
     } else { // z derivative
-        return N*exp(-m_alpha * r) / r * (r*r + z*z*(1 - r*m_alpha));
+        return N*exp(-a * r) / r * (r*r + z*z*(1 - r*a));
     }
 }
 
@@ -104,7 +108,8 @@ double SlaterTypeOrbital::computeLaplacian2s(double r) {
 
 double SlaterTypeOrbital::computeLaplacian2p(double r, double x) {
     // N = √(2 a^7) / √(15 pi)
-    return m_2pNormalization * exp(-m_alpha * r) * x / r  * (4 - 6*r*m_alpha + r*r*m_alpha2);
+    const double a = 0.5*m_alpha;
+    return m_2pNormalization * exp(-a * r) * x / r  * (4 - 6*r*a + r*r*a*a);
 }
 
 double SlaterTypeOrbital::evaluate(double x,

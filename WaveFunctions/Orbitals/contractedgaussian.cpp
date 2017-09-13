@@ -38,79 +38,45 @@ double ContractedGaussian::evaluate(double x, double y, double z) {
 }
 
 double ContractedGaussian::xDerivative(double x, double y, double z) {
-
-    bool debugprint = false;
-
-
     evaluate(x,y,z);
     double result = 0;
     for (int i = 0; i < m_numberOfPrimitives; i++) {
         PrimitiveGaussian*& primitive = m_primitives.at(i);
-        result += primitive->xDerivative(x,y,z);// * primitive->getCurrentValue();
+        result += primitive->xDerivative(x,y,z);
     }
-
-    double tmp = result;// /m_currentValue;
-    if (debugprint) cout << "contracted value: " << m_currentValue << endl;
-    if (debugprint) cout << "contracted: " << tmp << endl;
-
-
-
-    //exit(1);
-    return tmp;
+    return result;
 }
 
 double ContractedGaussian::yDerivative(double x, double y, double z) {
     double result = 0;
     for (int i = 0; i < m_numberOfPrimitives; i++) {
         PrimitiveGaussian*& primitive = m_primitives.at(i);
-        result += primitive->yDerivative(x,y,z);// * primitive->getCurrentValue();
+        result += primitive->yDerivative(x,y,z);
     }
-    return result;// /m_currentValue;
+    return result;
 }
 
 double ContractedGaussian::zDerivative(double x, double y, double z) {
     double result = 0;
     for (int i = 0; i < m_numberOfPrimitives; i++) {
         PrimitiveGaussian*& primitive = m_primitives.at(i);
-        result += primitive->zDerivative(x,y,z);// * primitive->getCurrentValue();
+        result += primitive->zDerivative(x,y,z);
     }
-    return result;// /m_currentValue;
+    return result;
 }
 
 double ContractedGaussian::calculateLaplacian(double x, double y, double z) {
-    /*cout << ".--.-.-.-.-.-.-.-.-.--." << endl;
-    cout << ".--.-.-.-.-.-.-.-.-.--." << endl;
-    cout << x << " " << y << " " << z << endl;
-    cout << "=======================" << endl;
-    cout << std::sqrt(x*x+y*y+z*z) << endl;
-    cout << "=======================" << endl;*/
-
     evaluate(x,y,z);
     const double xA         = x - m_x;
     const double yA         = y - m_y;
     const double zA         = z - m_z;
-    //double totalValue       = 0;
     double totalLaplacian   = 0;
     for (PrimitiveGaussian* primitive : m_primitives) {
         const double ddx     = primitive->xxDerivative(xA,yA,zA);
         const double ddy     = primitive->yyDerivative(xA,yA,zA);
         const double ddz     = primitive->zzDerivative(xA,yA,zA);
-        totalLaplacian      += (ddx + ddy + ddz) * primitive->getCurrentValue();
-
-        /*printf("%10.6g (%d,%d,%d) exp(-%10.6g r²)   -->   %10g   --> dx: %10g\n",
-               primitive->m_constant,
-               primitive->m_i,
-               primitive->m_j,
-               primitive->m_k,
-               primitive->m_alpha,
-               primitive->getCurrentValue(),
-               primitive->xxDerivative(x,y,z));*/
     }
-    //m_currentValue = totalValue;
-    //cout << m_currentValue << endl;
-    //cout << totalLaplacian << endl;//   / m_currentValue << endl;
-    //exit(1);
-    return totalLaplacian;// / m_currentValue;
+    return totalLaplacian;
 }
 
 std::ostream& operator<<(std::ostream& stream, const ContractedGaussian& contracted) {

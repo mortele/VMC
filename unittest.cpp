@@ -331,7 +331,7 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     } else {
         alpha = 10.22;
         beta  = 0.091;
-        if (orbital != "Gaussian") test->addCore(new Atom(test,vec{0,0,0},4,2,2));
+        if (orbital != "Gaussian") test->addCore(new Atom(test,vec{0,0,0},10,5,5));
     }
     test->setWaveFunction(new SlaterWithJastrow(test,beta,true));
     if (orbital == "Slater") {

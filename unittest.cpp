@@ -309,15 +309,15 @@ bool UnitTest::testSlaterWithJastrowGaussian() {
 bool UnitTest::testSlaterWithJastrowGaussianHe() {
     boost::timer t;
     Random::randomSeed();
-    //Random::seed(92573385);
+    //Random::seed(925733851);
     System* test = setupNewTestSystem();
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);
-    test->setStepLength(0.005);
+    test->setStepLength(0.025);
     //=========================================================================
-    /*====================*/ string atom     = "Ne";
-    /*====================*/ string orbital  = "Gaussian";
-    /*====================*/ string basis    = "Ne-STO-4G";
+    /*====================*/ string atom     = "Be";
+    /*====================*/ string orbital  = "Slater";
+    /*====================*/ string basis    = "Be-STO-4G";
     //=========================================================================
     double alpha, beta;
     if (atom=="He") {

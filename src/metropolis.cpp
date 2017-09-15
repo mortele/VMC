@@ -5,7 +5,6 @@
 #include "hamiltonian.h"
 #include "Cores/core.h"
 #include "WaveFunctions/wavefunction.h"
-#include "RandomNumberGenerator/random.h"
 #include <iostream>
 #include <cmath>
 #include <iomanip>
@@ -16,40 +15,38 @@ using std::log10;
 using std::pow;
 
 bool Metropolis::step() {
-    int    electron       = Random::nextInt(0, m_numberOfElectrons  - 1);
+    std::uniform_int_distribution<int> uniformIntElectron {0, m_numberOfElectrons-1};
+    int    electron       = uniformIntElectron (m_randomGenerator);
     int    dimension      = -1;
     double proposedChange;
     double xProposedChangeImportanceSampling;
     double yProposedChangeImportanceSampling;
     double zProposedChangeImportanceSampling;
     if (! m_importanceSampling) {
-        dimension      = Random::nextInt(0, m_numberOfDimensions - 1);
-        proposedChange = Random::nextDouble(-m_stepLengthHalf, m_stepLengthHalf);
+        std::uniform_int_distribution<int> uniformIntDimension{0, m_numberOfDimensions-1};
+        dimension      = uniformIntDimension(m_randomGenerator);
+        std::uniform_real_distribution<double> uniformDouble{-m_stepLengthHalf,m_stepLengthHalf};
+        proposedChange = uniformDouble(m_randomGenerator);
     } else {
         double D = 0.5;
 
+        std::normal_distribution<double> normalDistribution{0,1};
+
         xProposedChangeImportanceSampling
-                = Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
+                = normalDistribution(m_randomGenerator) *
+                  m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) *
+                  m_dt * D;
+
         yProposedChangeImportanceSampling
-                = Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
+                = normalDistribution(m_randomGenerator) *
+                  m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) *
+                  m_dt * D;
+
         zProposedChangeImportanceSampling
-                = Random::nextGaussian(0,1)* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
-
-        /*electron = m_i % 4;
-        double gauss0 =  1.12562532;
-        double gauss1 = -0.10989429851;
-        double gauss2 = -0.50153;
-
-        xProposedChangeImportanceSampling = gauss0* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,0) * m_dt * D;
-        yProposedChangeImportanceSampling = gauss1* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,1) * m_dt * D;
-        zProposedChangeImportanceSampling = gauss2* m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) * m_dt * D;
-        */
+                = normalDistribution(m_randomGenerator) *
+                  m_dtSqrt + m_waveFunction->getQuantumForceOld(electron,2) *
+                  m_dt * D;
     }
-
-    //electron = 2;
-    //xProposedChangeImportanceSampling =  1.12562532;
-    //yProposedChangeImportanceSampling = -0.10989429851;
-    //zProposedChangeImportanceSampling = -0.50153;
 
     m_waveFunction->passProposedChangeToWaveFunction(electron, dimension);
     if (! m_importanceSampling) {
@@ -65,7 +62,9 @@ bool Metropolis::step() {
         double greensFunction = computeGreensFunction();
         R *= R * greensFunction;
     }
-    if (R > Random::nextDouble(0, 1)) {
+
+    std::uniform_real_distribution<double> uniformDouble{0,1};
+    if (R > uniformDouble(m_randomGenerator)) {
         m_waveFunction->updateWaveFunctionAfterAcceptedStep();
         return true;
     } else {
@@ -119,7 +118,7 @@ void Metropolis::setStepLength(double stepLength) {
     m_stepLengthSetManually = true;
 }
 
-void Metropolis::runSteps(int steps) {
+double Metropolis::runSteps(int steps) {
     setup();
     m_numberOfMetropolisSteps = steps;
     if (! m_silent) printInitialInfo();
@@ -129,14 +128,16 @@ void Metropolis::runSteps(int steps) {
         m_sampler->sample(acceptedStep);
         if (! m_silent) printIterationInfo(m_i);
     }
+    m_sampler->computeAverages();
     if (! m_silent) printFinalInfo();
+    return m_sampler->getEnergy();
 }
 
-void Metropolis::runStepsSilent(int steps) {
+double Metropolis::runStepsSilent(int steps) {
     m_silent = true;
-    runSteps(steps);
-    m_sampler->computeAverages();
+    double E = runSteps(steps);
     m_silent = false;
+    return E;
 }
 
 void Metropolis::printInitialInfo() {
@@ -191,7 +192,6 @@ void Metropolis::printIterationInfo(int iteration) {
 }
 
 void Metropolis::printFinalInfo() {
-    m_sampler->computeAverages();
     printf(" ======================================================================== \n");
     printf("\n Metropolis algorithm finished. \n\n");
     printf(" => Metropolis steps:       %30g   \n",  (double) m_numberOfMetropolisSteps);

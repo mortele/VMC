@@ -1,7 +1,10 @@
 #pragma once
+#include <random>
 
 class Metropolis {
     friend class System;
+    friend class Atom;
+    friend class HarmonicOscillator;
 
 private:
     int                 m_i;
@@ -17,7 +20,11 @@ private:
     double              m_dtSqrt;
     class System*       m_system;
     class Sampler*      m_sampler;
+
+protected:
     class WaveFunction* m_waveFunction;
+    std::random_device  m_randomDevice;
+    std::mt19937        m_randomGenerator{m_randomDevice()};
 
     bool step();
     void setup();
@@ -30,8 +37,8 @@ private:
 public:
     Metropolis(class System* system);
     void setImportanceSampling(bool importanceSampling);
-    void runSteps(int steps);
-    void runStepsSilent(int steps);
+    double runSteps(int steps);
+    double runStepsSilent(int steps);
     int  getStep() { return m_i; }
 };
 

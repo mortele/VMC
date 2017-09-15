@@ -14,7 +14,6 @@
 #include "WaveFunctions/Orbitals/hydrogenorbital.h"
 #include "WaveFunctions/Orbitals/slatertypeorbital.h"
 #include "WaveFunctions/Orbitals/gaussianorbital.h"
-#include "RandomNumberGenerator/random.h"
 #include "hartreefockbasisparser.h"
 #include <armadillo>
 #include <cassert>
@@ -34,7 +33,6 @@ using arma::zeros;
 using arma::vec;
 
 System* UnitTest::setupNewTestSystem() {
-    Random::seed(0);
     System* test = new System();
     return test;
 }
@@ -245,7 +243,6 @@ bool UnitTest::HO3d() {
 bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
     boost::timer t;
 
-    Random::randomSeed();
     printf("%-40s", "Imp. sampling Slater w. Jastrow (Be)"); fflush(stdout);
     System* test = setupNewTestSystem();
     arma::vec pos = {0,0,0};
@@ -266,7 +263,6 @@ bool UnitTest::testImportanceSampledSlaterWithJastrowBe() {
 
 bool UnitTest::testSlaterWithJastrowGaussian() {
     boost::timer t;
-    Random::randomSeed();
 
 
     //printf("%-40s", "Imp. sampling Slater w. Jastrow (Gaussian basis) (Be)"); fflush(stdout);
@@ -308,8 +304,6 @@ bool UnitTest::testSlaterWithJastrowGaussian() {
 
 bool UnitTest::testSlaterWithJastrowGaussianHe() {
     boost::timer t;
-    Random::randomSeed();
-    //Random::seed(925733851);
     System* test = setupNewTestSystem();
     test->setElectronInteraction(true);
     test->setImportanceSampling (true);

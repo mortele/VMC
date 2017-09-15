@@ -1,10 +1,10 @@
 #include "harmonicoscillator.h"
 #include "system.h"
+#include "metropolis.h"
 #include "electron.h"
-#include "RandomNumberGenerator/random.h"
+#include <random>
 
 using arma::vec;
-
 
 HarmonicOscillator::HarmonicOscillator(System*      system,
                                        arma::vec    position,
@@ -17,11 +17,15 @@ HarmonicOscillator::HarmonicOscillator(System*      system,
 }
 
 
-void HarmonicOscillator::createElectrons() {
+void HarmonicOscillator::createElectrons() {    
+    std::normal_distribution<double> normalDistributionX{m_position(0), m_size};
+    std::normal_distribution<double> normalDistributionY{m_position(1), m_size};
+    std::normal_distribution<double> normalDistributionZ{m_position(2), m_size};
+    std::mt19937& randomGenerator = m_system->getMetropolis()->m_randomGenerator;
     for (int i = 0; i < m_numberOfElectrons; i++) {
-        m_electrons.push_back(new Electron(vec {Random::nextGaussian(m_position(0), 1),
-                                                Random::nextGaussian(m_position(1), 1),
-                                                Random::nextGaussian(m_position(2), 1)},
+        m_electrons.push_back(new Electron(vec {normalDistributionX(randomGenerator),
+                                                normalDistributionY(randomGenerator),
+                                                normalDistributionZ(randomGenerator)},
                                            i % 2));
     }
 }

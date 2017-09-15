@@ -5,7 +5,6 @@
 #include "sampler.h"
 #include "WaveFunctions/wavefunction.h"
 #include "Cores/core.h"
-#include "RandomNumberGenerator/random.h"
 
 System::System() {
     m_numberOfElectrons         = 0;

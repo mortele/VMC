@@ -42,19 +42,19 @@ System* UnitTest::setupNewTestSystem() {
 bool UnitTest::runAllTests() {
     cout << "Running all tests." << endl;
     cout << "=================================================================" << endl;
-    //cout << "Running test: "; if (! testHydrogen())                          return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testNonInteractingHelium())              return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testHelium())                            return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testHeliumWithJastrowNumerical())        return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
-    //cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
-    //cout << testSlaterWithJastrowGaussian() << endl;
+    cout << "Running test: "; if (! testHydrogen())                          return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testNonInteractingHelium())              return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testHelium())                            return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testNumericalLaplacian())                return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testHeliumWithJastrowNumerical())        return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterHelium())                return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterWithJastrowHelium())     return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterBeryllium())             return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testDirectSlaterWithJastrowBeryllium())  return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testGaussianSlaterHydrogenMolecule())    return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! HO3d())                                  return false; else cout << " -- passed" << endl;
+    cout << "Running test: "; if (! testImportanceSampledSlaterWithJastrowBe())                                  return false; else cout << " -- passed" << endl;
+    cout << testSlaterWithJastrowGaussian() << endl;
     cout << testSlaterWithJastrowGaussianHe() << endl;
     cout << "=================================================================" << endl;
     cout << "All tests passed." << endl;
@@ -316,8 +316,8 @@ bool UnitTest::testSlaterWithJastrowGaussianHe() {
     test->setStepLength(0.025);
     //=========================================================================
     /*====================*/ string atom     = "Be";
-    /*====================*/ string orbital  = "Slater";
-    /*====================*/ string basis    = "Be-STO-4G";
+    /*====================*/ string orbital  = "Gaussian";
+    /*====================*/ string basis    = "Be-STO-6G";
     //=========================================================================
     double alpha, beta;
     if (atom=="He") {

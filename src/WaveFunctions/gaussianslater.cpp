@@ -94,6 +94,7 @@ void GaussianSlater::evaluateWaveFunctionInitial() {
     m_spinDownDeterminant = zeros<mat>(m_numberOfSpinDownElectrons, m_numberOfSpinDownElectrons);
     m_currentValueSquared = evaluateWaveFunction();
     m_currentValueSquared = m_currentValueSquared * m_currentValueSquared;
+    evaluateLaplacian();
 }
 
 double GaussianSlater::evaluateLaplacian() {

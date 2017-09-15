@@ -14,5 +14,6 @@ public:
                                    double           beta,
                                    double           omega);
     double evaluateWaveFunction();
+    void evaluateWaveFunctionInitial();
     double evaluateLaplacian();
 };

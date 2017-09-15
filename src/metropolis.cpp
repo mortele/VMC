@@ -120,13 +120,16 @@ void Metropolis::setStepLength(double stepLength) {
 
 double Metropolis::runSteps(int steps) {
     setup();
+    m_system->getHamiltonian()->computeCoreCorePotentialEnergy();
+    m_system->getHamiltonian()->computeElectronCorePotentialEnergy();
+    m_system->getHamiltonian()->computeElectronElectronPotentialEnergy();
     m_numberOfMetropolisSteps = steps;
     if (! m_silent) printInitialInfo();
     m_waveFunction->evaluateWaveFunctionInitial();
     for (m_i = 0; m_i < steps; m_i++) {
         bool acceptedStep = step();
         m_sampler->sample(acceptedStep);
-        if (! m_silent) printIterationInfo(m_i);
+        printIterationInfo(m_i);
     }
     m_sampler->computeAverages();
     if (! m_silent) printFinalInfo();
@@ -164,11 +167,13 @@ void Metropolis::printInitialInfo() {
 
 void Metropolis::printIterationInfo(int iteration) {
     const int skip = 2500;
-    if (iteration != 0 && iteration % (20*20 * skip) == 0) {
-        printf(" ==================================================================================== \n");
-        printf(" %18s %5s %27s %10s \n", " ", "Total", " ", "Block" );
-        printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Std.dev.", "Energy", "Variance", "Acc. rate", "Virial r.");
-        printf(" ------------------------------------------------------------------------------------ \n");
+    if (! m_silent) {
+        if (iteration != 0 && iteration % (20*20 * skip) == 0) {
+            printf(" ==================================================================================== \n");
+            printf(" %18s %5s %27s %10s \n", " ", "Total", " ", "Block" );
+            printf(" %5s %12s %12s %12s %12s %12s %12s\n", "Step", "Energy", "Std.dev.", "Energy", "Variance", "Acc. rate", "Virial r.");
+            printf(" ------------------------------------------------------------------------------------ \n");
+        }
     }
     if (iteration != 0 && iteration % skip == 0) {
         const int exponent  = log10(iteration);
@@ -176,30 +181,34 @@ void Metropolis::printIterationInfo(int iteration) {
 
         m_sampler->computeBlockAverages();
         m_sampler->computeAverages();
-        if (iteration % (20 * skip) == 0) {
-        printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g %12.5g\n",
-               preFactor,
-               exponent,
-               m_sampler->getEnergy(),
-               m_sampler->getStandardDeviation(),
-               m_sampler->getBlockEnergy(),
-               m_sampler->getBlockVariance(),
-               m_sampler->getBlockAcceptanceRate(),
-               m_sampler->getBlockVirialRatio());
+        if (! m_silent) {
+            if (iteration % (20 * skip) == 0) {
+            printf(" %3de%-2d %12.5g %12.5g %12.5g %12.5g %12.5g %12.5g\n",
+                   preFactor,
+                   exponent,
+                   m_sampler->getEnergy(),
+                   m_sampler->getStandardDeviation(),
+                   m_sampler->getBlockEnergy(),
+                   m_sampler->getBlockVariance(),
+                   m_sampler->getBlockAcceptanceRate(),
+                   m_sampler->getBlockVirialRatio());
+            }
         }
     }
-    fflush(stdout);
+    if (! m_silent) fflush(stdout);
 }
 
 void Metropolis::printFinalInfo() {
-    printf(" ======================================================================== \n");
-    printf("\n Metropolis algorithm finished. \n\n");
-    printf(" => Metropolis steps:       %30g   \n",  (double) m_numberOfMetropolisSteps);
-    printf(" => Final acceptance rate:  %30.16g \n", m_sampler->getAcceptanceRate());
-    printf(" => Final energy average:   %30.16g \n", m_sampler->getEnergy());
-    printf(" => Final variance:         %30.16g \n", m_sampler->getVariance());
-    printf(" ============================================================ \n");
-    fflush(stdout);
+    if (! m_silent) {
+        printf(" ======================================================================== \n");
+        printf("\n Metropolis algorithm finished. \n\n");
+        printf(" => Metropolis steps:       %30g   \n",  (double) m_numberOfMetropolisSteps);
+        printf(" => Final acceptance rate:  %30.16g \n", m_sampler->getAcceptanceRate());
+        printf(" => Final energy average:   %30.16g \n", m_sampler->getEnergy());
+        printf(" => Final variance:         %30.16g \n", m_sampler->getVarianceBlocking());
+        printf(" ============================================================ \n");
+        fflush(stdout);
+    }
 }
 
 double Metropolis::computeGreensFunction() {

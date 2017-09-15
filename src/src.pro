@@ -25,7 +25,6 @@ SOURCES += \
     Cores/core.cpp \
     metropolis.cpp \
     WaveFunctions/heliumwavefunction.cpp \
-    unittest.cpp \
     WaveFunctions/heliumwithjastrow.cpp \
     WaveFunctions/directevaluationslater.cpp \
     WaveFunctions/directevaluationslaterwithjastrow.cpp \
@@ -40,7 +39,8 @@ SOURCES += \
     WaveFunctions/Orbitals/orbital.cpp \
     WaveFunctions/Orbitals/gaussianorbital.cpp \
     stofitter.cpp \
-    WaveFunctions/Orbitals/slatertypeorbital.cpp
+    WaveFunctions/Orbitals/slatertypeorbital.cpp \
+    cases.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -53,7 +53,6 @@ HEADERS += \
     Cores/core.h \
     metropolis.h \
     WaveFunctions/heliumwavefunction.h \
-    unittest.h \
     WaveFunctions/heliumwithjastrow.h \
     WaveFunctions/directevaluationslater.h \
     WaveFunctions/directevaluationslaterwithjastrow.h \
@@ -70,4 +69,5 @@ HEADERS += \
     WaveFunctions/Orbitals/orbital.h \
     WaveFunctions/Orbitals/gaussianorbital.h \
     stofitter.h \
-    WaveFunctions/Orbitals/slatertypeorbital.h
+    WaveFunctions/Orbitals/slatertypeorbital.h \
+    cases.h

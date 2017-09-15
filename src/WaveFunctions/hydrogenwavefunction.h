@@ -14,6 +14,7 @@ public:
                          bool          useNumericalDerivatives = false);
     void setup();
     double      evaluateWaveFunction();
+    void evaluateWaveFunctionInitial();
     double      evaluateLaplacian();
     arma::mat   evaluateGradient();
 

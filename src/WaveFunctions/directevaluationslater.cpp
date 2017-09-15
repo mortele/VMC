@@ -50,6 +50,7 @@ void DirectEvaluationSlater::evaluateWaveFunctionInitial() {
     m_spinDownDeterminant           = det(m_slaterSpinDown);
     const double determinantProduct = m_spinUpDeterminant * m_spinDownDeterminant;
     m_currentValueSquared           = determinantProduct * determinantProduct;
+    evaluateLaplacian();
 }
 
 double DirectEvaluationSlater::computeWaveFunctionRatio(int changedElectronIndex) {

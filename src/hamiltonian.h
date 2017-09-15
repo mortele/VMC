@@ -4,6 +4,7 @@
 class Hamiltonian {
     friend class Sampler;
     friend class System;
+    friend class Metropolis;
 
 protected:
     bool                m_interactingElectrons = true;

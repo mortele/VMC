@@ -54,7 +54,8 @@ public:
     Sampler(class System* system);
 
     double getEnergy()              { return m_energy;                      }
-    double getVariance()            { return m_blockingVariance;            }
+    double getVarianceBlocking()    { return m_blockingVariance;            }
+    double getVariance()            { return m_variance;                    }
     double getStandardDeviation()   { return m_blockingStandardDeviation;   }
     double getAcceptanceRate()      { return m_acceptanceRate;              }
 };

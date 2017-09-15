@@ -26,6 +26,11 @@ double HeliumWithJastrow::evaluateWaveFunction() {
     return base * jastrow;
 }
 
+void HeliumWithJastrow::evaluateWaveFunctionInitial() {
+    evaluateLaplacian();
+}
+
+
 double HeliumWithJastrow::evaluateLaplacian() {
     if (! m_useNumericalDerivatives) {
         // TODO: FIX THIS.

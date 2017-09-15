@@ -25,8 +25,7 @@ private:
 
 public:
     SlaterTypeOrbital(double alpha);
-
-    double evaluate(double x, double y, double z, int index, int =0);
+    double evaluate(double x, double y, double z, int index, int spin=0);
     double computeDerivativeX(double x, double y, double z, int index);
     double computeDerivativeY(double x, double y, double z, int index);
     double computeDerivativeZ(double x, double y, double z, int index);

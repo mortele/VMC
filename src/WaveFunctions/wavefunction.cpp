@@ -30,6 +30,7 @@ void WaveFunction::updateOldWaveFunctionValue() {
 void WaveFunction::evaluateWaveFunctionInitial() {
     m_currentValueSquared = evaluateWaveFunctionSquared();
     m_oldValueSquared     = m_currentValueSquared;
+    evaluateLaplacian();
 }
 
 double WaveFunction::computeWaveFunctionRatio(int) {

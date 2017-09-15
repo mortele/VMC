@@ -47,14 +47,14 @@ void System::setupSpinElectronArrays() {
 
 double System::runMetropolis(int steps) {
     setup();
-    m_metropolis->runSteps(steps);
-    return m_sampler->getEnergy();
+    double E = m_metropolis->runSteps(steps);
+    return E;
 }
 
 double System::runMetropolisSilent(int steps) {
     setup();
-    m_metropolis->runStepsSilent(steps);
-    return m_sampler->getEnergy();
+    double E = m_metropolis->runStepsSilent(steps);
+    return E;
 }
 
 void System::setWaveFunction(WaveFunction* waveFunction) {

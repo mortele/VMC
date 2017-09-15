@@ -116,7 +116,7 @@ inline double SlaterTypeOrbital::evaluate(double x,
                                    double y,
                                    double z,
                                    int index,
-                                   int) {
+                                   int spin) {
     const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
         return evaluate1s(r);
@@ -216,7 +216,7 @@ inline double SlaterTypeOrbital::computeLaplacian(double x,
                                            double y,
                                            double z,
                                            int index,
-                                           int spin) {
+                                           int ) {
     //const double r = sqrt(x*x + y*y + z*z);
     if (index==0) {
         return computeLaplacian1s(sqrt(x*x + y*y + z*z));

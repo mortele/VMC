@@ -12,5 +12,6 @@ public:
                       double        beta,
                       bool          useNumericalDerivatives);
     double evaluateWaveFunction();
+    void evaluateWaveFunctionInitial();
     double evaluateLaplacian();
 };

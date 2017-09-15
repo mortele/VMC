@@ -31,6 +31,10 @@ double HeliumWaveFunction::evaluateWaveFunction() {
     return exp(-m_alpha * (r1 + r2));
 }
 
+void HeliumWaveFunction::evaluateWaveFunctionInitial() {
+    evaluateLaplacian();
+}
+
 double HeliumWaveFunction::evaluateLaplacian() {
     if (! m_useNumericalDerivatives) {
         vec position1 = m_system->getElectrons().at(0)->getPosition();

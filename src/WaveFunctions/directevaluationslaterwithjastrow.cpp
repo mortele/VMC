@@ -26,6 +26,7 @@ void DirectEvaluationSlaterWithJastrow::evaluateWaveFunctionInitial() {
     DirectEvaluationSlater::evaluateWaveFunctionInitial();
     const double jastrowFactor = computeJastrowFactor();
     m_currentValueSquared = m_currentValueSquared * jastrowFactor * jastrowFactor;
+    evaluateLaplacian();
 }
 
 double DirectEvaluationSlaterWithJastrow::evaluateWaveFunction() {

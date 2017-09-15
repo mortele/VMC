@@ -31,6 +31,10 @@ double HydrogenWaveFunction::evaluateWaveFunction() {
     return exp(-m_alpha * r);
 }
 
+void HydrogenWaveFunction::evaluateWaveFunctionInitial() {
+    evaluateLaplacian();
+}
+
 double HydrogenWaveFunction::evaluateLaplacian() {
     if (! m_useNumericalDerivatives) {
         vec     position = m_system->getElectrons().at(0)->getPosition();

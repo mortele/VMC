@@ -22,7 +22,11 @@ double HarmonicOscillatorWaveFunction::evaluateWaveFunction() {
     double r12       = arma::norm(position1 - position2);
 
     return std::exp(- 0.5 * m_omega * m_alpha * (r1Squared + r2Squared))
-         * (m_beta == 0 ? 1.0 : std::exp(r12 / (2 + 2 * m_beta * r12)));
+            * (m_beta == 0 ? 1.0 : std::exp(r12 / (2 + 2 * m_beta * r12)));
+}
+
+void HarmonicOscillatorWaveFunction::evaluateWaveFunctionInitial() {
+    evaluateLaplacian();
 }
 
 double HarmonicOscillatorWaveFunction::evaluateLaplacian() {

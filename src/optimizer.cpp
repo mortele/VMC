@@ -37,7 +37,8 @@ double Optimizer::optimizeBeta(double   beta,
 
     printInitialInfo();
     for (int iteration = 0; iteration < m_maximumIterations; iteration++) {
-        m_system->getWaveFunction()->setBeta(m_beta);
+        //m_system->getWaveFunction()->setBeta(m_beta);
+        m_system->getWaveFunction()->setGamma(m_beta);
 
         if (iteration == 0) m_system->runMetropolisSilent(cycles);
         else m_metropolis->runStepsSilent(cycles);
@@ -87,7 +88,6 @@ void Optimizer::printInitialInfo() {
     printf(" %5s %12s %12s %12s %12s %12s \n",
            "Step", "Energy", "Std.dev.", "Acc. rate", "Beta", "Beta grad.");
     printf(" ------------------------------------------------------------------------------------ \n");
-
     fflush(stdout);
 }
 

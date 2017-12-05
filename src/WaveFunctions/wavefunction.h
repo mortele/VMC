@@ -22,6 +22,7 @@ protected:
     double          m_2stepLengthInverse;
     double          m_stepLengthSquaredInverse;
     double          m_betaDerivative;
+    double          m_gammaDerivative;
     arma::mat       m_quantumForce;
     arma::mat       m_quantumForceOld;
     arma::mat       m_electronPositions;
@@ -45,10 +46,14 @@ public:
     void   setOrbital(class Orbital* orbital);
     double evaluateWaveFunctionSquared();
     virtual void setBeta(double) {}
+    virtual void setGamma(double) {}
     virtual double  computeBetaDerivative();
+    virtual double  computeGammaDerivative();
 
-    bool   containsJastrow()   { return m_containsJastrow; }
-    double getBetaDerivative() { return m_betaDerivative; }
+
+    bool   containsJastrow()    { return m_containsJastrow; }
+    double getBetaDerivative()  { return m_betaDerivative; }
+    double getGammaDerivative() { return m_gammaDerivative; }
 
     virtual double      evaluateWaveFunction () { return nan(""); }
     virtual void        passProposedChangeToWaveFunction(int , int ) {}

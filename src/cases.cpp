@@ -99,6 +99,22 @@ bool Cases::optimizeGaussianExample() {
     He.optimizeBeta(beta,0.001,50,1e6);
 }
 
+bool Cases::jastrowCuspExample() {
+    for (int i=1; i < 100; i++) {
+        boost::timer t;
+        double beta = 0.36;
+        double gamma = 0.01*i;
+        System  He;
+        He.setImportanceSampling(true);
+        He.setWaveFunction  (new SlaterWithJastrow  (&He, beta, true));
+        He.setOrbital       (new GaussianOrbital    (&He, "He-6311++G**"));
+        double E = He.runMetropolisSilent(1e6);
+        double T = t.elapsed();
+        printf("%10g E=%10.5g T=%10.5g", gamma, E, T);
+        fflush(stdout);
+    }
+}
+
 bool Cases::closedShellAtom() {
     boost::timer t;
     System* test = new System();

@@ -45,6 +45,13 @@ double WaveFunction::computeBetaDerivative() {
     return 0;
 }
 
+double WaveFunction::computeGammaDerivative() {
+    std::cout << "No Jastrow factor gamma derivative available." << std::endl;
+    exit(1);
+    return 0;
+}
+
+
 void WaveFunction::setStepLength(double stepLength) {
     m_stepLength                = stepLength;
     m_2stepLengthInverse        = 1.0 / (2.0 * m_stepLength);

@@ -14,8 +14,10 @@ class SlaterWithJastrow : public WaveFunction {
 private:
     bool        m_jastrow                   = true;
     bool        m_initializeDone            = false;
+    int         m_numberOfAtoms             = 1;
     int         m_spinChanged               = -1;
     double      m_beta                      = 1;
+    double      m_gamma                     = 1;
     double      m_energyCrossTerm;
     double      m_jastrowLaplacian;
     double      m_slaterLaplacian;
@@ -24,6 +26,7 @@ private:
     double      m_laplacian;
     double      m_Rsd;
     double      m_Rc;
+
     arma::mat   m_slaterUp;
     arma::mat   m_slaterDown;
     arma::mat   m_slaterUpOld;
@@ -32,13 +35,21 @@ private:
     arma::mat   m_slaterGradientDown;
     arma::mat   m_slaterGradientUpOld;
     arma::mat   m_slaterGradientDownOld;
+
     arma::mat   m_jastrowGradient;
+    arma::mat   m_jastrowNucleusGradient;
     arma::mat   m_jastrowGradientOld;
+    arma::mat   m_jastrowNucleusGradientOld;
     arma::mat   m_jastrowLaplacianTerms;
+    arma::mat   m_jastrowNucleusLaplacianTerms;
     arma::mat   m_jastrowLaplacianTermsOld;
-    //arma::mat   m_positionsOld;
+    arma::mat   m_jastrowNucleusLaplacianTermsOld;
+
     arma::mat   m_correlationMatrix;
+    arma::mat   m_nucleusCorrelationMatrix;
     arma::mat   m_correlationMatrixOld;
+    arma::mat   m_nucleusCorrelationMatrixOld;
+
     arma::mat   m_interElectronDistances;
     arma::mat   m_interElectronDistancesOld;
     arma::mat   m_spinMatrix;
@@ -61,6 +72,7 @@ private:
     double getQuantumForce(int,int);
     double getQuantumForceOld(int,int);
     double computeBetaDerivative();
+    double computeGammaDerivative();
     void   computeQuantumForce();
 
 public:
@@ -72,6 +84,7 @@ public:
     double computeWaveFunctionRatio(int electronChanged);
     double evaluateLaplacian();
     void setBeta(double beta) { m_beta = beta; }
+    void setGamma(double gamma) { m_gamma = gamma; }
 };
 
 

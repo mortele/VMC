@@ -37,7 +37,8 @@ void Sampler::sample(bool acceptedStep) {
 
     if (m_system->getWaveFunction()->containsJastrow()) {
         if (acceptedStep) {
-            m_currentJastrowDerivative        = m_system->getWaveFunction()->computeBetaDerivative();
+            //m_currentJastrowDerivative        = m_system->getWaveFunction()->computeBetaDerivative();
+            m_currentJastrowDerivative        = m_system->getWaveFunction()->computeGammaDerivative();
             m_currentEnergy_JastrowDerivative = m_currentEnergy * m_currentJastrowDerivative;
         }
         m_cumulativeEnergy_JastrowDerivative    += m_currentEnergy_JastrowDerivative;

@@ -7,6 +7,7 @@ public:
     static bool thirdExample();
     static bool optimizeExample();
     static bool optimizeGaussianExample();
+    static bool jastrowCuspExample();
     static bool closedShellAtom();
 };
 

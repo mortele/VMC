@@ -3,6 +3,7 @@
 #include "electron.h"
 #include "hamiltonian.h"
 #include "metropolis.h"
+#include "Cores/core.h"
 #include <armadillo>
 #include <vector>
 #include <iomanip>
@@ -64,6 +65,19 @@ void SlaterWithJastrow::updateJastrowGradient(int k) {
         double          factor      = 1 + m_beta * rkj;
         m_jastrowGradient(k, j) = a(j,k) / (factor*factor);
     }
+
+    // Electron-nucleus terms.
+    const std::vector<Core*>& cores = m_system->getCores();
+    Electron* kElectron = m_system->getElectrons().at(k);
+    const vec& position = kElectron->getPosition();
+
+    for (int i = 0; i < m_numberOfAtoms; i++) {
+        Core* nucleus = cores.at(i);
+        double rik = arma::norm(position - nucleus->getPosition());
+        double Z = nucleus->getGeneralizedCharge();
+        double factor = 1 + m_gamma * rik;
+        m_jastrowNucleusGradient(k, i) = Z / (factor*factor);
+    }
 }
 
 
@@ -82,6 +96,19 @@ void SlaterWithJastrow::updateJastrowLaplacianTerms(int k) {
         double          factor        = 1 + m_beta * rkj;
         laplacianJ(k, j) = -2*a(k,j)*m_beta / (factor*factor*factor);
     }
+
+    // Electron-nucleus terms.
+    const std::vector<Core*>& cores = m_system->getCores();
+    Electron* kElectron = m_system->getElectrons().at(k);
+    const vec& position = kElectron->getPosition();
+
+    for (int i = 0; i < m_numberOfAtoms; i++) {
+        Core* nucleus = cores.at(i);
+        double rik = arma::norm(position - nucleus->getPosition());
+        double Z = nucleus->getGeneralizedCharge();
+        double factor = 1 + m_gamma * rik;
+        m_jastrowNucleusLaplacianTerms(k,i) = - 2*Z / (factor*factor*factor);
+    }
 }
 
 void SlaterWithJastrow::computeJastrowLaplacian() {
@@ -98,6 +125,17 @@ void SlaterWithJastrow::computeJastrowLaplacian() {
         for (int i = k+1; i < m_numberOfElectrons; i++) {
             const double rik = R(i,k);
             sum += 2/rik * gradientJ(k,i) + laplacianJ(k,i);
+        }
+
+        // Electron-nucleus terms.
+        const std::vector<Core*>& cores = m_system->getCores();
+        Electron* kElectron = m_system->getElectrons().at(k);
+        const vec& position = kElectron->getPosition();
+
+        for (int i = 0; i < m_numberOfAtoms; i++) {
+            Core* nucleus = cores.at(i);
+            double rik = arma::norm(position - nucleus->getPosition());
+            sum += 2/rik * m_jastrowNucleusGradient(k,i) * m_jastrowNucleusLaplacianTerms(k,i);
         }
     }
     m_jastrowLaplacian = sum;
@@ -149,15 +187,6 @@ void SlaterWithJastrow::computeSlaterRatio() {
         sum += m_orbital->evaluate(xi,yi,zi,j,m_spinChanged) * slater(j,i);
     }
     m_Rsd = sum;
-    /*if (m_spinChanged==1) {
-        for (int j = 0; j < m_numberOfSpinUpElectrons; j++) {
-            sum += m_orbital->evaluate(xi,yi,zi,j,1) * m_slaterUp(j,i);
-        }
-    } else {
-        for (int j = 0; j < m_numberOfSpinDownElectrons; j++) {
-            sum += m_orbital->evaluate(xi,yi,zi,j,0) * m_slaterDown(j,i);
-        }
-    }*/
 }
 
 void SlaterWithJastrow::computeJastrowRatio() {
@@ -169,6 +198,11 @@ void SlaterWithJastrow::computeJastrowRatio() {
     }
     for (int i = k+1; i < m_numberOfElectrons; i++) {
         sum += m_correlationMatrix(k,i) - m_correlationMatrixOld(k,i);
+    }
+
+    // Electron-nucleus terms.
+    for (int i = 0; i < m_numberOfAtoms; i++) {
+        sum += m_nucleusCorrelationMatrix(k,i) - m_nucleusCorrelationMatrixOld(k,i);
     }
 
     m_Rc = exp(sum);
@@ -216,6 +250,22 @@ void SlaterWithJastrow::fillCorrelationMatrix() {
             m_correlationMatrix(i,k) = m_correlationMatrix(k,i);
         }
     }
+
+    // Fill nucleus-electron correlation terms.
+    const std::vector<Core*>& cores = m_system->getCores();
+    for (int i = 0; i < m_numberOfElectrons; i++) {
+        Electron* iElectron = m_system->getElectrons().at(i);
+        const vec& position = iElectron->getPosition();
+
+        for (int j = 0; j < m_numberOfAtoms; j++) {
+            Core* nucleus = cores.at(j);
+            double Z = nucleus->getGeneralizedCharge();
+            vec r = position - nucleus->getPosition();
+            double rij = arma::norm(r);
+
+            m_nucleusCorrelationMatrix(i,j) = Z*rij / (1.0 + m_gamma * rij);
+        }
+    }
 }
 
 void SlaterWithJastrow::updateCorrelationsMatrix() {
@@ -232,6 +282,18 @@ void SlaterWithJastrow::updateCorrelationsMatrix() {
         //Electron* iElectron = m_system->getElectrons().at(i);
         m_correlationMatrix(k,i) = m_spinMatrix(k,i) * R(k,i) / (1 + m_beta * R(k,i)); //computeJastrowFactor(kElectron,iElectron);
         m_correlationMatrix(i,k) = m_correlationMatrix(k,i);
+    }
+
+    // Electron-nucleus terms.
+    const std::vector<Core*>& cores = m_system->getCores();
+    Electron* kElectron = m_system->getElectrons().at(k);
+    const vec& position = kElectron->getPosition();
+
+    for (int i = 0; i < m_numberOfAtoms; i++) {
+        Core* nucleus = cores.at(i);
+        double rik = arma::norm(position - nucleus->getPosition());
+        double Z = nucleus->getGeneralizedCharge();
+        m_nucleusCorrelationMatrix(k,i) = Z*rik / (1 + m_gamma * rik);
     }
 }
 
@@ -268,14 +330,33 @@ double SlaterWithJastrow::computeBetaDerivative() {
     mat& a = m_spinMatrix;
     mat& R = m_interElectronDistances;
 
-    double m_betaDerivative = 0;
+    double betaDerivative = 0;
     for (int i = 0; i < m_numberOfElectrons; i++) {
         for (int j = i+1; j < m_numberOfElectrons; j++) {
             double factor = 1.0 + m_beta * R(i,j);
-            m_betaDerivative -= a(i,j) * R(i,j) * R(i,j) / (factor*factor);
+            betaDerivative -= a(i,j) * R(i,j) * R(i,j) / (factor*factor);
         }
     }
-    return m_betaDerivative;
+    return betaDerivative;
+}
+
+double SlaterWithJastrow::computeGammaDerivative() {
+    double gammaDerivative = 0;
+
+    const std::vector<Core*>&     cores     = m_system->getCores();
+    const std::vector<Electron*>& electrons = m_system->getElectrons();
+
+    for (int i = 0; i < m_numberOfElectrons; i++) {
+        Electron* iElectron = electrons.at(i);
+        for (int j = 0; j < m_numberOfAtoms; j++) {
+            Core* jNucleus = cores.at(j);
+            double Z  = jNucleus->getGeneralizedCharge();
+            double rij = arma::norm(iElectron->getPosition() - jNucleus->getPosition());
+            double factor = 1.0 + m_gamma * rij;
+            gammaDerivative -= Z * rij * rij / (factor*factor);
+        }
+    }
+    return gammaDerivative;
 }
 
 void SlaterWithJastrow::computeQuantumForce() {
@@ -289,7 +370,7 @@ void SlaterWithJastrow::computeQuantumForce() {
 
         mat& slaterGradient = (kSpin==1 ? m_slaterGradientUp : m_slaterGradientDown);
 
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < m_numberOfDimensions; j++) {
             double sum = 0;
             for (int i = 0; i < k ; i++) {
                 const double xk         = r(k,j);
@@ -301,6 +382,20 @@ void SlaterWithJastrow::computeQuantumForce() {
                 const double xi         = r(i,j);
                 sum -= (xi - xk) / R(i,k) * m_jastrowGradient(k,i);
             }
+
+            // Electron-nucleus terms.
+            const std::vector<Core*>& cores = m_system->getCores();
+            Electron* kElectron = m_system->getElectrons().at(k);
+            const vec& position = kElectron->getPosition();
+
+            for (int i = 0; i < m_numberOfAtoms; i++) {
+                Core* nucleus = cores.at(i);
+                const vec& nucleusPosition = nucleus->getPosition();
+                double xki = position(j) - nucleusPosition(j);
+                double Rki = arma::norm(position - nucleusPosition);
+                sum -= xki / Rki * m_jastrowNucleusGradient(k,i);
+            }
+
             m_quantumForce(k , j) = 2 * slaterGradient(kSpinIndex,j);
             if (m_jastrow) m_quantumForce(k ,j) += 2 * sum;
             m_energyCrossTerm -= 0.5*sum*sum + (slaterGradient(kSpinIndex,j) * sum);
@@ -396,19 +491,26 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
 
     m_correlationMatrix    = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
     m_correlationMatrixOld = zeros<mat>(m_numberOfElectrons, m_numberOfElectrons);
+
+    m_numberOfAtoms = m_system->getCores().size();
+    m_nucleusCorrelationMatrix      = zeros<mat>(m_numberOfElectrons, m_numberOfAtoms);
+    m_nucleusCorrelationMatrixOld   = zeros<mat>(m_numberOfElectrons, m_numberOfAtoms);
+
     fillCorrelationMatrix();
-    m_correlationMatrixOld = m_correlationMatrix;
+    m_correlationMatrixOld          = m_correlationMatrix;
+    m_nucleusCorrelationMatrixOld   = m_nucleusCorrelationMatrix;
 
     m_slaterGradientUp   = zeros<mat>(eUp,   3);
     m_slaterGradientDown = zeros<mat>(eDown, 3);
     m_jastrowGradient       = zeros<mat>(m_numberOfElectrons,m_numberOfElectrons);
     m_jastrowLaplacianTerms = zeros<mat>(m_numberOfElectrons,m_numberOfElectrons);
 
+    m_jastrowNucleusGradient       = zeros<mat>(m_numberOfElectrons, m_numberOfAtoms);
+    m_jastrowNucleusLaplacianTerms = zeros<mat>(m_numberOfElectrons, m_numberOfAtoms);
+
     for (int electron = 0; electron < m_numberOfElectrons; electron++) {
         updateSlaterGradient(1.0, electron);
-        computeSlaterLaplacian(electron);   // This is called N-2 too many times,
-        // but that shouldnt affect runtime
-        // in any substantial way.
+        computeSlaterLaplacian(electron);
         if (m_jastrow) {
             updateJastrowGradient(electron);
             updateJastrowLaplacianTerms(electron);
@@ -417,6 +519,10 @@ void SlaterWithJastrow::evaluateWaveFunctionInitial() {
     }
     m_jastrowGradientOld        = m_jastrowGradient;
     m_jastrowLaplacianTermsOld  = m_jastrowLaplacianTerms;
+
+    m_jastrowNucleusGradientOld        = m_jastrowNucleusGradient;
+    m_jastrowNucleusLaplacianTermsOld  = m_jastrowNucleusLaplacianTerms;
+
     m_slaterGradientUpOld       = m_slaterGradientUp;
     m_slaterGradientDownOld     = m_slaterGradientDown;
 

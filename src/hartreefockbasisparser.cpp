@@ -89,8 +89,7 @@ void HartreeFockBasisParser::parseBasisFile(System* system, string fileName) {
             eUpNext     = Z / 2;
             eDownNext   = Z / 2;
         }
-        cout << eUpNext << endl;
-        cout << eDownNext << endl;
+
         m_atoms.push_back(new Atom(m_system,m_atomPositions.at(atom),Z,eUpNext,eDownNext));
         eUp     += eUpNext;
         eDown   += eDownNext;

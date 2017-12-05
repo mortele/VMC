@@ -40,7 +40,8 @@ SOURCES += \
     WaveFunctions/Orbitals/gaussianorbital.cpp \
     stofitter.cpp \
     WaveFunctions/Orbitals/slatertypeorbital.cpp \
-    cases.cpp
+    cases.cpp \
+    optimizer.cpp
 
 HEADERS += \
     hamiltonian.h \
@@ -70,4 +71,5 @@ HEADERS += \
     WaveFunctions/Orbitals/gaussianorbital.h \
     stofitter.h \
     WaveFunctions/Orbitals/slatertypeorbital.h \
-    cases.h
+    cases.h \
+    optimizer.h

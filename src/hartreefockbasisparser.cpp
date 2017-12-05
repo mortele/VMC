@@ -45,9 +45,9 @@ void HartreeFockBasisParser::parseBasisFile(System* system, string fileName) {
     std::ifstream basisFile;
     basisFile.open(fileName, std::ios::in);
     if (! basisFile.is_open()) {
-        basisFile.open("../../HartreeFock/HartreeFockBases/"+fileName, std::ios::in);
+        basisFile.open("../../HartreeFock/data/HartreeFockBases/"+fileName, std::ios::in);
         if (! basisFile.is_open()) {
-            basisFile.open("/Users/morten/Documents/Master/HartreeFock/HartreeFockBases/"+fileName, std::ios::in);
+            basisFile.open("/Users/morten/Documents/Master/HartreeFock/data/HartreeFockBases/"+fileName, std::ios::in);
         }
     }
     if (! basisFile.is_open()) {

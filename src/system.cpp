@@ -3,6 +3,7 @@
 #include "hamiltonian.h"
 #include "metropolis.h"
 #include "sampler.h"
+#include "optimizer.h"
 #include "WaveFunctions/wavefunction.h"
 #include "Cores/core.h"
 
@@ -14,6 +15,7 @@ System::System() {
     m_sampler                   = new Sampler(this);
     m_metropolis                = new Metropolis(this);
     m_hamiltonian               = new Hamiltonian(this);
+    m_optimizer                 = new Optimizer(this);
 }
 
 void System::setup() {
@@ -23,6 +25,7 @@ void System::setup() {
     m_sampler->setup();
     setupSpinElectronArrays();
     m_waveFunction->setup();
+    m_optimizer->setup();
 }
 
 void System::setupSpinElectronArrays() {
@@ -55,6 +58,13 @@ double System::runMetropolisSilent(int steps) {
     setup();
     double E = m_metropolis->runStepsSilent(steps);
     return E;
+}
+
+double System::optimizeBeta(double beta,
+                            double tollerance,
+                            int    maxIterations,
+                            int    cycles) {
+    m_optimizer->optimizeBeta(beta,tollerance,maxIterations,cycles);
 }
 
 void System::setWaveFunction(WaveFunction* waveFunction) {

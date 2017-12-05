@@ -1,6 +1,7 @@
 #include "wavefunction.h"
 #include "system.h"
 #include "WaveFunctions/Orbitals/orbital.h"
+#include <iostream>
 
 using arma::vec;
 using arma::mat;
@@ -36,6 +37,12 @@ void WaveFunction::evaluateWaveFunctionInitial() {
 double WaveFunction::computeWaveFunctionRatio(int) {
     m_currentValueSquared = evaluateWaveFunctionSquared();
     return m_currentValueSquared / m_oldValueSquared;
+}
+
+double WaveFunction::computeBetaDerivative() {
+    std::cout << "No Jastrow factor beta derivative available." << std::endl;
+    exit(1);
+    return 0;
 }
 
 void WaveFunction::setStepLength(double stepLength) {

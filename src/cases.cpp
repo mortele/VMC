@@ -1,6 +1,7 @@
 #include "cases.h"
 #include "system.h"
 #include "sampler.h"
+#include "metropolis.h"
 #include "Cores/atom.h"
 #include "Cores/harmonicoscillator.h"
 #include "WaveFunctions/heliumwavefunction.h"
@@ -33,6 +34,71 @@ using arma::zeros;
 using arma::vec;
 
 
+
+
+bool Cases::firstExample() {
+    int     Z       = 2;
+    double  alpha   = 1.843;
+    double  beta    = 0.347;
+    vec     position{0,0,0};
+
+    System  He;
+    //He.setStepLength(3.0);
+    He.setImportanceSampling(true);
+    He.addCore          (new Atom               (&He, position, Z));
+    He.setWaveFunction  (new SlaterWithJastrow  (&He, beta,true));
+    He.setOrbital       (new SlaterTypeOrbital  (alpha));
+    He.runMetropolis    ((int) 1e7);
+}
+
+bool Cases::secondExample() {
+    vec     position{0,0,0};
+    System  Ne;
+    Ne.setImportanceSampling    (true);
+    Ne.setElectronInteraction   (false);
+    Ne.setStepLength    (0.001);
+    Ne.addCore          (new Atom               (&Ne, position, 10, 5, 4));
+    Ne.setWaveFunction  (new SlaterWithJastrow  (&Ne, -1, false));
+    Ne.setOrbital       (new HydrogenOrbital    (10.0));
+    Ne.runMetropolis    ((int) 1e7);
+}
+
+bool Cases::thirdExample() {
+    double  beta = 0.094;
+    string  basisFileName = "Be-STO-3G";
+    System  Be;
+    Be.setImportanceSampling(true);
+    Be.setWaveFunction  (new SlaterWithJastrow  (&Be, beta, true));
+    Be.setOrbital       (new GaussianOrbital    (&Be, basisFileName));
+    Be.runMetropolis    ((int) 1e7);
+}
+
+bool Cases::optimizeExample() {
+    int     Z       = 2;
+    double  alpha   = 1.843;
+    double  beta    = 0.2;//0.347;
+    vec     position{0,0,0};
+
+    System  He;
+    //He.setStepLength(3.0);
+    He.setImportanceSampling(true);
+    He.addCore          (new Atom               (&He, position, Z));
+    He.setWaveFunction  (new SlaterWithJastrow  (&He, beta,true));
+    He.setOrbital       (new SlaterTypeOrbital  (alpha));
+    He.optimizeBeta(beta,0.001,50,1e6);
+    He.getMetropolis()->runSteps((int) 1e7);
+}
+
+bool Cases::optimizeGaussianExample() {
+    double beta = 0.36;
+    System  He;
+    He.setStepLength(0.08);
+    He.setImportanceSampling(true);
+    He.setWaveFunction  (new SlaterWithJastrow  (&He, beta, true));
+    He.setOrbital       (new GaussianOrbital    (&He, "He-STO-6G-HF"));
+    He.optimizeBeta(beta,0.001,50,1e6);
+}
+
 bool Cases::closedShellAtom() {
     boost::timer t;
     System* test = new System();
@@ -40,7 +106,7 @@ bool Cases::closedShellAtom() {
     test->setImportanceSampling (true);
     test->setStepLength(0.025);
     //=========================================================================
-    /*====================*/ string atom     = "Be";
+    /*====================*/ string atom     = "He";
     /*====================*/ string orbital  = "Slater";
     /*====================*/ string basis    = "Be-STO-6G";
     //=========================================================================

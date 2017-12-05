@@ -13,7 +13,12 @@
 
 
 int main(int, char**) {
-    Cases::closedShellAtom();
+    //Cases::firstExample();
+    //Cases::secondExample();
+    //Cases::thirdExample();
+    //Cases::optimizeExample();
+    Cases::optimizeGaussianExample();
+    //Cases::closedShellAtom();
     return 0;
 }
 

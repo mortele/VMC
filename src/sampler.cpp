@@ -2,6 +2,7 @@
 #include "system.h"
 #include "hamiltonian.h"
 #include "electron.h"
+#include "WaveFunctions/wavefunction.h"
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -34,6 +35,15 @@ void Sampler::sample(bool acceptedStep) {
         m_currentPotentialEnergy    = m_hamiltonian->getPotentialEnergy();
     }
 
+    if (m_system->getWaveFunction()->containsJastrow()) {
+        if (acceptedStep) {
+            m_currentJastrowDerivative        = m_system->getWaveFunction()->computeBetaDerivative();
+            m_currentEnergy_JastrowDerivative = m_currentEnergy * m_currentJastrowDerivative;
+        }
+        m_cumulativeEnergy_JastrowDerivative    += m_currentEnergy_JastrowDerivative;
+        m_cumulativeJastrowDerivative           += m_currentJastrowDerivative;
+    }
+
     m_currentEnergySquared            = m_currentEnergy * m_currentEnergy;
     m_cumulativeEnergy               += m_currentEnergy;
     m_cumulativeEnergySquared        += m_currentEnergySquared;
@@ -58,6 +68,11 @@ void Sampler::computeAverages() {
     m_numberOfMetropolisSteps   = m_totalSamplesTaken;
     m_blockingVariance          = (blockingE2-blockingE*blockingE) / m_numberOfBlocks;
     m_blockingStandardDeviation = sqrt(m_blockingVariance);
+
+    if (m_system->getWaveFunction()->containsJastrow()) {
+        m_jastrowDerivative         = m_cumulativeJastrowDerivative         / m_totalSamplesTaken;
+        m_energyJastrowDerivative   = m_cumulativeEnergy_JastrowDerivative  / m_totalSamplesTaken;
+    }
 }
 
 void Sampler::computeBlockAverages() {
@@ -98,6 +113,47 @@ void Sampler::computeBlockAverages() {
 
 Sampler::Sampler(System* system) {
     m_system = system;
+}
+
+void Sampler::clear() {
+    m_firstBlock                         = true;
+    m_numberOfMetropolisSteps            = 0;
+    m_currentEnergy                      = 0;
+    m_currentEnergySquared               = 0;
+    m_currentKineticEnergy               = 0;
+    m_currentPotentialEnergy             = 0;
+    m_energy                             = 0;
+    m_variance                           = 0;
+    m_totalAccepted                      = 0;
+    m_totalSamplesTaken                  = 0;
+    m_cumulativeEnergy                   = 0;
+    m_cumulativeEnergySquared            = 0;
+    m_acceptanceRate                     = 0;
+    m_currentEnergy_JastrowDerivative    = 0;
+    m_currentJastrowDerivative           = 0;
+    m_cumulativeEnergy_JastrowDerivative = 0;
+    m_cumulativeJastrowDerivative        = 0;
+    m_energyJastrowDerivative            = 0;
+    m_jastrowDerivative                  = 0;
+    m_blockEnergy                        = 0;
+    m_blockVariance                      = 0;
+    m_blockAccepted                      = 0;
+    m_blockSamplesTaken                  = 0;
+    m_blockCumulativeEnergy              = 0;
+    m_blockCumulativeEnergySquared       = 0;
+    m_blockAcceptanceRate                = 0;
+    m_blockCumulativeKineticEnergy       = 0;
+    m_blockCumulativePotentialEnergy     = 0;
+    m_blockVirialRatio                   = 0;
+    m_blockingEnergy                     = 0;
+    m_blockingEnergy2                    = 0;
+    m_blockingVariance                   = 0;
+    m_blockingStandardDeviation          = 0;
+    m_numberOfBlocks                     = 0;
+}
+
+double Sampler::getJastrowGradient() {
+    return 2*(m_energyJastrowDerivative - m_jastrowDerivative*m_energy);
 }
 
 void Sampler::setup() {

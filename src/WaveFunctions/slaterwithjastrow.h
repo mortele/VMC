@@ -13,6 +13,7 @@ class System;
 class SlaterWithJastrow : public WaveFunction {
 private:
     bool        m_jastrow                   = true;
+    bool        m_initializeDone            = false;
     int         m_spinChanged               = -1;
     double      m_beta                      = 1;
     double      m_energyCrossTerm;
@@ -59,7 +60,8 @@ private:
     double spinCoefficient(Electron*,Electron*);
     double getQuantumForce(int,int);
     double getQuantumForceOld(int,int);
-    void computeQuantumForce();
+    double computeBetaDerivative();
+    void   computeQuantumForce();
 
 public:
     SlaterWithJastrow(System* system, double beta, bool useJastrow=true);
@@ -69,6 +71,7 @@ public:
     void updateWaveFunctionAfterRejectedStep();
     double computeWaveFunctionRatio(int electronChanged);
     double evaluateLaplacian();
+    void setBeta(double beta) { m_beta = beta; }
 };
 
 

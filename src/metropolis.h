@@ -14,6 +14,7 @@ private:
     bool                m_silent = false;
     bool                m_stepLengthSetManually = false;
     bool                m_importanceSampling = false;
+    bool                m_thermalize = true;
     double              m_stepLength = 1.0;
     double              m_stepLengthHalf;
     double              m_dt;
@@ -40,5 +41,6 @@ public:
     double runSteps(int steps);
     double runStepsSilent(int steps);
     int  getStep() { return m_i; }
+    void setThermalization(bool thermalize) { m_thermalize = thermalize; }
 };
 

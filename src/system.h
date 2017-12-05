@@ -13,6 +13,7 @@ private:
     class Hamiltonian*              m_hamiltonian;
     class WaveFunction*             m_waveFunction;
     class Orbital*                  m_orbital;
+    class Optimizer*                m_optimizer;
     std::vector<class Core*>        m_cores;
     std::vector<class Electron*>    m_electrons;
     std::vector<class Electron*>    m_spinUpElectrons;
@@ -25,6 +26,7 @@ public:
     System();
     double runMetropolis                (int steps);
     double runMetropolisSilent          (int steps);
+    double optimizeBeta                 (double beta=0.2, double tollerance=0.01, int maxIterations=50, int cycles=1e5);
     void adjustPositionOfElectron     (int electron, int dimension, double adjustment);
     void addCore                      (class Core* core);
     void setWaveFunction              (class WaveFunction* waveFunction);

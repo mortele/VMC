@@ -128,7 +128,7 @@ double Metropolis::runSteps(int steps) {
     m_waveFunction->evaluateWaveFunctionInitial();
     for (m_i = 0; m_i < steps; m_i++) {
         bool acceptedStep = step();
-        m_sampler->sample(acceptedStep);
+        if (m_thermalize && (m_i > 1e4)) m_sampler->sample(acceptedStep);
         printIterationInfo(m_i);
     }
     m_sampler->computeAverages();
@@ -217,9 +217,11 @@ double Metropolis::computeGreensFunction() {
     double greensFunction = 0;
     for (int i = 0; i < m_numberOfElectrons; i++) {
         for (int j = 0; j < 3; j++) {
-            greensFunction += 0.5 * (wf->getQuantumForceOld(i,j) + wf->getQuantumForce(i,j))
-                                  * (D * m_dt * 0.5 * (wf->getQuantumForceOld(i,j) - wf->getQuantumForce(i,j))
-                                     - wf->getPosition(i,j) + wf->getPositionOld(i,j));
+            greensFunction += 0.5 *
+                 (wf->getQuantumForceOld(i,j) + wf->getQuantumForce(i,j)) *
+                 (D * m_dt * 0.5 *
+                    (wf->getQuantumForceOld(i,j) - wf->getQuantumForce(i,j)) -
+                     wf->getPosition(i,j)        + wf->getPositionOld(i,j));
         }
     }
     return exp(greensFunction);

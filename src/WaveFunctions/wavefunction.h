@@ -14,12 +14,14 @@ protected:
     int             m_changedDimension;
     bool            m_orbitalSet = false;
     bool            m_useNumericalDerivatives;
+    bool            m_containsJastrow = false;
     double          m_currentValueSquared;
     double          m_oldValueSquared;
     double          m_stepLength = 1e-4;
     double          m_stepLengthSquared;
     double          m_2stepLengthInverse;
     double          m_stepLengthSquaredInverse;
+    double          m_betaDerivative;
     arma::mat       m_quantumForce;
     arma::mat       m_quantumForceOld;
     arma::mat       m_electronPositions;
@@ -42,6 +44,11 @@ public:
     void   setStepLength(double stepLength);
     void   setOrbital(class Orbital* orbital);
     double evaluateWaveFunctionSquared();
+    virtual void setBeta(double) {}
+    virtual double  computeBetaDerivative();
+
+    bool   containsJastrow()   { return m_containsJastrow; }
+    double getBetaDerivative() { return m_betaDerivative; }
 
     virtual double      evaluateWaveFunction () { return nan(""); }
     virtual void        passProposedChangeToWaveFunction(int , int ) {}

@@ -128,7 +128,7 @@ double Metropolis::runSteps(int steps) {
     m_waveFunction->evaluateWaveFunctionInitial();
     for (m_i = 0; m_i < steps; m_i++) {
         bool acceptedStep = step();
-        if (m_thermalize && (m_i > 1e4)) m_sampler->sample(acceptedStep);
+        if (m_thermalize && (m_i > 2500*4)) m_sampler->sample(acceptedStep);
         printIterationInfo(m_i);
     }
     m_sampler->computeAverages();

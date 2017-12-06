@@ -26,6 +26,7 @@
 #include <string>
 
 
+
 using std::cout;
 using std::endl;
 using std::setprecision;
@@ -90,13 +91,54 @@ bool Cases::optimizeExample() {
 }
 
 bool Cases::optimizeGaussianExample() {
-    double beta = 0.36;
-    System  He;
-    He.setStepLength(0.08);
-    He.setImportanceSampling(true);
-    He.setWaveFunction  (new SlaterWithJastrow  (&He, beta, true));
-    He.setOrbital       (new GaussianOrbital    (&He, "He-STO-6G-HF"));
-    He.optimizeBeta(beta,0.001,50,1e6);
+
+    double alpha = 1.843;
+    double beta = 0.2;
+    System  Hee;
+    Hee.addCore(new Atom(&Hee,vec{0,0,0},2,1,1));
+    Hee.setStepLength(0.03);
+    Hee.setImportanceSampling(true);
+    Hee.setWaveFunction  (new SlaterWithJastrow  (&Hee, beta, true));
+    Hee.setOrbital       (new HydrogenOrbital    (alpha));
+    Hee.optimizeBeta(beta,1e-7,50,1e6);
+
+    for (int i=0; i<20; i++) {
+
+        boost::timer t;
+        double beta = 0.3-0.01+(0.4-0.3)/20*i;
+        System  He;
+        He.setStepLength(0.08);
+        He.setImportanceSampling(true);
+        He.setWaveFunction  (new SlaterWithJastrow  (&He, beta, true));
+        He.setOrbital       (new GaussianOrbital    (&He, "He-STO-6G"));
+        //He.optimizeBeta(beta,0.001,50,1e6);
+        double E = He.runMetropolisSilent(5e7);
+        double T = t.elapsed();
+        printf("%20.15g %20.15g %20.15g\n", beta, E, T);
+        fflush(stdout);
+    }
+}
+
+bool Cases::nonInteracting() {
+    int Z = 10;
+
+    System NonInt;
+    NonInt.setImportanceSampling(true);
+    NonInt.setElectronInteraction(false);
+    NonInt.addCore(new Atom(&NonInt, vec{0,0,0}, Z, Z/2, Z/2));
+    NonInt.setWaveFunction(new SlaterWithJastrow(&NonInt, 0, false));
+    NonInt.setOrbital(new HydrogenOrbital(Z));
+    NonInt.runMetropolis(1e6);
+}
+
+bool Cases::Hplus() {
+    System Hplus;
+    Hplus.setImportanceSampling(true);
+    Hplus.setElectronInteraction(false);
+    Hplus.addCore(new Atom(&Hplus, vec{0,0,0}, Z, Z/2, Z/2));
+    Hplus.setWaveFunction(new SlaterWithJastrow(&Hplus, 0, false));
+    Hplus.setOrbital(new HydrogenOrbital(Z));
+    Hplus.runMetropolis(1e6);
 }
 
 bool Cases::closedShellAtom() {

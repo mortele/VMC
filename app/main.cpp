@@ -17,7 +17,8 @@ int main(int, char**) {
     //Cases::secondExample();
     //Cases::thirdExample();
     //Cases::optimizeExample();
-    Cases::optimizeGaussianExample();
+    //Cases::optimizeGaussianExample();
+    Cases::nonInteracting();
     //Cases::closedShellAtom();
     return 0;
 }
